@@ -17,7 +17,9 @@
             colModel: [
                 { label: "主键", name: "F_Id", hidden: true, key: true },
                 { label: '名称', name: 'F_FullName', width: 200, align: 'left' },
-                { label: '编号', name: 'F_EnCode', width: 150, align: 'left' },
+                //{ label: '编号', name: 'F_EnCode', width: 150, align: 'left' },
+                { label: '基层机构编号', name: 'F_EnCode', width: 150, align: 'left' },
+                { label: '医保机构编号', name: 'F_AdministrativeArea', width: 150, align: 'left' },
                 {
                     label: '分类', name: 'F_CategoryId', width: 80, align: 'left',
                     formatter: function (cellvalue) {

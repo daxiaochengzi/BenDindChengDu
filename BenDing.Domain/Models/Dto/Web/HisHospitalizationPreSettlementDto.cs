@@ -36,9 +36,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 传输标志
         /// </summary>
         public  string AfferentSign { get; set; }
-        /// <summary>
-        /// 诊断
-        /// </summary>
-        public List<InpatientDiagnosisDto> DiagnosisList { get; set; }
+        ///// <summary>
+        ///// 诊断
+        ///// </summary>
+        //public List<InpatientDiagnosisDto> DiagnosisList { get; set; }
     }
 }

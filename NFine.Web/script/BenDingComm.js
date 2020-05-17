@@ -16,10 +16,9 @@ var baseInfo = {
         "Birthday": null,    //出生日期
         "InsuranceType": null, // 险种类型,
         "IdCardNo": null ,// 身份证,
-        "ResidentInsuranceBalance": null,//居民医保账户余额
-        "WorkersInsuranceBalance": null,//职工医保账户余额
-        "MentorBalance": null, //门特余额
-        "OverallPaymentBalance": null //统筹支付余额
+        "AccountBalance": null,//账户余额
+        "MedicalInsuranceSign": null//医保标识
+       
     }
 };
 //判断插件是否存在
@@ -30,6 +29,10 @@ function DetectActiveX() {
         var activeVersionNumber = activeX.GetVersionNumber();
         if (parseInt(versionNumber) > parseInt(activeVersionNumber)) {
             msgError("当前插件版本过低,请下载新的版本!!!");
+        }//签到检查
+        else {
+
+            SignInCheck();
         }
 
     }
@@ -38,6 +41,65 @@ function DetectActiveX() {
         return false;
     }
     return true;
+}
+//签到检查
+function SignInCheck() {
+    var queryParam = {
+        "UserId": iniJs("#empid").val() /*授权操作人的ID*/
+    }
+    $.ajax({
+        type: 'post',
+        url: hostNew + '/MedicalInsuranceSignInQuery',
+        data: queryParam,
+        dataType: "json",
+        async: false,
+        success: function (data) {
+
+            if (data.Success === false) {
+                var errData = data.Message;
+                msgError(errData);
+                //样式类名:墨绿深蓝风
+            } else {
+                var dataValue = data.Data;
+                if (dataValue.TransactionInputXml !== null)
+                {
+                    var activeX = document.getElementById("CSharpActiveX");
+                    //门诊结算
+                    var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                        , "MedicalInsuranceSignIn", iniJs("#empid").val());
+                    var activeJsonData = JSON.parse(activeData);
+                    if (activeJsonData.Success === false) {
+                        msgError(activeJsonData.Message);
+                    } else {
+                        queryParam["ResultJson"] = activeJsonData.Data;
+                        medicalInsuranceSignIn(queryParam);
+                    }
+                }
+                
+
+            }
+        }
+
+    });
+}
+
+function medicalInsuranceSignIn(signInParam) {
+    $.ajax({
+        type: 'post',
+        url: hostNew + '/MedicalInsuranceSignIn',
+        data: signInParam,
+        dataType: "json",
+        async: false,
+        success: function (data) {
+
+            if (data.Success === false) {
+                var errData = data.Message;
+                msgError(errData);
+                //样式类名:墨绿深蓝风
+            }
+        }
+
+    });
 }
 function queryData(getInpatientInfoBack) {
    layer.open({
@@ -151,7 +213,7 @@ function getInpatientInfo(getInpatientInfoBack)
 {
   
       var activeX = document.getElementById("CSharpActiveX");
-      var activeData = activeX.OutpatientMethods(JSON.stringify(baseInfo.HospitalInfo), JSON.stringify(baseInfo.HospitalInfo),"GetUserInfo");
+    var activeData = activeX.YiHaiOutpatientMethods("", "","GetUserInfo","");
         var activeJsonData = JSON.parse(activeData);
         if (activeJsonData.Success === false) {
             msgError(activeJsonData.Message);
@@ -164,10 +226,8 @@ function getInpatientInfo(getInpatientInfoBack)
             baseInfo.Inpatient["Birthday"] = activeJsonInfo.Birthday;
             baseInfo.Inpatient["InsuranceType"] = activeJsonInfo.InsuranceType;
             baseInfo.Inpatient["IdCardNo"] = activeJsonInfo.IdCardNo;
-            baseInfo.Inpatient["ResidentInsuranceBalance"] = activeJsonInfo.ResidentInsuranceBalance;
-            baseInfo.Inpatient["WorkersInsuranceBalance"] = activeJsonInfo.WorkersInsuranceBalance;
-            baseInfo.Inpatient["MentorBalance"] = activeJsonInfo.MentorBalance;
-            baseInfo.Inpatient["OverallPaymentBalance"] = activeJsonInfo.OverallPaymentBalance;
+            baseInfo.Inpatient["AccountBalance"] = activeJsonInfo.AccountBalance;
+            baseInfo.Inpatient["MedicalInsuranceSign"] = activeJsonInfo.MedicalInsuranceSign;
             baseInfo.HospitalInfo.AfferentSign = "2";
             baseInfo.HospitalInfo.IdentityMark = activeJsonInfo.PersonalCoding;
             getInpatientInfoBack();
@@ -197,8 +257,6 @@ function getReadCardInpatientInfo(getInpatientInfoBack) {
         baseInfo.Inpatient["IdCardNo"] = activeJsonInfo.IdCardNo;
         baseInfo.Inpatient["ResidentInsuranceBalance"] = activeJsonInfo.ResidentInsuranceBalance;
         baseInfo.Inpatient["WorkersInsuranceBalance"] = activeJsonInfo.WorkersInsuranceBalance;
-        baseInfo.Inpatient["MentorBalance"] = activeJsonInfo.MentorBalance;
-        baseInfo.Inpatient["OverallPaymentBalance"] = activeJsonInfo.OverallPaymentBalance;
         baseInfo.HospitalInfo.AfferentSign = "2";
         baseInfo.HospitalInfo.IdentityMark = activeJsonInfo.PersonalCoding;
         getInpatientInfoBack();

@@ -132,7 +132,7 @@ namespace BenDing.Repository.Providers.Web
                var resultData = sqlConnection.QueryFirstOrDefault<HospitalOrganizationGradeDto>(querySql);
                 sqlConnection.Close();
                 if (resultData==null)throw  new Exception("当前医院未设置等级,请重新设置");
-                if (resultData.MedicalInsuranceAccount == null) throw new Exception("当前医院未设置医保账号");
+                //if (resultData.MedicalInsuranceAccount == null) throw new Exception("当前医院未设置医保账号");
                 return resultData;
             }
 

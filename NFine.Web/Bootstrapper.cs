@@ -4,9 +4,15 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 using BenDing.Repository.Interfaces.Web;
+using BenDing.Repository.Interfaces.YiHaiWeb;
 using BenDing.Repository.Providers.Web;
+using BenDing.Repository.Providers.YiHaiWeb;
 using BenDing.Service.Interfaces;
+using BenDing.Service.Interfaces.YiHaiWeb;
 using BenDing.Service.Providers;
+using BenDing.Service.Providers.YiHaiWeb;
+using NFine.Domain._04_IRepository.BenDingManage;
+using NFine.Repository.BenDingManage;
 using NFine.Web.Model;
 using StructureMap;
 using Unity;
@@ -81,6 +87,7 @@ namespace NFine.Web
             container.RegisterType<IOutpatientDepartmentNewService, OutpatientDepartmentNewService>();
             container.RegisterType<IResidentMedicalInsuranceNewService, ResidentMedicalInsuranceNewService>();
             container.RegisterType<IWorkerMedicalInsuranceNewService, WorkerMedicalInsuranceNewService>();
+            container.RegisterType<IYiHaiOutpatientDepartmentService, YiHaiOutpatientDepartmentService>();
             
             #endregion
             #region Repository
@@ -91,6 +98,9 @@ namespace NFine.Web
             container.RegisterType<ISystemManageRepository, SystemManageRepository>();
             container.RegisterType<IOutpatientDepartmentRepository, OutpatientDepartmentRepository>();
             container.RegisterType<IWorkerMedicalInsuranceRepository, WorkerMedicalInsuranceRepository>();
+            container.RegisterType<IMedicalInsuranceSignInRepository, MedicalInsuranceSignRepository>();
+            container.RegisterType<IYiHaiOutpatientDepartmentRepository, YiHaiOutpatientDepartmentRepository>();
+            container.RegisterType<IYiHaiSqlRepository, YiHaiSqlRepository>();
             
             #endregion
             return container;

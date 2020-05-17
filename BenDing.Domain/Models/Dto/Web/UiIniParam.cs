@@ -6,9 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Dto.Web
-{
+{/// <summary>
+/// 
+/// </summary>
   public  class UiIniParam
-    {
+    {/// <summary>
+    /// 
+    /// </summary>
         [Display(Name = "UserId")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string UserId { get; set; }

@@ -54,6 +54,7 @@
     <Compile Include="Interfaces\IWebServiceBasicService.cs" />
     <Compile Include="Interfaces\IWorkerMedicalInsuranceNewService.cs" />
     <Compile Include="Interfaces\IWorkerMedicalInsuranceService.cs" />
+    <Compile Include="Interfaces\YiHaiWeb\IYiHaiOutpatientDepartmentService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\OutpatientDepartmentNewService.cs" />
     <Compile Include="Providers\OutpatientDepartmentService.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Providers\WebServiceBasicService.cs" />
     <Compile Include="Providers\WorkerMedicalInsuranceNewService.cs" />
     <Compile Include="Providers\WorkerMedicalInsuranceService.cs" />
+    <Compile Include="Providers\YiHaiWeb\YiHaiOutpatientDepartmentService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenDing.Domain\BenDing.Domain.csproj">
@@ -84,5 +86,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

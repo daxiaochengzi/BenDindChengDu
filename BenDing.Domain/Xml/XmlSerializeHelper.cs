@@ -56,6 +56,7 @@ namespace BenDing.Domain.Xml
                     writer.Formatting = System.Xml.Formatting.Indented;
                     XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                     ns.Add("", "");//把命名空间设置为空，这样就没有命名空间了
+                  
                     ser.Serialize(writer, o, ns);
                 }
                 var encodingData = encoding.GetString(ms.ToArray());
@@ -87,6 +88,34 @@ namespace BenDing.Domain.Xml
                 }
                var encodingData = encoding.GetString(ms.ToArray());
                return System.Text.RegularExpressions.Regex.Replace(encodingData, "^[^<]", "");
+            }
+        }
+        /// <summary>
+        /// 基层转xml
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="encoding"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static string YinHaiXmlSerialize<T>(T o)
+        {
+            var encoding = Encoding.UTF8;
+            if (o == null)
+                throw new ArgumentNullException("实体不能为空!!!");
+
+            var ser = new XmlSerializer(o.GetType());
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new XmlTextWriter(ms, encoding))
+                {
+                    writer.Formatting = System.Xml.Formatting.Indented;
+                    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                    ns.Add("", "");//把命名空间设置为空，这样就没有命名空间了
+                    writer.WriteStartDocument(true);
+                    ser.Serialize(writer, o, ns);
+                }
+                var encodingData = encoding.GetString(ms.ToArray());
+                return System.Text.RegularExpressions.Regex.Replace(encodingData, "^[^<]", "");
             }
         }
 

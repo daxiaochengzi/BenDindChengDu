@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BenDing.Domain.Models.Dto.Resident;
+using BenDing.Domain.Models.Dto.YiHai.Base;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Xml
@@ -63,7 +64,7 @@ namespace BenDing.Domain.Xml
             }
             return tStr;
 
-        }
+        } 
         public static string ToUnXml<T>(T t)
         {
             string tStr = string.Empty;
@@ -336,8 +337,29 @@ namespace BenDing.Domain.Xml
             doc = null;
             return result;
         }
+        /// <summary>
+        /// 银海结果xml解析
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="strXml"></param>
+        /// <returns></returns>
+        public static T YiHaiDeSerializerModel<T>(T t,string strXml)
+        {
+            var result = t;
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(strXml);
+            string jsonText = JsonConvert.SerializeXmlNode(doc);
+            var resultData = JsonConvert.DeserializeObject<YiHaiResultData>(jsonText);
+            if (resultData?.Output != null && resultData.Output.ToString() != "")
+            {
+                var jsonStr = JsonConvert.SerializeObject(resultData.Output);
+                result = JsonConvert.DeserializeObject<T>(jsonStr);
+            }
 
-      
+            doc = null;
+            return result;
+        }
 
         public static string DeSerializerModelStr(string rowsName)
         {
