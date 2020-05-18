@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BenDingManage\HospitalGeneralCatalogMap.cs" />
     <Compile Include="BenDingManage\InpatientMap.cs" />
     <Compile Include="BenDingManage\MedicalInsuranceSignInMap.cs" />
     <Compile Include="BenDingManage\MonthlyHospitalizationMap.cs" />

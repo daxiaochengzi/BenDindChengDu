@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 namespace BenDing.Domain.Models.Dto.Resident
 {
   public  class QueryMedicalInsurancePairCodeDto
-    {  /// <summary>
-    /// 
-    /// </summary>
+    {
+        /// <summary>
+        /// ID20编码
+        /// </summary>
+        public string FixedEncodingId { get; set; }
+
+        /// <summary>
+        /// DirectoryCode 20位编码
+        /// </summary>
         public string FixedEncoding { get; set; }
         /// <summary>
         /// his项目编码

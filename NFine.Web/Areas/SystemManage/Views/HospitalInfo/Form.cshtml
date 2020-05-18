@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<script>
+    
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        var postData = $("#form1").formSerialize();
+       
+        $.submitForm({
+            url: "/SystemManage/HospitalInfo/SubmitForm" ,
+            param: postData,
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+</script>
+
+<form id="form1">
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            <tr>
+             <th class="formTitle">项目类型</th>
+            <td class="formValue">
+                <select id="DirectoryType" name="DirectoryType" class="form-control">
+                  
+                    <option value="0">科室</option>
+                    <option value="1">医生</option>
+                    <option value="2">病区</option>
+                    <option value="3">床</option>
+                </select>
+            </td>
+            </tr>
+           
+        </table>
+    </div>
+</form>

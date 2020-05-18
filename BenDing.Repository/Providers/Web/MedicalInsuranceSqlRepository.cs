@@ -413,10 +413,11 @@ namespace BenDing.Repository.Providers.Web
                         {
                             foreach (var items in insertParam)
                             {
+                                var dataId = Guid.NewGuid();
                                 insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
-                                           ([Id],[OrganizationCode],[OrganizationName],[DirectoryCategoryCode],[State],[ProjectCode],
+                                           ([Id],[FixedEncodingId],[OrganizationCode],[OrganizationName],[DirectoryCategoryCode],[State],[ProjectCode],
                                             [FixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[UploadState],[DirectoryCode]) values (
-                                           '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryCategoryCode}',0,'{items.ProjectCode}',
+                                           '{dataId}','{CommonHelp.GuidToStr(dataId.ToString())}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryCategoryCode}',0,'{items.ProjectCode}',
                                            '{BitConverter.ToInt64(Guid.Parse(items.DirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',0,'{items.DirectoryCode}') ";
 
                             }
@@ -451,7 +452,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         var updateId = CommonHelp.ListToStr(param.DirectoryCodeList);
                         sqlStr = $@"
-                            select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
+                            select a.FixedEncodingId,a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
                             b.ProjectName,b.ProjectLevel,b.Formulation,b.RestrictionSign,b.Specification,b.Unit,a.DirectoryCategoryCode,
                             b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock,b.Manufacturer,b.LimitPaymentScope,b.NewCodeMark,
                             b.ResidentOutpatientBlock,b.ResidentOutpatientSign,b.ResidentSelfPayProportion,b.WorkersSelfPayProportion

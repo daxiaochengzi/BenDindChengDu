@@ -1243,30 +1243,35 @@ namespace BenDing.Repository.Providers.Web
                     sqlConnection.Open();
                     if (param.Any())
                     {
+                        var paramNew = new List<InformationDto>();
                         var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.DirectoryCode).ToList());
                         strSql =
-                          $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
+                          $@"select DirectoryCode from  [dbo].[HospitalGeneralCatalog]  where [IsDelete]=0  and  [OrganizationCode]='{user.OrganizationCode}'
                                 and [DirectoryCode] in(" + outpatientNum + ")";
-                        sqlConnection.Execute(strSql);
+                        var data = sqlConnection.Query<string>(strSql).ToList();
+                        paramNew = data.Any() ? param.Where(c => !data.Contains(c.DirectoryCode)).ToList() : param;
                         string insertSql = "";
-                        foreach (var item in param)
+                        foreach (var item in paramNew)
                         {
 
                             string str = $@"INSERT INTO [dbo].[HospitalGeneralCatalog]
-                                   (id,DirectoryType,[OrganizationCode],[DirectoryCode],[DirectoryName]
+                                   (id,DirectoryType,[OrganizationCode],[OrganizationName],[DirectoryCode],[DirectoryName]
                                    ,[MnemonicCode],[DirectoryCategoryName],[Remark] ,[CreateTime]
-		                            ,[IsDelete],[DeleteTime],CreateUserId,FixedEncoding)
-                             VALUES ('{Guid.NewGuid()}','{info.DirectoryType}','{info.OrganizationCode}','{item.DirectoryCode}','{item.DirectoryName}',
+		                            ,[IsDelete],[DeleteTime],CreateUserId,FixedEncoding,[UploadMark])
+                             VALUES ('{Guid.NewGuid()}','{info.DirectoryType}','{info.OrganizationCode}','{user.OrganizationName}','{item.DirectoryCode}','{item.DirectoryName}',
                                      '{item.MnemonicCode}','{item.DirectoryCategoryName}','{item.Remark}',getDate(),
-                                       0, null,'{user.UserId}','{CommonHelp.GuidToStr(item.DirectoryCode)}');";
+                                       0, null,'{user.UserId}','{CommonHelp.GuidToStr(item.DirectoryCode)}',0);";
                             insertSql += str;
 
                         }
-                        count = sqlConnection.Execute(strSql + insertSql);
-
-                        sqlConnection.Close();
-
+                        if  (!string.IsNullOrWhiteSpace(insertSql))
+                        {
+                            count = sqlConnection.Execute(insertSql);
+                        }
                     }
+                    sqlConnection.Close();
+
+                    
                     return count;
                 }
                 catch (Exception e)

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web.Http;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.YinHai.Ui;
+using BenDing.Domain.Models.Params.YinHai.Web;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces.YiHaiWeb;
 
@@ -41,7 +42,6 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 _yiHaiOutpatientDepartmentService.MedicalInsuranceSignIn(param);
-
             });
 
         }
@@ -55,6 +55,20 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                var  data= _yiHaiOutpatientDepartmentService.GetMedicalInsuranceSignInParam(param);
+                y.Data = data;
+            });
+
+        }
+        /// <summary>
+        /// 医保签到查询
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientDepartmentParam([FromBody]GetOutpatientDepartmentUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var data = _yiHaiOutpatientDepartmentService.GetOutpatientDepartmentParam(param);
                 y.Data = data;
             });
 

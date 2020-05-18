@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="01 Infrastructure\DbLogType.cs" />
+    <Compile Include="BenDingManage\HospitalGeneralCatalogBase.cs" />
     <Compile Include="BenDingManage\InpatientBase.cs" />
     <Compile Include="BenDingManage\MedicalInsuranceSignInBase.cs" />
     <Compile Include="BenDingManage\MonthlyHospitalizationApp.cs" />

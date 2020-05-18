@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.YiHai.Base;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.YinHai.Ui;
+using BenDing.Domain.Models.Params.YinHai.Web;
 
 namespace BenDing.Service.Interfaces.YiHaiWeb
 {/// <summary>
@@ -23,5 +24,10 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         void MedicalInsuranceSignIn(MedicalInsuranceSignInUiParam param);
+        /// <summary>
+        /// 获取门诊
+        /// </summary>
+        /// <param name="param"></param>
+        GetYiHaiBaseParm GetOutpatientDepartmentParam(GetOutpatientDepartmentUiParam param);
     }
 }

@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BenDingManage\HospitalGeneralCatalogRepository.cs" />
     <Compile Include="BenDingManage\InpatientRepository.cs" />
     <Compile Include="BenDingManage\MedicalInsuranceSignRepository.cs" />
     <Compile Include="BenDingManage\MonthlyHospitalizationRepository.cs" />

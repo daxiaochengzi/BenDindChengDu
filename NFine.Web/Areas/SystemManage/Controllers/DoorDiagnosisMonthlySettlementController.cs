@@ -20,8 +20,9 @@ namespace NFine.Web.Areas.SystemManage.Controllers
     public class DoorDiagnosisMonthlySettlementController : ControllerBase
     {
         private UserApp userApp = new UserApp();
-        private MonthlyHospitalizationApp monthlyApp = new MonthlyHospitalizationApp();
         private readonly IOutpatientDepartmentNewService _outpatientNewService;
+        private MonthlyHospitalizationApp monthlyApp = new MonthlyHospitalizationApp();
+        
        // 
         /// <summary>
         /// 
