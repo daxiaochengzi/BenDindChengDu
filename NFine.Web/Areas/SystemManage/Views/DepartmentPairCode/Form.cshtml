@@ -1,0 +1,65 @@
+﻿
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<script>
+    var keyValue = $.request("keyValue");
+    $(function() {
+        initControl();
+    });
+    function initControl() {
+        $("#MedicalInsuranceCode").bindSelect({
+            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson",
+            id: "CodeValue",
+            text: "CodeDescribe"
+        });
+        $("#InpatientAreaCode").bindSelect({
+            url: "/SystemManage/DepartmentPairCode/GetInpatientAreaCodeGridJson",
+            id: "DirectoryCode",
+            text: "DirectoryName"
+        });
+    }
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        var postData = $("#form1").formSerialize();
+        postData["keyword"] = keyValue;
+        postData["MedicalInsuranceName"] = $("#MedicalInsuranceCode").find("option:selected").text();
+       
+        $.submitForm({
+            url: "/SystemManage/DepartmentPairCode/SubmitForm",
+            param: postData,
+            success: function() {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        });
+    }
+</script>
+
+<form id="form1">
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            
+           
+
+            <tr>
+                <th class="formTitle">医保科室</th>
+                <td class="formValue">
+                    <select id="MedicalInsuranceCode" name="MedicalInsuranceCode" class="form-control">
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">病区</th>
+                <td class="formValue">
+                    <select id="InpatientAreaCode" name="InpatientAreaCode" class="form-control">
+                    </select>
+                   
+                </td>
+            </tr>
+
+        </table>
+    </div>
+</form>

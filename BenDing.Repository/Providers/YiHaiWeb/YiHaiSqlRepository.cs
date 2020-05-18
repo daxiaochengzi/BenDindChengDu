@@ -77,6 +77,91 @@ namespace BenDing.Repository.Providers.YiHaiWeb
 
             }
         }
+        /// <summary>
+        /// 码表查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public List<CodeTableDto> CodeTableQuery(string param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string strSql = null;
+                try
+                {
+                    strSql = $@"select aaa100 as CodeData,aaa103 as  CodeDescribe,[aaa102] as CodeValue from [dbo].[CodeTable]  where aaa100='{param}'";
+                    var data = sqlConnection.Query<CodeTableDto>(strSql);
+                    sqlConnection.Close();
+                    return data.ToList();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
+            }
+        }
+
+
+        /// <summary>
+        /// 码表查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public List<HospitalGeneralCatalogEntity> HospitalGeneralCatalog(HospitalGeneralCatalogYiHaiParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string strSql = null;
+                try
+                {
+                    strSql = $@"SELECT [Id]
+      ,[OrganizationCode]
+      ,[OrganizationName]
+      ,[DirectoryType]
+      ,[DirectoryCode]
+      ,[FixedEncoding]
+      ,[MedicalInsuranceCode]
+      ,[MedicalInsuranceName]
+      ,[InpatientAreaCode]
+      ,[MnemonicCode]
+      ,[DirectoryName]
+      ,[DirectoryCategoryName]
+      ,[Remark]
+      ,[UploadMark]
+      ,[UploadTime]
+      ,[UploadUserId]
+      ,[UploadName]
+      ,[PairCodeUserId]
+      ,[PairCodeUserName]
+      ,[PairCodeTime]
+      ,[CreateTime]
+      ,[Version]
+      ,[UpdateTime]
+      ,[IsDelete]
+      ,[DeleteTime]
+      ,[CreateUserId]
+      ,[DeleteUserId]
+      ,[UpdateUserId]
+  FROM [dbo].[HospitalGeneralCatalog] 
+  where IsDelete=0 and DirectoryType='{param.DirectoryType}' and OrganizationCode='{param.User.OrganizationCode}' ";
+                    var data = sqlConnection.Query<HospitalGeneralCatalogEntity>(strSql);
+                    sqlConnection.Close();
+                    return data.ToList();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
+            }
+        }
+
+
     }
 
 }

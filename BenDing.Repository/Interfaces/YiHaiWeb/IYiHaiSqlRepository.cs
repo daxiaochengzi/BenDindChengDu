@@ -4,13 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.YiHai.Web;
 using BenDing.Domain.Models.Params.YinHai.Web;
 using NFine.Domain._03_Entity.BenDingManage;
 
 namespace BenDing.Repository.Interfaces.YiHaiWeb
 {
   public  interface IYiHaiSqlRepository
-  {   
-     List<MedicalInsuranceSignInEntity>  QueryMedicalInsuranceSignIn(QueryMedicalInsuranceSignInParam param);
+  {   /// <summary>
+      /// 签到查询
+      /// </summary>
+      /// <param name="param"></param>
+      /// <returns></returns>
+        List<MedicalInsuranceSignInEntity>  QueryMedicalInsuranceSignIn(QueryMedicalInsuranceSignInParam param);
+        /// <summary>
+        /// 码表查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+      List<CodeTableDto> CodeTableQuery(string param);
+        /// <summary>
+        /// 医院信息查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+       List<HospitalGeneralCatalogEntity> HospitalGeneralCatalog(HospitalGeneralCatalogYiHaiParam param);
   }
 }

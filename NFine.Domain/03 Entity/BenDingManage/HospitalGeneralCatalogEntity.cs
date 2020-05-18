@@ -68,6 +68,43 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [StringLength(100)]
         public string Remark { get; set; }
         /// <summary>
+        /// 医保对码
+        /// </summary>
+        [DisplayName("医保对码")]
+        [StringLength(100)]
+        public string MedicalInsuranceCode { get; set; }
+        /// <summary>
+        /// 医保科室名称
+        /// </summary>
+        [DisplayName("医保科室名称")]
+        [StringLength(500)]
+        public string MedicalInsuranceName { get; set; }
+        /// <summary>
+        /// 病区编号
+        /// </summary>
+        [DisplayName("病区编号")]
+        [StringLength(100)]
+        public string InpatientAreaCode { get; set; }
+        
+        /// <summary>
+        /// 对码人员
+        /// </summary>
+        [DisplayName("对码人员")]
+        [StringLength(100)]
+        public string PairCodeUserId { get; set; }
+        /// <summary>
+        /// 对码人员名称
+        /// </summary>
+        [DisplayName("对码人员名称")]
+        [StringLength(100)]
+        public string PairCodeUserName { get; set; }
+        /// <summary>
+        /// 对码人员名称
+        /// </summary>
+        [DisplayName("对码时间")]
+     
+        public DateTime? PairCodeTime { get; set; }
+        /// <summary>
         /// 创建时间
         /// </summary>
         [DisplayName("创建时间")]

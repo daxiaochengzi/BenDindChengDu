@@ -32,9 +32,13 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         [HandlerAjaxOnly]
         public ActionResult GetGridJson(Pagination pagination, string keyword,string directoryType)
         {
+            var loginInfo = OperatorProvider.Provider.GetCurrent();
+            var user = userApp.GetForm(loginInfo.UserId);
+            if (string.IsNullOrEmpty(user.F_HisUserId)) throw new Exception("当前用户非基层用户不能操作!!!");
+            var userBase = _webServiceBasicService.GetUserBaseInfo(user.F_HisUserId);
             var data = new
             {
-                rows = hospitalGeneralCatalogBase.GetList(pagination, keyword, directoryType),
+                rows = hospitalGeneralCatalogBase.GetList(pagination, keyword, directoryType, userBase.OrganizationCode),
                 total = pagination.total,
                 page = pagination.page,
                 records = pagination.records
@@ -59,7 +63,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
             };
             var resultData = _webServiceBasicService.SaveInformation(userBase, inputInpatientInfo);
             //hospitalGeneralCatalogBase.SubmitForm(organizeEntity, keyValue, userBase);
-            return Success("更新"+ resultData+"条信息!!!");
+            return Success("更新"+ resultData.Count+"条信息!!!");
         }
         [System.Web.Http.HttpPost]
         [HandlerAjaxOnly]

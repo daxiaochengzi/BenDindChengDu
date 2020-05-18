@@ -91,6 +91,7 @@
     <Compile Include="Models\Dto\YiHai\Base\GetYiHaiBaseParm.cs" />
     <Compile Include="Models\Dto\YiHai\Base\YiHaiResultData.cs" />
     <Compile Include="Models\Dto\YiHai\JsonEntity\MedicalInsuranceSignInJsonDto.cs" />
+    <Compile Include="Models\Dto\YiHai\Web\CodeTableDto.cs" />
     <Compile Include="Models\Dto\YiHai\Web\MedicalInsuranceSignInDto.cs" />
     <Compile Include="Models\Dto\YiHai\Web\UnCodeDataDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\MedicalInsuranceSignInXmlDto.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartmentDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\SignInControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\SignInDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\UploadHospitalInfoDataXmlDto.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationCancelParam.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\MonthlyHospitalizationDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientCostReturnDataDto.cs" />
@@ -349,7 +351,9 @@
     <Compile Include="Models\Params\Workers\WorkerStrokeCardParam.cs" />
     <Compile Include="Models\Params\YinHai\TestParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\MedicalInsuranceSignInUiParam.cs" />
+    <Compile Include="Models\Params\YinHai\Web\DepartmentPairCodeYiHaiParam.cs" />
     <Compile Include="Models\Params\YinHai\Web\GetOutpatientDepartmentUiParam.cs" />
+    <Compile Include="Models\Params\YinHai\Web\HospitalGeneralCatalogYiHaiParam.cs" />
     <Compile Include="Models\Params\YinHai\Web\QueryMedicalInsuranceSignInParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\ActiveXmlHelp.cs" />

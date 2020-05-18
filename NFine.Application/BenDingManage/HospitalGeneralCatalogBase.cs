@@ -23,7 +23,7 @@ namespace NFine.Application.BenDingManage
         {
             return service.FindEntity(Guid.Parse(keyValue));
         }
-        public List<HospitalGeneralCatalogEntity> GetList(Pagination pagination, string keyword,string directoryType)
+        public List<HospitalGeneralCatalogEntity> GetList(Pagination pagination, string keyword,string directoryType,string organizationCode)
         {
             var expression = ExtLinq.True<HospitalGeneralCatalogEntity>();
             if (!string.IsNullOrEmpty(keyword))
@@ -34,6 +34,7 @@ namespace NFine.Application.BenDingManage
             {
                 expression = expression.And(t => t.DirectoryType== directoryType);
             }
+            expression = expression.And(t => t.OrganizationCode == organizationCode);
             expression = expression.And(t => t.IsDelete ==false );
             return service.FindList(expression, pagination);
         }
