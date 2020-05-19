@@ -36,6 +36,10 @@ namespace NFine.Domain.Entity.SystemManage
         public DateTime? F_LastModifyTime { get; set; }
         public string F_LastModifyUserId { get; set; }
         public DateTime? F_DeleteTime { get; set; }
+        /// <summary>
+        /// 医保经办机构
+        /// </summary>
+        public string F_MedicalInsuranceHandleNo { get; set; }
         public string F_DeleteUserId { get; set; }
         /// <summary>
         /// 医院id

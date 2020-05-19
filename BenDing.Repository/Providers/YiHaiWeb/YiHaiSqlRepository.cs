@@ -119,35 +119,43 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                 try
                 {
                     strSql = $@"SELECT [Id]
-      ,[OrganizationCode]
-      ,[OrganizationName]
-      ,[DirectoryType]
-      ,[DirectoryCode]
-      ,[FixedEncoding]
-      ,[MedicalInsuranceCode]
-      ,[MedicalInsuranceName]
-      ,[InpatientAreaCode]
-      ,[MnemonicCode]
-      ,[DirectoryName]
-      ,[DirectoryCategoryName]
-      ,[Remark]
-      ,[UploadMark]
-      ,[UploadTime]
-      ,[UploadUserId]
-      ,[UploadName]
-      ,[PairCodeUserId]
-      ,[PairCodeUserName]
-      ,[PairCodeTime]
-      ,[CreateTime]
-      ,[Version]
-      ,[UpdateTime]
-      ,[IsDelete]
-      ,[DeleteTime]
-      ,[CreateUserId]
-      ,[DeleteUserId]
-      ,[UpdateUserId]
-  FROM [dbo].[HospitalGeneralCatalog] 
-  where IsDelete=0 and DirectoryType='{param.DirectoryType}' and OrganizationCode='{param.User.OrganizationCode}' ";
+                          ,[OrganizationCode]
+                          ,[OrganizationName]
+                          ,[DirectoryType]
+                          ,[DirectoryCode]
+                          ,[FixedEncoding]
+                          ,[MedicalInsuranceCode]
+                          ,[MedicalInsuranceName]
+                          ,[InpatientAreaCode]
+                          ,[MnemonicCode]
+                          ,[DirectoryName]
+                          ,[DirectoryCategoryName]
+                          ,[Remark]
+                          ,[UploadMark]
+                          ,[UploadTime]
+                          ,[UploadUserId]
+                          ,[UploadName]
+                          ,[PairCodeUserId]
+                          ,[PairCodeUserName]
+                          ,[PairCodeTime]
+                          ,[CreateTime]
+                          ,[Version]
+                          ,[UpdateTime]
+                          ,[IsDelete]
+                          ,[DeleteTime]
+                          ,[CreateUserId]
+                          ,[DeleteUserId]   
+                          ,[UpdateUserId]
+                      FROM [dbo].[HospitalGeneralCatalog] 
+                      where IsDelete=0  and OrganizationCode='{param.User.OrganizationCode}' ";
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryType))
+                    {
+                        strSql += $" and DirectoryType = '{param.DirectoryType}'";
+                    }
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
+                    {
+                        strSql += $" and DirectoryCode = '{param.DirectoryCode}'";
+                    }
                     var data = sqlConnection.Query<HospitalGeneralCatalogEntity>(strSql);
                     sqlConnection.Close();
                     return data.ToList();

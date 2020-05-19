@@ -10,6 +10,7 @@ using NFine.Domain.IRepository.SystemManage;
 using NFine.Repository.SystemManage;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NFine.Application.SystemManage
 {
@@ -34,6 +35,7 @@ namespace NFine.Application.SystemManage
         {
             return service.FindEntity(keyValue);
         }
+       
         public void DeleteForm(string keyValue)
         {
             service.DeleteForm(keyValue);

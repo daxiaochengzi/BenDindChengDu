@@ -20,5 +20,14 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 厂商编号
         /// </summary>
         public  string ManufacturerNumber { get; set; }
+        /// <summary>
+        /// 组织机构
+        /// </summary>
+        public  string OrganizationCode { get; set; }
+        /// <summary>
+        /// 账户名称
+        /// </summary>
+
+        public  string AccountName { get; set; }
     }
 }

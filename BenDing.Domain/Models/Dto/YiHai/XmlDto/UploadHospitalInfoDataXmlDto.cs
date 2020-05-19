@@ -152,7 +152,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
         [XmlElementAttribute("yke419", IsNullable = false)]
         public string DoctorNo { get; set; }
         /// <summary>
-        ///医生编号
+        ///医生姓名
         /// </summary>
         [XmlElementAttribute("aac003", IsNullable = false)]
         public string DoctorName { get; set; }

@@ -11,6 +11,7 @@ using BenDing.Domain.Models.Params.Web;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
 using NFine.Code;
+using NFine.Domain.Entity.SystemManage;
 
 namespace BenDing.Repository.Providers.Web
 {
@@ -127,8 +128,10 @@ namespace BenDing.Repository.Providers.Web
             {
                 sqlConnection.Open();
                 string querySql =
-                    $"select top 1  F_OrganizationGrade as OrganizationGrade,F_AdministrativeArea as AdministrativeArea," +
-                    $"F_MedicalInsuranceAccount as MedicalInsuranceAccount,F_MedicalInsurancePwd as MedicalInsurancePwd from [dbo].[Sys_Organize] where F_DeleteMark=0 and F_EnCode='{param}'";
+                    $@"select top 1  F_OrganizationGrade as OrganizationGrade,F_AdministrativeArea as AdministrativeArea,
+                    F_MedicalInsuranceAccount as MedicalInsuranceAccount,F_MedicalInsurancePwd as MedicalInsurancePwd,
+                   F_MedicalInsuranceHandleNo as MedicalInsuranceHandleNo
+                   from [dbo].[Sys_Organize] where F_DeleteMark=0 and F_EnCode='{param}'";
                var resultData = sqlConnection.QueryFirstOrDefault<HospitalOrganizationGradeDto>(querySql);
                 sqlConnection.Close();
                 if (resultData==null)throw  new Exception("当前医院未设置等级,请重新设置");
@@ -149,7 +152,18 @@ namespace BenDing.Repository.Providers.Web
             {
                 var resultData = new QueryHospitalOperatorDto();
                 sqlConnection.Open();
-                string querySql = $"select top 1 F_Account as HisUserAccount,F_HisUserPwd as HisUserPwd,F_ManufacturerNumber as ManufacturerNumber   from [dbo].[Sys_User] where [F_HisUserId]='{param.UserId}' ";
+                string querySql = @"select top 1 F_Account as HisUserAccount,F_HisUserPwd as HisUserPwd, F_RealName as AccountName, F_ManufacturerNumber as ManufacturerNumber ,
+                                (select top 1 F_EnCode from [dbo].[Sys_Organize]  as a where a.F_Id=F_DepartmentId and a.F_DeleteMark=0)  as OrganizationCode
+                                 from [dbo].[Sys_User]  where F_DeleteMark=0 ";
+                if (!string.IsNullOrWhiteSpace(param.Id))
+                {
+                    querySql += $" and [F_Id]='{param.Id}'";
+                }
+                else
+                {
+                    querySql += $"  and [F_HisUserId]='{param.UserId}' ";
+                }
+
                 var data = sqlConnection.QueryFirstOrDefault<QueryHospitalOperatorDto>(querySql);
                 if (data != null)
                 {
@@ -164,15 +178,31 @@ namespace BenDing.Repository.Providers.Web
         /// 获取所有的操作人员
         /// </summary>
         /// <returns></returns>
-        public List<QueryHospitalOperatorAll> QueryHospitalOperatorAll()
+        public List<QueryHospitalOperatorAll> QueryHospitalOperatorAll( )
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                
                 sqlConnection.Open();
                 // string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
                 string querySql = @"select F_RealName as HisUserName,F_HisUserId as HisUserId from [dbo].[Sys_User] where F_IsHisAccount=1";
                 var data = sqlConnection.Query<QueryHospitalOperatorAll>(querySql).ToList();
+                sqlConnection.Close();
+                return data;
+            }
+        }
+        /// <summary>
+        /// 获取根据区域所有的操作人员
+        /// </summary>
+        /// <returns></returns>
+        public List<UserEntity> QueryHospitalOperatorAllInfo( string param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                // string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
+                string querySql = $@"select * from [dbo].[Sys_User] where F_IsHisAccount=1 and  F_DepartmentId=
+                             (select top 1  F_Id from [dbo].[Sys_Organize] where F_EnCode='{param}' and F_DeleteMark=0 )";
+                var data = sqlConnection.Query<UserEntity>(querySql).ToList();
                 sqlConnection.Close();
                 return data;
             }

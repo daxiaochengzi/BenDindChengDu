@@ -15,6 +15,9 @@ namespace NFine.Domain.Entity.SystemManage
         public string F_RealName { get; set; }
         public string F_NickName { get; set; }
         public string F_HeadIcon { get; set; }
+        /// <summary>
+        ///  性别 true==男
+        /// </summary>
         public bool? F_Gender { get; set; }
         public DateTime? F_Birthday { get; set; }
         public string F_MobilePhone { get; set; }
@@ -62,11 +65,12 @@ namespace NFine.Domain.Entity.SystemManage
         /// 医生治疗范围
         /// </summary>
         public string F_DoctorTreatmentRange { get; set; }
+
         /// <summary>
         /// 医执人员年龄(取证书年龄)
         /// </summary>
 
-        public int? F_DoctorJobAge { get; set; }
+        public int? F_DoctorJobAge { get; set; } = 0;
 
         /// <summary>
         /// 医执人员职称

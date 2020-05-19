@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using NFine.Code;
 using NFine.Domain._03_Entity.BenDingManage;
 using NFine.Domain._04_IRepository.BenDingManage;
 using NFine.Repository.BenDingManage;
@@ -21,6 +22,17 @@ namespace NFine.Application.BenDingManage
         public MedicalInsuranceSignInEntity GetForm(Guid keyValue)
         {
             return service.FindEntity(keyValue);
+        }
+        public List<MedicalInsuranceSignInEntity> GetList(Pagination pagination, string keyword, string organizationCode)
+        {
+            var expression = ExtLinq.True<MedicalInsuranceSignInEntity>();
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                expression = expression.And(t => t.CreateUserName.Contains(keyword));
+            }
+            expression = expression.And(t => t.OrganizationCode == organizationCode);
+            expression = expression.And(t => t.IsDelete == false);
+            return service.FindList(expression, pagination);
         }
         public void DeleteForm(Guid keyValue)
         {

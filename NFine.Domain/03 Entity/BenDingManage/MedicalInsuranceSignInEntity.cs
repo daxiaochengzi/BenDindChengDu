@@ -52,7 +52,24 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [DisplayName("组织机构名称")]
         [StringLength(100)]
         public string OrganizationName { get; set; }
-       
+        /// <summary>
+        /// 交易次数
+        /// </summary>
+        public int TransactionFrequency { get; set; }
+        /// <summary>
+        /// 医保支付合计金额(城镇职工,生育保险,工伤保险,城乡居民)4项合计
+        /// </summary>
+        public decimal MedicalInsurancePayTotalAmount { get; set; }
+        /// <summary>
+        /// 创建人员名称
+        /// </summary>
+        [StringLength(100)]
+        public string CreateUserName { get; set; }
+        /// <summary>
+        /// 更新人员名称
+        /// </summary>
+        [StringLength(100)]
+        public string UpdateUserName { get; set; }
         /// <summary>
         /// 创建时间
         /// </summary>

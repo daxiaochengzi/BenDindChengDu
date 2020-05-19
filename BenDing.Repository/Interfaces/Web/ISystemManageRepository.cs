@@ -7,6 +7,7 @@ using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.Web;
+using NFine.Domain.Entity.SystemManage;
 
 namespace BenDing.Repository.Interfaces.Web
 {
@@ -42,6 +43,17 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         HospitalOrganizationGradeDto QueryHospitalOrganizationGrade(string param);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         int AddHospitalLog(AddHospitalLogParam param);
+        /// <summary>
+        /// 根据区域获取人员
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         List<UserEntity> QueryHospitalOperatorAllInfo(string param);
     }
 }

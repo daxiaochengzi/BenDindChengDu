@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.YiHai.Base;
 using BenDing.Domain.Models.Params.UI;
+using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Ui;
 using BenDing.Domain.Models.Params.YinHai.Web;
 
@@ -29,5 +30,11 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         GetYiHaiBaseParm GetOutpatientDepartmentParam(GetOutpatientDepartmentUiParam param);
+        /// <summary>
+        /// 获取医院上传信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         GetYiHaiBaseParm GetHospitalInfoUploadParam(GetUploadHospitalInfoDataXmlParam param);
     }
 }
