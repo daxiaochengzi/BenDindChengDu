@@ -54,5 +54,49 @@ namespace NFine.Domain.Entity.SystemManage
         /// 厂商编号
         /// </summary>
         public  string F_ManufacturerNumber { get; set; }
+        /// <summary>
+        /// 医执人员类别
+        /// </summary>
+        public string F_DoctorType { get; set; }
+        /// <summary>
+        /// 医生治疗范围
+        /// </summary>
+        public string F_DoctorTreatmentRange { get; set; }
+        /// <summary>
+        /// 医执人员年龄(取证书年龄)
+        /// </summary>
+
+        public int? F_DoctorJobAge { get; set; }
+
+        /// <summary>
+        /// 医执人员职称
+        /// </summary>
+        public string F_DoctorTitle { get; set; }
+        /// <summary>
+        /// 医执人员职务
+        /// </summary>
+        public string F_DoctorJob { get; set; }
+        /// <summary>
+        ///  科室（病区）编号
+        /// </summary>
+        public string F_DepartmentInpatientAreaNo { get; set; }
+        /// <summary>
+        /// 医生从业时间
+        /// </summary>
+
+        public DateTime? F_DoctorDiagnosisStartTime { get; set; }
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        public string F_IdCardNo { get; set; }
+        /// <summary>
+        /// 医生执业编号
+        /// </summary>
+        public string F_DoctorPracticeNo { get; set; }
+        /// <summary>
+        /// 医生资格编号
+        /// </summary>
+        public string F_DoctorQualificationNo { get; set; }
+
     }
 }

@@ -17,6 +17,13 @@ namespace BenDing.Domain.Models.Params.YinHai.Web
         /// 医保对码科室名称
         /// </summary>
         public string MedicalInsuranceName { get; set; }
+        /// <summary>
+        /// 病区编号
+        /// </summary>
         public  string InpatientAreaCode { get; set; }
+        /// <summary>
+        /// 病区责任人
+        /// </summary>
+        public string InpatientAreaDutyPerson { get; set; }
     }
 }

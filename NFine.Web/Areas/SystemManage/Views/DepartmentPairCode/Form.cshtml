@@ -10,7 +10,7 @@
     });
     function initControl() {
         $("#MedicalInsuranceCode").bindSelect({
-            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson",
+            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson?keyword=YKE414",
             id: "CodeValue",
             text: "CodeDescribe"
         });
@@ -41,22 +41,27 @@
 <form id="form1">
     <div style="padding-top: 20px; margin-right: 20px;">
         <table class="form">
-            
-           
+
+
 
             <tr>
                 <th class="formTitle">医保科室</th>
                 <td class="formValue">
-                    <select id="MedicalInsuranceCode" name="MedicalInsuranceCode" class="form-control">
-                    </select>
+                    <select id="MedicalInsuranceCode" name="MedicalInsuranceCode" class="form-control required"></select>
                 </td>
             </tr>
             <tr>
                 <th class="formTitle">病区</th>
                 <td class="formValue">
-                    <select id="InpatientAreaCode" name="InpatientAreaCode" class="form-control">
-                    </select>
-                   
+                    <select id="InpatientAreaCode" name="InpatientAreaCode" class="form-control required"></select>
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">科室(病区)负责人</th>
+                <td class="formValue">
+                    <input id="InpatientAreaDutyPerson" name="InpatientAreaDutyPerson" type="text" class="form-control" />
+                  
+
                 </td>
             </tr>
 

@@ -90,7 +90,7 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                 string strSql = null;
                 try
                 {
-                    strSql = $@"select aaa100 as CodeData,aaa103 as  CodeDescribe,[aaa102] as CodeValue from [dbo].[CodeTable]  where aaa100='{param}'";
+                    strSql = $@"select  replace(aaa100,' ','') as CodeData ,replace(aaa103,' ','') as  CodeDescribe,replace(aaa102,' ','') as CodeValue from [dbo].[CodeTable]  where aaa100='{param}'";
                     var data = sqlConnection.Query<CodeTableDto>(strSql);
                     sqlConnection.Close();
                     return data.ToList();

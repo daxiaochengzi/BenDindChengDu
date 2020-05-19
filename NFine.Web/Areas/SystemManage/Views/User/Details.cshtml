@@ -19,6 +19,19 @@
             }
         });
     });
+    function getIsHisAccount() {
+      
+        var value = $("#F_IsHisAccount").val();
+        if (value === "false") {
+            $("#F_ManufacturerNumber, #F_DoctorType, #F_DoctorTreatmentRange,#F_DoctorJobAge, #F_DoctorTitle, #F_DoctorJob, #F_DepartmentInpatientAreaNo, #F_DoctorPracticeNo, #F_DoctorQualificationNo, #F_IdCardNo, #F_DoctorDiagnosisStartTime")
+                .addClass("form-control");
+           
+        } else {
+
+            $("#F_ManufacturerNumber, #F_DoctorType, #F_DoctorTreatmentRange,#F_DoctorJobAge, #F_DoctorTitle, #F_DoctorJob, #F_DepartmentInpatientAreaNo, #F_DoctorPracticeNo, #F_DoctorQualificationNo, #F_IdCardNo, #F_DoctorDiagnosisStartTime")
+                .addClass("form-control required");
+        }
+    }
     function initControl() {
         $("#F_Gender").bindSelect()
         $("#F_IsAdministrator").bindSelect()
@@ -38,6 +51,31 @@
             url: "/SystemManage/Duty/GetGridJson",
             id: "F_Id",
             text: "F_FullName"
+        });
+        $("#F_DepartmentInpatientAreaNo").bindSelect({
+            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson?keyword=YKE414",
+            id: "CodeValue",
+            text: "CodeDescribe"
+        });
+        $("#F_DoctorType").bindSelect({
+            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson?keyword=YKE418",
+            id: "CodeValue",
+            text: "CodeDescribe"
+        });
+        $("#F_DoctorTreatmentRange").bindSelect({
+            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson?keyword=YKE420",
+            id: "CodeValue",
+            text: "CodeDescribe"
+        });
+        $("#F_DoctorTitle").bindSelect({
+            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson?keyword=YKE424",
+            id: "CodeValue",
+            text: "CodeDescribe"
+        });
+        $("#F_DoctorJob").bindSelect({
+            url: "/SystemManage/DepartmentPairCode/GetCodeTableGridJson?keyword=YKE425",
+            id: "CodeValue",
+            text: "CodeDescribe"
         });
     }
 </script>
@@ -64,8 +102,7 @@
                 <tr>
                     <th class="formTitle">机构类型</th>
                     <td class="formValue">
-                        <select id="F_OrganizeId" name="F_OrganizeId" class="form-control">
-                        </select>
+                        <select id="F_OrganizeId" name="F_OrganizeId" class="form-control"></select>
                     </td>
                     <th class="formTitle">机构名称</th>
                     <td class="formValue">
@@ -91,7 +128,7 @@
                 <tr>
                     <th class="formTitle">姓名</th>
                     <td class="formValue">
-                        <input id="F_RealName" name="F_RealName" type="text" class="form-control"/>
+                        <input id="F_RealName" name="F_RealName" type="text" class="form-control" />
                     </td>
                     <th class="formTitle">性别</th>
                     <td class="formValue">
@@ -101,39 +138,103 @@
                         </select>
                     </td>
                 </tr>
-                <tr>
+                @*<tr>
                     <th class="formTitle">手机</th>
                     <td class="formValue">
                         <input id="F_MobilePhone" name="F_MobilePhone" type="text" class="form-control" />
                     </td>
                     <th class="formTitle">生日</th>
                     <td class="formValue">
-                        <input id="F_Birthday" name="F_Birthday" type="text" class="form-control"/>
+                        <input id="F_Birthday" name="F_Birthday" type="text" class="form-control" />
                     </td>
-                </tr>
+                </tr>*@
                 <tr>
                     <th class="formTitle">是否基层账户</th>
                     <td class="formValue">
                         <select id="F_IsHisAccount" name="F_IsHisAccount" class="form-control">
-                            <option value="true">是</option>
                             <option value="false">否</option>
+                            <option value="true">是</option>
                         </select>
                     </td>
                     <th class="formTitle">厂商编号</th>
                     <td class="formValue">
-                        <input id="F_ManufacturerNumber" name="F_ManufacturerNumber" type="text" class="form-control required"  placeholder="请输厂商编号" />
+                        <input id="F_ManufacturerNumber" name="F_ManufacturerNumber" type="text" class="form-control required" placeholder="请输厂商编号" />
                     </td>
                 </tr>
+                <tr>
+                    <th class="formTitle">医执人员类别</th>
+                    <td class="formValue">
+                        <select id="F_DoctorType" name="F_DoctorType" class="form-control">
+                            <option value="">==请选择==</option>
+                        </select>
+                    </td>
+
+                    <th class="formTitle">医执人员执业范围</th>
+                    <td class="formValue">
+                        <select id="F_DoctorTreatmentRange" name="F_DoctorTreatmentRange" class="form-control">
+                            <option value="">==请选择==</option>
+                        </select>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th class="formTitle">取得证书年龄</th>
+                    <td class="formValue">
+                        <input id="F_DoctorJobAge" name="F_DoctorJobAge" type="text" class="form-control" placeholder="请输证书年龄" />
+                    </td>
+                    <th class="formTitle">医执人员职称</th>
+                    <td class="formValue">
+                        <select id="F_DoctorTitle" name="F_DoctorTitle" class="form-control">
+                            <option value="">==请选择==</option>
+                        </select>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th class="formTitle">医执人员职务</th>
+                    <td class="formValue">
+                        <select id="F_DoctorJob" name="F_DoctorJob" class="form-control">
+                            <option value="">==请选择==</option>
+                        </select>
+                    </td>
+                    <th class="formTitle">科室（病区）编号</th>
+                    <td class="formValue">
+                        <select id="F_DepartmentInpatientAreaNo" name="F_DepartmentInpatientAreaNo" class="form-control">
+                            <option value="">==请选择==</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">医生执业编号</th>
+                    <td class="formValue">
+                        <input id="F_DoctorPracticeNo" name="F_DoctorPracticeNo" type="text" class="form-control" placeholder="请输编号" />
+                    </td>
+                    <th class="formTitle">医生资格编号</th>
+                    <td class="formValue">
+                        <input id="F_DoctorQualificationNo" name="F_DoctorQualificationNo" type="text" class="form-control" placeholder="请输编号" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">身份证号</th>
+                    <td class="formValue">
+                        <input id="F_IdCardNo" name="F_IdCardNo" type="text" class="form-control" placeholder="请输身份证号" />
+                    </td>
+                    <th class="formTitle">医执执业起始时间</th>
+                    <td class="formValue">
+                        <input id="F_DoctorDiagnosisStartTime" name="F_DoctorDiagnosisStartTime" type="text" class="form-control" placeholder="格式:2020-05-19" />
+                    </td>
+                </tr>
+                
                 @*<tr>
-                    <th class="formTitle">微信</th>
-                    <td class="formValue">
-                        <input id="F_WeChat" name="F_WeChat" type="text" class="form-control" />
-                    </td>
-                    <th class="formTitle">邮箱</th>
-                    <td class="formValue">
-                        <input id="F_Email" name="F_Email" type="text" class="form-control" />
-                    </td>
-                </tr>*@
+            <th class="formTitle">微信</th>
+            <td class="formValue">
+                <input id="F_WeChat" name="F_WeChat" type="text" class="form-control" />
+            </td>
+            <th class="formTitle">邮箱</th>
+            <td class="formValue">
+                <input id="F_Email" name="F_Email" type="text" class="form-control" />
+            </td>
+        </tr>*@
                 <tr>
                     <th class="formTitle">类型</th>
                     <td class="formValue">
@@ -149,15 +250,16 @@
                             <option value="false">否</option>
                         </select>
                     </td>
-                
+
                 </tr>
-                <tr>
-                    <th class="formTitle" valign="top" style="padding-top: 5px;">备注
+                @*<tr>
+                    <th class="formTitle" valign="top" style="padding-top: 5px;">
+                        备注
                     </th>
                     <td class="formValue" colspan="3">
                         <textarea id="F_Description" name="F_Description" class="form-control" style="height: 60px;"></textarea>
                     </td>
-                </tr>
+                </tr>*@
                 <tr>
                     <th class="formTitle">创建人员</th>
                     <td class="formValue">

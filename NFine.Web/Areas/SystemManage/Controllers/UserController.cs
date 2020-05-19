@@ -65,12 +65,19 @@ namespace NFine.Web.Areas.SystemManage.Controllers
                     Pwd = userLogOnEntity.F_UserPassword,
                     ManufacturerNumber = userEntity.F_ManufacturerNumber,
                 };
-                    string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
-                    var verificationCode = _basicService.GetVerificationCode("01", inputParamJson);
-                    //获取userid
-                    if (verificationCode == null) throw  new  Exception("基层用户登陆失败!!!");
-                        userEntity.F_HisUserId = verificationCode.UserId;
-                        organizationCode = verificationCode.OrganizationCode;
+                if (!string.IsNullOrEmpty(keyValue))
+                {
+                   var  userData= userApp.GetForm(keyValue);
+                    inputParam.UserName = userData.F_Account;
+                    inputParam.Pwd = userData.F_HisUserPwd;
+                }
+
+                string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
+                var verificationCode = _basicService.GetVerificationCode("01", inputParamJson);
+                //获取userid
+                if (verificationCode == null) throw new Exception("基层用户登陆失败!!!");
+                userEntity.F_HisUserId = verificationCode.UserId;
+                organizationCode = verificationCode.OrganizationCode;
             }
             userApp.SubmitForm(userEntity, userLogOnEntity, keyValue);
             //是否机构账户

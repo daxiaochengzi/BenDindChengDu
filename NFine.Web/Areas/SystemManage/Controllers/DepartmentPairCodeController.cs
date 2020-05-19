@@ -27,9 +27,9 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         }
         [HttpGet]
         [HandlerAjaxOnly]
-        public ActionResult GetCodeTableGridJson()
+        public ActionResult GetCodeTableGridJson(string keyword)
         {
-            var data = _yiHaiSqlRepository.CodeTableQuery("YKE414");
+            var data = _yiHaiSqlRepository.CodeTableQuery(keyword);
             return Content(data.ToJson());
         }
         [HttpGet]
@@ -82,6 +82,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
             hospitalGeneralCatalogEntity.PairCodeUserId = userBase.UserId;
             hospitalGeneralCatalogEntity.PairCodeUserName = userBase.UserName;
             hospitalGeneralCatalogEntity.MedicalInsuranceName = param.MedicalInsuranceName;
+            hospitalGeneralCatalogEntity.InpatientAreaDutyPerson = param.InpatientAreaDutyPerson;
             hospitalGeneralCatalogBase.Modify(hospitalGeneralCatalogEntity, userBase, Guid.Parse(param.keyword));
 
             return Success("操作成功");

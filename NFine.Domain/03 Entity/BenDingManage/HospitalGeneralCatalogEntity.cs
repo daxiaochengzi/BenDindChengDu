@@ -85,7 +85,14 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [DisplayName("病区编号")]
         [StringLength(100)]
         public string InpatientAreaCode { get; set; }
+        /// <summary>
+        /// 病区责任人
+        /// </summary>
+        [DisplayName("病区责任人")]
+        [StringLength(100)]
+        public string InpatientAreaDutyPerson { get; set; }
         
+
         /// <summary>
         /// 对码人员
         /// </summary>
