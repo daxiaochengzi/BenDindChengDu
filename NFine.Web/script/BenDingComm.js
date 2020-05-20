@@ -189,8 +189,6 @@ function getHospitalInfo(getHospitalInfoParam) {
         dataType: "json",
         async: false,
         success: function (data) {
-            
-         
             if (data.Success === false) {
                 var errData = data.Message;
                 msgError(errData);

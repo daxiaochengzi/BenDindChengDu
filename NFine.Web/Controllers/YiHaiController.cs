@@ -31,7 +31,20 @@ namespace NFine.Web.Controllers
         }
 
         #region 门诊
+        /// <summary>
+        /// 获取门诊结算入参
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientDepartmentParam([FromBody]GetOutpatientDepartmentUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var data = _yiHaiOutpatientDepartmentService.GetOutpatientDepartmentParam(param);
+                y.Data = data;
+            });
 
+        }
         /// <summary>
         /// 医保签到
         /// </summary>
@@ -60,19 +73,35 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 医保签到查询
+        /// 获取医保签到取消参数
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetOutpatientDepartmentParam([FromBody]GetOutpatientDepartmentUiParam param)
+        public ApiJsonResultData GetCancelMedicalInsuranceSignInParam([FromBody]CancelMedicalInsuranceSignInParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var data = _yiHaiOutpatientDepartmentService.GetOutpatientDepartmentParam(param);
+                var data = _yiHaiOutpatientDepartmentService.GetCancelMedicalInsuranceSignInParam(param);
                 y.Data = data;
             });
 
         }
+        /// <summary>
+        /// 医保签到取消
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData CancelMedicalInsuranceSignIn([FromBody]CancelMedicalInsuranceSignInParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+               _yiHaiOutpatientDepartmentService.CancelMedicalInsuranceSignIn(param);
+               
+            });
+
+        }
+
+
         #endregion
     }
 }

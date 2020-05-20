@@ -12,6 +12,7 @@ using BenDing.Domain.Models.Dto.YiHai.XmlDto;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
@@ -40,7 +41,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebBasicRepository _webServiceBasic;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
-        
+
         public YiHaiOutpatientDepartmentService(
             IWebServiceBasicService iWebServiceBasicService,
             IYiHaiSqlRepository iHaiSqlRepository,
@@ -55,7 +56,10 @@ namespace BenDing.Service.Providers.YiHaiWeb
             _webServiceBasic = iWebBasicRepository;
             _medicalInsuranceSqlRepository = insuranceSqlRepository;
         }
-
+        /// <summary>
+        /// 签到
+        /// </summary>
+        /// <param name="param"></param>
         public void MedicalInsuranceSignIn(MedicalInsuranceSignInUiParam param)
         {
             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
@@ -63,6 +67,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var outputData = XmlHelp.DeSerializer<MedicalInsuranceSignInXmlDto>(resultDto.TransactionOutputXml);
             if (outputData != null && outputData.Row.Any())
             {
+                var entityId = Guid.NewGuid();
                 var outputDefault = outputData.Row.FirstOrDefault();
                 if (outputDefault != null)
                 {
@@ -71,10 +76,25 @@ namespace BenDing.Service.Providers.YiHaiWeb
                         BatchNo = outputDefault.BatchNo,
                         MedicalInsuranceOrganization = outputDefault.MedicalInsuranceOrganization,
                         SignInState = outputDefault.SignInState,
-                        SignInTime = Convert.ToDateTime(outputDefault.SignInTime)
+                        SignInTime = Convert.ToDateTime(outputDefault.SignInTime),
+                        OrganizationCode = userBase.OrganizationCode,
+                        OrganizationName = userBase.OrganizationName,
+                        TransactionFrequency = 0,
+                        MedicalInsurancePayTotalAmount = 0,
+                        CreateUserName = userBase.UserName,
+                        Id = entityId
+
                     };
                     medicalInsuranceSignInService.Insert(insertEntity, userBase);
                 }
+
+                _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+                {
+                    User = userBase,
+                    Remark = "签到",
+                    JoinOrOldJson = param.ResultJson,
+                    RelationId = entityId
+                });
             }
         }
         /// <summary>
@@ -101,13 +121,57 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 });
                 resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
                 {
-                    OperationName = hospitalOrganization.AdministrativeArea
+                    OperationName = hospitalOrganization.MedicalInsuranceHandleNo
                 });
             }
 
             return resultData;
 
         }
+        /// <summary>
+        /// 获取取消签到参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public GetYiHaiBaseParm GetCancelMedicalInsuranceSignInParam(CancelMedicalInsuranceSignInParam param)
+        {
+            var resultData = new GetYiHaiBaseParm();
+            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var signData = medicalInsuranceSignInService.GetForm(Guid.Parse(param.KeyWord));
+            if (signData.SignInState==0) throw  new Exception("当前签到已取消");
+            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new CancelMedicalInsuranceSignInControlXmlDto()
+            {
+                BatchNo = signData.BatchNo,
+                MedicalInsuranceOrganization = signData.MedicalInsuranceOrganization
+            });
+
+            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new CancelMedicalInsuranceSignInDataXmlDto()
+            {
+                TransactionFrequency = signData.TransactionFrequency,
+                MedicalInsurancePayTotalAmount = signData.MedicalInsurancePayTotalAmount
+            });
+
+            return resultData;
+        }
+        /// <summary>
+        /// 取消签到
+        /// </summary>
+        /// <param name="param"></param>
+        public void CancelMedicalInsuranceSignIn(CancelMedicalInsuranceSignInParam param)
+        {
+            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var signInEntity = medicalInsuranceSignInService.GetForm(Guid.Parse(param.KeyWord));
+            signInEntity.UpdateUserName = userBase.UserName;
+            signInEntity.SignInState = 0;
+            medicalInsuranceSignInService.Modify(signInEntity, userBase, Guid.Parse(param.KeyWord));
+            _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+            {
+                User = userBase,
+                Remark = "取消签到",
+                RelationId = Guid.Parse(param.KeyWord)
+            });
+        }
+
         /// <summary>
         /// 获取门诊结算入参
         /// </summary>
@@ -181,7 +245,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             };
             resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlXml);
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
-           
+
             return resultData;
         }
         /// <summary>
@@ -193,15 +257,15 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var resultData = new GetYiHaiBaseParm();
             var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
             baseUser.TransKey = param.TransKey;
-          
+
             var outpatientDetailParam = new OutpatientDetailParam()
             {
                 User = baseUser,
                 BusinessId = param.BusinessId,
             };
             var data = _webServiceBasicService.GetOutpatientDetailPerson(outpatientDetailParam);
-            var  registerData= data.FirstOrDefault(d => d.DirectoryName.Contains("挂号"));
-            if (registerData==null)throw  new Exception("当前病人没有挂号费,不能进行医保门诊挂号");
+            var registerData = data.FirstOrDefault(d => d.DirectoryName.Contains("挂号"));
+            if (registerData == null) throw new Exception("当前病人没有挂号费,不能进行医保门诊挂号");
 
             var controlXmlData = new OutpatientRegisterControlXmlDto()
             {
@@ -217,15 +281,15 @@ namespace BenDing.Service.Providers.YiHaiWeb
             }).FirstOrDefault();
             if (hospitalGeneralCatalogData == null) throw new Exception("当前科室中间库中不存在,请更新中间库科室");
             if (hospitalGeneralCatalogData.MedicalInsuranceCode == null) throw new Exception("科室未医保对码");
-            var detailRow = new List<OutpatientRegisterDataXmlRow>(); 
+            var detailRow = new List<OutpatientRegisterDataXmlRow>();
             detailRow.Add(new OutpatientRegisterDataXmlRow()
             {
                 DirectoryName = hospitalGeneralCatalogData.DirectoryName,
                 MedicalInsuranceProjectCode = hospitalGeneralCatalogData.MedicalInsuranceCode,
-                DocumentNo =CommonHelp.GuidToStr(param.BusinessId),
-                HappenTime =Convert.ToDateTime(registerData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
+                DocumentNo = CommonHelp.GuidToStr(param.BusinessId),
+                HappenTime = Convert.ToDateTime(registerData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
                 InputTime = Convert.ToDateTime(registerData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
-                Num = registerData.Amount>0?1:0,
+                Num = registerData.Amount > 0 ? 1 : 0,
                 Price = registerData.Amount > 0 ? registerData.Amount : 1,
                 Operator = baseUser.UserName,
                 TotalAmount = registerData.Amount
@@ -246,8 +310,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(xmlData);
             return resultData;
         }
-
-        /// <returns></returns>
         private UploadHospitalInfoDataXmlDto GetUploadHospitalInfoDataXml(List<HospitalGeneralCatalogEntity> param, UserInfoDto user)
         {
             var resultData = new UploadHospitalInfoDataXmlDto();
@@ -351,7 +413,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
 
             return resultData;
         }
-
         /// <summary>
         /// 
         /// </summary>

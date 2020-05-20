@@ -10,7 +10,7 @@ namespace BenDing.Domain.Models.Params.YinHai.Web
 {
    public class QueryMedicalInsuranceSignInParam: UserBaseParam
     {/// <summary>
-    /// 签到状态
+    /// 签到状态 1为已签
     /// </summary>
         public int? SignInState { get; set; }
     }

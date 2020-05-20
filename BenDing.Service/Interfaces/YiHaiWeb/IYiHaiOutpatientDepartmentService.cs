@@ -36,5 +36,16 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// <param name="param"></param>
         /// <returns></returns>
          GetYiHaiBaseParm GetHospitalInfoUploadParam(GetUploadHospitalInfoDataXmlParam param);
+        /// <summary>
+        /// 获取取消签到参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         GetYiHaiBaseParm GetCancelMedicalInsuranceSignInParam(CancelMedicalInsuranceSignInParam param);
+        /// <summary>
+        /// 取消签到
+        /// </summary>
+        /// <param name="param"></param>
+         void CancelMedicalInsuranceSignIn(CancelMedicalInsuranceSignInParam param);
     }
 }

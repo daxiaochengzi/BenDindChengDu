@@ -94,12 +94,15 @@
     <Compile Include="Models\Dto\YiHai\Web\CodeTableDto.cs" />
     <Compile Include="Models\Dto\YiHai\Web\MedicalInsuranceSignInDto.cs" />
     <Compile Include="Models\Dto\YiHai\Web\UnCodeDataDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\CancelMedicalInsuranceSignInControlXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\CancelMedicalInsuranceSignInDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\ControlXmlBaseDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\MedicalInsuranceSignInXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartmentControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartmentDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegisterControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegisterDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutputXmlBaseDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\SignInControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\SignInDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\UploadHospitalInfoDataXmlDto.cs" />
@@ -355,6 +358,7 @@
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\GetUploadHospitalInfoDataXmlParam.cs" />
     <Compile Include="Models\Params\YinHai\TestParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\MedicalInsuranceSignInUiParam.cs" />
+    <Compile Include="Models\Params\YinHai\Web\CancelMedicalInsuranceSignInParam.cs" />
     <Compile Include="Models\Params\YinHai\Web\DepartmentPairCodeYiHaiParam.cs" />
     <Compile Include="Models\Params\YinHai\Web\GetOutpatientDepartmentUiParam.cs" />
     <Compile Include="Models\Params\YinHai\Web\HospitalGeneralCatalogYiHaiParam.cs" />

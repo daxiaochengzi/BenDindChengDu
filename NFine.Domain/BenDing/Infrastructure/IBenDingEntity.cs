@@ -16,8 +16,7 @@ namespace NFine.Domain.BenDing.Infrastructure
             var entity = this as IBenDingCreationAudited;
             if (entity != null)
             {
-
-                  
+                if (entity.Id==Guid.Empty) entity.Id=Guid.NewGuid();
                 entity.CreateUserId = user.UserId;
                 entity.CreateTime = DateTime.Now;
                 entity.OrganizationName = user.OrganizationName;

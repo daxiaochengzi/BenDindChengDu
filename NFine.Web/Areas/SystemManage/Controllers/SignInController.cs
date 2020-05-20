@@ -25,7 +25,18 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         {
             _systemManageRepository = Bootstrapper.UnityIOC.Resolve<ISystemManageRepository>();
         }
-
+        [HttpGet]
+        [HandlerAuthorize]
+        public override ActionResult Index()
+        {
+            var loginInfo = OperatorProvider.Provider.GetCurrent();
+            var userBase = _systemManageRepository.QueryHospitalOperator(new QueryHospitalOperatorParam()
+            {
+                Id = loginInfo.UserId
+            });
+            ViewBag.empid = userBase.HisUserId;
+            return View();
+        }
         [System.Web.Http.HttpGet]
         [HandlerAjaxOnly]
         public ActionResult GetGridJson(Pagination pagination, string keyword)

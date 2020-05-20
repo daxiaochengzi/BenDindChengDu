@@ -13,6 +13,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public string HisUserAccount { get; set; }
         /// <summary>
+        /// 基层id
+        /// </summary>
+        public string HisUserId { get; set; }
+        /// <summary>
         /// 基层密码
         /// </summary>
         public string HisUserPwd { get; set; }
