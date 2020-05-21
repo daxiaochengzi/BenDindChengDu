@@ -2,9 +2,11 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Index.cshtml";
 }
+<script src="~/script/BenDingYiHaiComm.js"></script>
 <script>
     $(function() {
         gridList();
+        DetectActiveX();
     });
     function gridList() {
         var $gridList = $("#gridList");
@@ -71,8 +73,76 @@
             }
         });
     }
-    
-    
+    //医院信息上传至医保中心
+    function btn_uploadData() {
+        //检查签到
+        YiHaiSignInCheck();
+        var iniParam =
+        {
+            "UserId": $("#empid").val()
+
+        };
+        $.ajax({
+            type: 'post',
+            url: YiHaiAPI + '/GetHospitalInfoUploadParam',
+            data: iniParam,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    $.modalAlert(errData, "error");
+                  
+                    //样式类名:墨绿深蓝风
+                } else {
+                    var dataValue = data.Data;
+                    if (dataValue.TransactionInputXml !== null) {
+                        var activeX = document.getElementById("CSharpActiveX");
+                  
+                        var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                            , "HospitalInfoUpload", $("#empid").val());
+                        var activeJsonData = JSON.parse(activeData);
+                        if (activeJsonData.Success === false) {
+                            $.modalAlert(activeJsonData.Message, "error");
+                         
+                        } else {
+                            iniParam["ResultJson"] = activeJsonData.Data;
+                            HospitalInfoUpload(iniParam);
+                           
+                        }
+                    }
+                }
+
+            }
+
+        });
+
+    }
+
+    function HospitalInfoUpload (parameters) {
+        $.ajax({
+            type: 'post',
+            url: YiHaiAPI + '/HospitalInfoUpload',
+            data: parameters,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    $.modalAlert(errData, "error");
+                  
+                    //样式类名:墨绿深蓝风
+                } else {
+                    $.reload();
+                }
+
+            }
+
+        });
+
+    }
 </script>
 
 <div class="topPanel">
@@ -82,6 +152,9 @@
         </div>
         <div class="btn-group">
             <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>更新信息</a>
+        </div>
+        <div class="btn-group">
+            <a id="NF-Upload"  class="btn btn-primary" onclick="btn_uploadData()"><i class="fa fa-plus"></i>上传至医保中心</a>
         </div>
         
         <script>$('.toolbar').authorizeButton()</script>
@@ -121,6 +194,7 @@
     </div>
 </div>
 <div class="gridPanel">
+    @{Html.RenderPartial("_CSharpYiHaiActiveX");}
     <table id="gridList"></table>
     <div id="gridPager"></div>
 </div>

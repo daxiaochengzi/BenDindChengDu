@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using BenDing.Domain.Models.Params.UI;
+using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Ui;
 using BenDing.Domain.Models.Params.YinHai.Web;
 using BenDing.Repository.Interfaces.Web;
@@ -30,21 +31,8 @@ namespace NFine.Web.Controllers
             _yiHaiOutpatientDepartmentService = iHaiOutpatientDepartmentService;
         }
 
-        #region 门诊
-        /// <summary>
-        /// 获取门诊结算入参
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public ApiJsonResultData GetOutpatientDepartmentParam([FromBody]GetOutpatientDepartmentUiParam param)
-        {
-            return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            {
-                var data = _yiHaiOutpatientDepartmentService.GetOutpatientDepartmentParam(param);
-                y.Data = data;
-            });
+        #region comm
 
-        }
         /// <summary>
         /// 医保签到
         /// </summary>
@@ -67,7 +55,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-               var  data= _yiHaiOutpatientDepartmentService.GetMedicalInsuranceSignInParam(param);
+                var data = _yiHaiOutpatientDepartmentService.GetMedicalInsuranceSignInParam(param);
                 y.Data = data;
             });
 
@@ -95,11 +83,70 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-               _yiHaiOutpatientDepartmentService.CancelMedicalInsuranceSignIn(param);
+                _yiHaiOutpatientDepartmentService.CancelMedicalInsuranceSignIn(param);
+
+            });
+
+        }
+        /// <summary>
+        /// 获取医院上传信息参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetHospitalInfoUploadParam([FromBody]UploadHospitalInfoUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+              var data=  _yiHaiOutpatientDepartmentService.GetHospitalInfoUploadParam(param);
+                y.Data = data;
+            });
+
+        }
+        /// <summary>
+        /// 医院信息上传
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData HospitalInfoUpload([FromBody]UploadHospitalInfoUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+               _yiHaiOutpatientDepartmentService.HospitalInfoUpload(param);
                
             });
 
         }
+        #endregion
+        #region 门诊
+        /// <summary>
+        /// 获取门诊挂号入参
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientRegisterParam([FromBody]GetOutpatientDepartmentUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var data = _yiHaiOutpatientDepartmentService.GetOutpatientRegisterParam(param);
+                y.Data = data;
+            });
+
+        }
+        /// <summary>
+        /// 获取门诊结算入参
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientSettlementParam([FromBody]GetOutpatientDepartmentUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var data = _yiHaiOutpatientDepartmentService.GetOutpatientSettlementParam(param);
+                y.Data = data;
+            });
+
+        }
+        
 
 
         #endregion

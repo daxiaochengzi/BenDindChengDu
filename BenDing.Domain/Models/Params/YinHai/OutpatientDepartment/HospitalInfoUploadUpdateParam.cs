@@ -8,7 +8,10 @@ using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Domain.Models.Params.YinHai.OutpatientDepartment
 {
-   public class GetUploadHospitalInfoDataXmlParam:UserBaseParam
-    {
+  public  class HospitalInfoUploadUpdateParam:UserBaseParam
+        {/// <summary>
+        /// 项目编号
+        /// </summary>
+            public List<string>  FixedEncodingList { get; set; }
     }
 }

@@ -7,7 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.YiHai.Web;
+using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Web;
+using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.YiHaiWeb;
 using Dapper;
 using NFine.Code;
@@ -156,9 +158,42 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                     {
                         strSql += $" and DirectoryCode = '{param.DirectoryCode}'";
                     }
-                    var data = sqlConnection.Query<HospitalGeneralCatalogEntity>(strSql);
+                  
+                    
+                   var data = sqlConnection.Query<HospitalGeneralCatalogEntity>(strSql);
                     sqlConnection.Close();
                     return data.ToList();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
+            }
+        }
+        /// <summary>
+        /// 更新
+        /// </summary>
+
+        public void HospitalInfoUploadUpdate(HospitalInfoUploadUpdateParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string strSql = null;
+                try
+                {
+                    if (param.FixedEncodingList.Any())
+                    {
+                        var str = CommonHelp.ListToStr(param.FixedEncodingList);
+                        strSql = $@"update [dbo].[HospitalGeneralCatalog] set UpdateTime=GETDATE(),
+                          UploadMark=1,UploadName='{param.User.UserName}',UploadUserId='{param.User.UserId}' 
+                     where FixedEncoding in({str})";
+                        var data = sqlConnection.Execute(strSql);
+                        sqlConnection.Close();
+
+                    }
                 }
                 catch (Exception e)
                 {

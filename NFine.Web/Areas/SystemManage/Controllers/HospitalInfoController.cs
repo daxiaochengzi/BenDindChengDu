@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Mvc;
 using BenDing.Domain.Models.Params.Web;
+using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using NFine.Application.BenDingManage;
 using NFine.Application.SystemManage;
@@ -20,6 +21,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         private HospitalGeneralCatalogBase hospitalGeneralCatalogBase = new HospitalGeneralCatalogBase();
         private UserApp userApp = new UserApp();
         private readonly IWebServiceBasicService _webServiceBasicService;
+        private readonly ISystemManageRepository _systemManageRepository;
         // 
         /// <summary>
         /// 
@@ -27,6 +29,20 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         public HospitalInfoController()
         {
             _webServiceBasicService = Bootstrapper.UnityIOC.Resolve<IWebServiceBasicService>();
+           _systemManageRepository= Bootstrapper.UnityIOC.Resolve<ISystemManageRepository>();
+        }
+        [HttpGet]
+        [HandlerAuthorize]
+        public override ActionResult Index()
+        {
+            var loginInfo = OperatorProvider.Provider.GetCurrent();
+            var userBase = _systemManageRepository.QueryHospitalOperator(new QueryHospitalOperatorParam()
+            {
+                Id = loginInfo.UserId
+            });
+          if (!string.IsNullOrEmpty(userBase.HisUserId)) throw new  Exception("当前页面操作人员为基层账户人员!!!");
+            ViewBag.empid = userBase.HisUserId;
+            return View();
         }
         [HttpGet]
         [HandlerAjaxOnly]

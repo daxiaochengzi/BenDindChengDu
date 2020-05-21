@@ -7,12 +7,10 @@ function DetectActiveX() {
         var activeVersionNumber = activeX.GetVersionNumber();
         if (parseInt(versionNumber) > parseInt(activeVersionNumber)) {
             $.modalAlert("当前插件版本过低,请下载新的版本!!!", "error");
-           
         }
     }
     catch (e) {
         $.modalAlert("请检查医保插件是否安装,是否使用IE浏览器打开!!!!!!", "error");
-      
     }
  
 }
@@ -33,7 +31,8 @@ function YiHaiSignInCheck() {
 
             if (data.Success === false) {
                 var errData = data.Message;
-                YiHaiMsgError(errData);
+                $.modalAlert(errData, "error");
+            
                 //样式类名:墨绿深蓝风
             } else {
                 var dataValue = data.Data;

@@ -56,6 +56,38 @@ namespace BenDing.Service.Providers.YiHaiWeb
             _webServiceBasic = iWebBasicRepository;
             _medicalInsuranceSqlRepository = insuranceSqlRepository;
         }
+        #region comm
+        /// <summary>
+        /// 获取签到入参
+        /// </summary>
+        /// <param name="param"></param>
+        public GetYiHaiBaseParm GetMedicalInsuranceSignInParam(UiInIParam param)
+        {
+            var resultData = new GetYiHaiBaseParm();
+            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var medicalInsuranceSignList = _yiHaiSqlRepository.QueryMedicalInsuranceSignIn(new QueryMedicalInsuranceSignInParam()
+            {
+                SignInState = 1,
+                User = userBase
+            });
+            //如果签到不存在自动签到
+            if (medicalInsuranceSignList.Count == 0)
+            {
+                var hospitalOrganization =
+                    _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+                resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
+                {
+                    OperationName = userBase.UserName
+                });
+                resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
+                {
+                    OperationName = hospitalOrganization.MedicalInsuranceHandleNo
+                });
+            }
+
+            return resultData;
+
+        }
         /// <summary>
         /// 签到
         /// </summary>
@@ -97,37 +129,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 });
             }
         }
-        /// <summary>
-        /// 获取签到入参
-        /// </summary>
-        /// <param name="param"></param>
-        public GetYiHaiBaseParm GetMedicalInsuranceSignInParam(UiInIParam param)
-        {
-            var resultData = new GetYiHaiBaseParm();
-            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-            var medicalInsuranceSignList = _yiHaiSqlRepository.QueryMedicalInsuranceSignIn(new QueryMedicalInsuranceSignInParam()
-            {
-                SignInState = 1,
-                User = userBase
-            });
-            //如果签到不存在自动签到
-            if (medicalInsuranceSignList.Count == 0)
-            {
-                var hospitalOrganization =
-                    _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
-                {
-                    OperationName = userBase.UserName
-                });
-                resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
-                {
-                    OperationName = hospitalOrganization.MedicalInsuranceHandleNo
-                });
-            }
-
-            return resultData;
-
-        }
+       
         /// <summary>
         /// 获取取消签到参数
         /// </summary>
@@ -138,7 +140,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var resultData = new GetYiHaiBaseParm();
             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
             var signData = medicalInsuranceSignInService.GetForm(Guid.Parse(param.KeyWord));
-            if (signData.SignInState==0) throw  new Exception("当前签到已取消");
+            if (signData.SignInState == 0) throw new Exception("当前签到已取消");
             resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new CancelMedicalInsuranceSignInControlXmlDto()
             {
                 BatchNo = signData.BatchNo,
@@ -172,87 +174,14 @@ namespace BenDing.Service.Providers.YiHaiWeb
             });
         }
 
-        /// <summary>
-        /// 获取门诊结算入参
-        /// </summary>
-        /// <param name="param"></param>
-        public GetYiHaiBaseParm GetOutpatientDepartmentParam(GetOutpatientDepartmentUiParam param)
-        {
-            var resultData = new GetYiHaiBaseParm();
 
-            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-            var xmlData = new MedicalInsuranceXmlDto();
-            xmlData.BusinessId = param.BusinessId;
-            xmlData.HealthInsuranceNo = "48";//42MZ
-            xmlData.TransactionId = param.TransKey;
-            xmlData.AuthCode = userBase.AuthCode;
-            xmlData.UserId = userBase.UserId;
-            xmlData.OrganizationCode = userBase.OrganizationCode;
-            var jsonParam = JsonConvert.SerializeObject(xmlData);
-            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
-            OutpatientPersonJsonDto dataValue = JsonConvert.DeserializeObject<OutpatientPersonJsonDto>(data.Msg);
-
-            //获取初始门诊费用明细
-            var iniCostDetail = dataValue.DetailInfo;
-            var outpatientBase = dataValue.OutpatientPersonBase;
-            //获取未对码的项目
-            var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode) == true)
-                .Select(d => new UnCodeDataDto
-                {
-                    名称 = d.DirectoryName,
-                    项目编号 = d.DirectoryCode
-                }).ToList();
-            if (unCodeData.Any())
-            {
-                string unCodeDataInfo = "医保未对码项目:";
-                unCodeDataInfo += JsonConvert.SerializeObject(unCodeData);
-                throw new Exception(unCodeDataInfo);
-            }
-            //排除挂号费 
-            var costDetail = iniCostDetail;
-
-            if (costDetail.Count == 0) throw new Exception("门诊无处方明细不能进行医保报账");
-            if (costDetail.Count >= 50) throw new Exception("门诊费用明细只能小于50条");
-            decimal medicalTreatmentTotalCost = string.IsNullOrEmpty(outpatientBase.MedicalTreatmentTotalCost) == true
-                ? Convert.ToDecimal(outpatientBase.MedicalTreatmentTotalCost)
-                : 0;
-            var controlData = new OutpatientDepartmentControlXmlDto();
-            controlData.PaymentCategory = param.PaymentCategory; //【城职普通门诊0201】、【城居普通门诊0203】
-            controlData.TotalAmount = medicalTreatmentTotalCost;
-            controlData.nums = costDetail.Count;
-            controlData.edition = "5.0";
-            var dataXml = OutpatientDepartmentDataXml(iniCostDetail, outpatientBase, userBase.OrganizationCode);
-            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlData);
-            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
-            return resultData;
-        }
-        /// <summary>
-        /// 获取医院信息上传
-        /// </summary>
-        /// <returns></returns>
-        public GetYiHaiBaseParm GetHospitalInfoUploadParam(GetUploadHospitalInfoDataXmlParam param)
-        {
-            var resultData = new GetYiHaiBaseParm();
-            var hospitalGeneralCatalogList = _yiHaiSqlRepository.HospitalGeneralCatalog(new HospitalGeneralCatalogYiHaiParam()
-            {
-                User = param.User
-            });
-            var dataXml = GetUploadHospitalInfoDataXml(hospitalGeneralCatalogList, param.User);
-            var hospitalInfo = _systemManageRepository.QueryHospitalOrganizationGrade(param.User.OrganizationCode);
-            var controlXml = new ControlXmlBaseDto()
-            {
-                MedicalInsuranceHandleNo = hospitalInfo.MedicalInsuranceHandleNo
-            };
-            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlXml);
-            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
-
-            return resultData;
-        }
+        #endregion
+        #region 门诊
         /// <summary>
         /// 获取门诊挂号入参
         /// </summary>
         /// <returns></returns>
-        public GetYiHaiBaseParm OutpatientRegister(UiBaseDataParam param)
+        public GetYiHaiBaseParm GetOutpatientRegisterParam(UiBaseDataParam param)
         {
             var resultData = new GetYiHaiBaseParm();
             var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
@@ -310,6 +239,182 @@ namespace BenDing.Service.Providers.YiHaiWeb
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(xmlData);
             return resultData;
         }
+        /// <summary>
+        /// 门诊挂号
+        /// </summary>
+        /// <param name="param"></param>
+        public void OutpatientRegister(OutpatientRegisterUiParam param)
+        {
+
+        }
+        /// <summary>
+        /// 获取门诊结算入参
+        /// </summary>
+        /// <param name="param"></param>
+        public GetYiHaiBaseParm GetOutpatientSettlementParam(GetOutpatientDepartmentUiParam param)
+        {
+            var resultData = new GetYiHaiBaseParm();
+
+            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "48";//42MZ
+            xmlData.TransactionId = param.TransKey;
+            xmlData.AuthCode = userBase.AuthCode;
+            xmlData.UserId = userBase.UserId;
+            xmlData.OrganizationCode = userBase.OrganizationCode;
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            OutpatientPersonJsonDto dataValue = JsonConvert.DeserializeObject<OutpatientPersonJsonDto>(data.Msg);
+
+            //获取初始门诊费用明细
+            var iniCostDetail = dataValue.DetailInfo;
+            var outpatientBase = dataValue.OutpatientPersonBase;
+            //获取未对码的项目
+            var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode) == true)
+                .Select(d => new UnCodeDataDto
+                {
+                    名称 = d.DirectoryName,
+                    项目编号 = d.DirectoryCode
+                }).ToList();
+            if (unCodeData.Any())
+            {
+                string unCodeDataInfo = "医保未对码项目:";
+                unCodeDataInfo += JsonConvert.SerializeObject(unCodeData);
+                throw new Exception(unCodeDataInfo);
+            }
+            //排除挂号费 
+            var costDetail = iniCostDetail;
+
+            if (costDetail.Count == 0) throw new Exception("门诊无处方明细不能进行医保报账");
+            if (costDetail.Count >= 50) throw new Exception("门诊费用明细只能小于50条");
+            decimal medicalTreatmentTotalCost = string.IsNullOrEmpty(outpatientBase.MedicalTreatmentTotalCost) == true
+                ? Convert.ToDecimal(outpatientBase.MedicalTreatmentTotalCost)
+                : 0;
+            var controlData = new OutpatientDepartmentControlXmlDto();
+            controlData.PaymentCategory = param.PaymentCategory; //【城职普通门诊0201】、【城居普通门诊0203】
+            controlData.TotalAmount = medicalTreatmentTotalCost;
+            controlData.nums = costDetail.Count;
+            controlData.edition = "5.0";
+            var dataXml = OutpatientDepartmentDataXml(iniCostDetail, outpatientBase, userBase.OrganizationCode);
+            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlData);
+            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
+            return resultData;
+        }
+
+        /// <summary>
+        /// 获取没明细上传入参
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public GetYiHaiBaseParm GetOutpatientDetailUploadParam(GetOutpatientDepartmentUiParam param)
+        {
+            var resultData = new GetYiHaiBaseParm();
+
+            return resultData;
+        }
+        /// <summary>
+        /// 获取门诊取消结算入参
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public GetYiHaiBaseParm GetCancelOutpatientSettlementParam(GetOutpatientDepartmentUiParam param)
+        {
+            var resultData = new GetYiHaiBaseParm();
+
+            return resultData;
+        }
+
+        /// <summary>
+        /// 获取医院信息上传参数
+        /// </summary>
+        /// <returns></returns>
+        public GetYiHaiBaseParm GetHospitalInfoUploadParam(UploadHospitalInfoUiParam param)
+        {
+            var resultData = new GetYiHaiBaseParm();
+             var  userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+         
+               var hospitalGeneralCatalogList = _yiHaiSqlRepository.HospitalGeneralCatalog(new HospitalGeneralCatalogYiHaiParam()
+            {
+                User = userBase,
+               });
+            var dataXml = GetUploadHospitalInfoDataXml(hospitalGeneralCatalogList, userBase);
+            var hospitalInfo = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+            var controlXml = new ControlXmlBaseDto()
+            {
+                MedicalInsuranceHandleNo = hospitalInfo.MedicalInsuranceHandleNo
+            };
+            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlXml);
+            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
+
+            return resultData;
+        }
+        /// <summary>
+        /// 医院信息上传
+        /// </summary>
+        /// <param name="param"></param>
+        public void HospitalInfoUpload(UploadHospitalInfoUiParam param)
+        {
+            var resultData = new GetYiHaiBaseParm();
+           
+            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
+            var inputData = XmlHelp.DeSerializer<UploadHospitalInfoDataXmlDto>(resultDto.TransactionInputXml);
+            //获取当前医院所有信息
+            var hospitalGeneralCatalogList = _yiHaiSqlRepository.HospitalGeneralCatalog(new HospitalGeneralCatalogYiHaiParam()
+            {
+                User = userBase,
+            });
+
+            //项目编码
+            var fixedEncodingList=new  List<string>();
+            if (inputData.BedDetail.Any())
+            {
+                //获取科室编号
+                var departmentFixedEncodingList = inputData.BedDetail.Select(c => c.DepartmentCode).ToList();
+                var badNoList = inputData.BedDetail.Select(c => c.BadNo).ToList();
+                //获取病区目录编号
+                var inpatientAreaDirectoryCodeList = hospitalGeneralCatalogList.Where(
+                        c => departmentFixedEncodingList.Contains(c.FixedEncoding))
+                    .Select(d => d.InpatientAreaCode).ToList();
+                var badNoFixedEncodingList = hospitalGeneralCatalogList.Where(
+                    c => inpatientAreaDirectoryCodeList.Contains(c.Remark)
+                         && badNoList.Contains(c.DirectoryName)).
+                    Select(a=>a.FixedEncoding)
+                    .ToList();
+                fixedEncodingList.AddRange(badNoFixedEncodingList);
+            }
+
+            if (inputData.DoctorDetail.Any())
+            {//获取科室编号
+                var doctorFixedEncodingList = inputData.DoctorDetail.Select(c => c.DoctorNo).ToList();
+                fixedEncodingList.AddRange(doctorFixedEncodingList);
+            }
+            if (inputData.DepartmentDetail.Any())
+            {//获取科室编号
+                var departmentFixedEncodingList = inputData.DepartmentDetail.Select(c => c.DepartmentCode).ToList();
+                fixedEncodingList.AddRange(departmentFixedEncodingList);
+            }
+
+            _yiHaiSqlRepository.HospitalInfoUploadUpdate(new HospitalInfoUploadUpdateParam()
+            {
+                User = userBase,
+                FixedEncodingList = fixedEncodingList
+            });
+
+            _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+            {
+                User = userBase,
+                Remark = "住院信息上传",
+                JoinOrOldJson = JsonConvert.SerializeObject(fixedEncodingList)
+              
+            });
+
+        }
+
+
+        #endregion
+
         private UploadHospitalInfoDataXmlDto GetUploadHospitalInfoDataXml(List<HospitalGeneralCatalogEntity> param, UserInfoDto user)
         {
             var resultData = new UploadHospitalInfoDataXmlDto();
