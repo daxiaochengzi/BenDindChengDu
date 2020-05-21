@@ -60,6 +60,8 @@ namespace NFine.Web.App_Start
                 //异地
                 cfg.CreateMap<DifferentPlacesUserInfoJsonDto, DifferentPlacesUserInfoDto>();
                cfg.CreateMap<DifferentPlacesHospitalizationRegisterJsonDto, DifferentPlacesHospitalizationRegisterDto>();
+
+
                 
             });
         }
