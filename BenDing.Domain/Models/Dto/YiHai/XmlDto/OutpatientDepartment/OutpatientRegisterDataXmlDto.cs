@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
-{
+{   /// <summary>
+/// 门诊挂号
+/// </summary>
     [XmlRoot("data", IsNullable = false)]
     public class OutpatientRegisterDataXmlDto
     {   /// <summary>

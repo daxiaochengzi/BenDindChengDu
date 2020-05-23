@@ -7,7 +7,9 @@ using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
-{   
+{   /// <summary>
+/// 门诊挂号回参
+/// </summary>
     [XmlRoot("output", IsNullable = false)]
     public class OutpatientRegisterOutputXmlDto
     {/// <summary>

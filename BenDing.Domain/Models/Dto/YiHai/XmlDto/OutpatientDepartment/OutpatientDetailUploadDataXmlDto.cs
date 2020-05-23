@@ -7,16 +7,58 @@ using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
 {
+    /// <summary>
+    /// 门诊明细上传
+    /// </summary>
     [XmlRoot("data", IsNullable = false)]
     public class OutpatientDetailUploadDataXmlDto
     {
 
+        /// <summary>
+        /// 费用明细
+        /// </summary>
+        [XmlElementAttribute("datasetfymx")]
+        [XmlArrayItem("row")]
+        public List<OutpatientDetailUploadDataCostDetailXmlDto> DetailRow { get; set; }
+
+        /// <summary>
+        /// 挂号信息
+        /// </summary>
+        [XmlElementAttribute("datasetghxx")]
+        public OutpatientDetailUploadDataRegisterDetailXmlDto RegisterDetail { get; set; }
+
+        /// <summary>
+        /// 服务对象明细
+        /// </summary>
+        [XmlElementAttribute("datasetfwdx")]
+        public OutpatientDetailUploadDataServiceObjectDetailXmlDto ServiceObjectDetail { get; set; }
+        /// <summary>
+        /// 门诊病历明细
+        /// </summary>
+        [XmlElementAttribute("datasetmzbl")]
+        public OutpatientDetailUploadDataOutpatientMedicalRecordDetailXmlDto MedicalRecordDetail { get; set; }
+
+        /// <summary>
+        /// 西药处方
+        /// </summary>
+        [XmlElementAttribute("datasetxydz")]
+        [XmlArrayItem("row")]
+        public List<OutpatientWesternDrugPrescriptionDetail> WesternDrugDetail { get; set; }
+
+        /// <summary>
+        /// 医嘱明细
+        /// </summary>
+        [XmlElementAttribute("datasetyz")]
+        [XmlArrayItem("row")]
+        public List<OutpatientPatientOrdersDetail> OrdersDetail { get; set; }
+
     }
+
     /// <summary>
-    /// 费用明细
-    /// </summary>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class OutpatientDetailUploadDataCostDetailXmlDto
+        /// 费用明细
+        /// </summary>
+        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+     public class OutpatientDetailUploadDataCostDetailXmlDto
     {
         /// <summary>
         /// 费用明细ID len(20)
@@ -114,162 +156,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         public string OperateDoctorNo { get; set; }
 
 
-        ///// <summary>
-        ///// 明细录入时间 (yyyy-mm-dd hh:mm:ss)
-        ///// </summary>
-        //[XmlElementAttribute("yke123", IsNullable = false)]
-        //public string DetailInputTime { get; set; }
-        ///// <summary>
-        ///// 明细发生时间 (yyyy-mm-dd hh:mm:ss)
-        ///// </summary>
-        //[XmlElementAttribute("yke123", IsNullable = false)]
-        //public string DetailTime { get; set; }
-
-
-        ///// <summary>
-        ///// 备注
-        ///// </summary>
-        //[XmlElementAttribute("aae013", IsNullable = false)]
-        //public string Remark { get; set; }
-
-        ///// <summary>
-        /////使用方式 （固定值 01）
-        ///// </summary>
-        //[XmlElementAttribute("yke201", IsNullable = false)]
-        //public string UserMethod { get; set; } = "01";
-
-        ///// <summary>
-        ///// 药品进价
-        ///// </summary>
-        //[XmlElementAttribute("yke553", IsNullable = false)]
-        //public decimal InputPrice { get; set; }
-        ///// <summary>
-        ///// 外检标志
-        ///// </summary>
-        //[XmlElementAttribute("yke676", IsNullable = false)]
-        //public string ExternalInspectSign { get; set; }
-        ///// <summary>
-        ///// 外检医院编码
-        ///// </summary>
-        //[XmlElementAttribute("yke677", IsNullable = false)]
-        //public string ExternalInspectHospitalNo { get; set; }
-
-
-        ///// <summary>
-        ///// 设备编号
-        ///// </summary>
-        //[XmlElementAttribute("ykf013", IsNullable = false)]
-        //public string EquipmentCode { get; set; }
-
-
-        ///// <summary>
-        ///// 药物类型
-        ///// </summary>
-        //[XmlElementAttribute("yke347", IsNullable = false)]
-        //public string DirectoryType { get; set; }
-        /////// <summary>
-        /////// 药物剂型   码表
-        /////// </summary>
-        ////[XmlElementAttribute("yke348", IsNullable = false)]
-        ////public string DosageCode { get; set; }
-        /////// <summary>
-        /////// 用药天数
-        /////// </summary>
-        ////[XmlElementAttribute("yke446", IsNullable = false)]
-        ////public string UseDays { get; set; }
-        /////// <summary>
-        /////// 用药频率
-        /////// </summary>
-        ////[XmlElementAttribute("yke446", IsNullable = false)]
-        ////public string UsedrugFrequency { get; set; }
-
-        ///// <summary>
-        ///// 医嘱内容
-        ///// </summary>
-        //[XmlElementAttribute("YKE113", IsNullable = false)]
-        //public string OrderContent { get; set; }
-        ///// <summary>
-        /////医生姓名
-        ///// </summary>
-        //[XmlElementAttribute("YKA287", IsNullable = false)]
-        //public string DoctorName { get; set; }
-        ///// <summary>
-        ///// 医嘱开始时间 (yyyy-MM-dd HH:mm:ss)
-        ///// </summary>
-        //[XmlElementAttribute("YKE361", IsNullable = false)]
-        //public string OrderStartTime { get; set; }
-        ///// <summary>
-        ///// 医嘱执行时间 (yyyy-MM-dd)
-        ///// </summary>
-        //[XmlElementAttribute("YKE363", IsNullable = false)]
-        //public string OrderOperateTime { get; set; }
-        ///// <summary>
-        ///// 医生编码
-        ///// </summary>
-        //[XmlElementAttribute("ykf008", IsNullable = false)]
-        //public string DoctorCode { get; set; }
-        ///// <summary>
-        ///// 医嘱科室编码
-        ///// </summary>
-        //[XmlElementAttribute("aaz307", IsNullable = false)]
-        //public string OrderDepartmentId { get; set; }
-        ///// <summary>
-        ///// 医嘱科室名称
-        ///// </summary>
-        //[XmlElementAttribute("akf002", IsNullable = false)]
-        //public string OrderDepartmentName { get; set; }
-        ///// <summary>
-        ///// 医执人员编号
-        ///// </summary>
-        //[XmlElementAttribute("yke419", IsNullable = false)]
-        //public string OperateDoctorCode { get; set; }
-        ///// <summary>
-        ///// 医执人员所属科室 代码yke414
-        ///// </summary>
-        //[XmlElementAttribute("yke426", IsNullable = false)]
-        //public string OperateDoctorDepartment { get; set; }
-        ///// <summary>
-        ///// 出生日期 datetime
-        ///// </summary>
-        //[XmlElementAttribute("aac006", IsNullable = false)]
-        //public string Birthday { get; set; }
-        ///// <summary>
-        ///// 就诊年龄 
-        ///// </summary>
-        //[XmlElementAttribute("yke525", IsNullable = false)]
-        //public string Age { get; set; }
-        ///// <summary>
-        ///// 是否复诊 1是 0 否
-        ///// </summary>
-        //[XmlElementAttribute("yke509", IsNullable = false)]
-        //public int IsSecondVisit { get; set; }
-        ///// <summary>
-        ///// 是否外伤 1是 0 否
-        ///// </summary>
-        //[XmlElementAttribute("yke510", IsNullable = false)]
-        //public int IsTrauma { get; set; }
-
-        ///// <summary>
-        /////科室（病区）编号  代码 yke414
-        ///// </summary>
-        //[XmlElementAttribute("yke414", IsNullable = false)]
-        //public string DepartmentInpatientArea { get; set; }
-
-        ///// <summary>
-        ///// 职业
-        ///// </summary>
-        //[XmlElementAttribute("yke508", IsNullable = false)]
-        //public string Occupation { get; set; } = "医生";
-        ///// <summary>
-        ///// 医院对码流水号
-        ///// </summary>
-        //[XmlElementAttribute("ake005", IsNullable = false)]
-        //public string HospitalPairingCode { get; set; }
-        ///// <summary>
-        ///// 药品编码/诊疗项目编码本位吗
-        ///// </summary>
-        //[XmlElementAttribute("yka059", IsNullable = false)]
-        //public string DirectoryCodeStandard { get; set; }
+       
     }
     /// <summary>
     /// 挂号信息
@@ -293,7 +180,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
     /// 服务对象
     /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class OutpatientDetailUploadDatafwdxDetailXmlDto
+    public class OutpatientDetailUploadDataServiceObjectDetailXmlDto
     { /// <summary>
         /// 经办人
         /// </summary>
@@ -311,7 +198,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
     /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
 
-    public class OutpatientDetailUploadDataDatasetmzblDetailXmlDto
+    public class OutpatientDetailUploadDataOutpatientMedicalRecordDetailXmlDto
     { /// <summary>
       /// 就医开始时间
       /// </summary>
@@ -321,14 +208,111 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// 主诉
         /// </summary>
         [XmlElementAttribute("ykc310", IsNullable = false)]
-        public string MainLawsuit { get; set; }
-        
+        public string MainDiagnosis { get; set; }
+        /// <summary>
+        /// 门诊症状
+        /// </summary>
+        [XmlElementAttribute("datasetykc328")]
+        [XmlArrayItem("row")]
+        public List<OutpatientDetailUploadDataSymptomDetailXmlDto> SymptomDetail { get; set; }
+        /// <summary>
+        /// 诊断明细
+        /// </summary>
+        [XmlElementAttribute("datasetykc312")]
+        [XmlArrayItem("row")]
+        public List<OutpatientDetailUploadDataDiagnosisDetailXmlDto> DiagnosisDetail { get; set; }
+        /// <summary>
+        /// 发病日期
+        /// </summary>
+        [XmlElementAttribute("ykc314")]
+        public string FindDiseaseTime { get; set; }
+        /// <summary>
+        /// 诊断时间
+        /// </summary>
+        [XmlElementAttribute("ykc315")]
+        public string DiagnosisTime { get; set; }
+        /// <summary>
+        /// 就诊类型
+        /// </summary>
+        [XmlElementAttribute("yke479")]
+        public string VisitType { get; set; }
+        /// <summary>
+        /// 是否会诊
+        /// </summary>
+        [XmlElementAttribute("yke480")]
+        public int IsConsultation { get; set; }
+
+        /// <summary>
+        /// 是否确认诊断
+        /// </summary>
+        [XmlElementAttribute("yke480")]
+        public int IsConfirmDiagnosis { get; set; }
+        /// <summary>
+        /// 经办人
+        /// </summary>
+        [XmlElementAttribute("aae011")]
+        public string OperatorName { get; set; }
+        /// <summary>
+        /// 经办时间
+        /// </summary>
+        [XmlElementAttribute("aae011")]
+        public string OperatorTime { get; set; }
+        /// <summary>
+        /// 职业
+        /// </summary>
+        [XmlElementAttribute("yke508")]
+        public string Job { get; set; }
+
+        /// <summary>
+        /// 出生日期
+        /// </summary>
+        [XmlElementAttribute("yke508")]
+        public string Birthday { get; set; }
+
+        /// <summary>
+        /// 年龄
+        /// </summary>
+        [XmlElementAttribute("yke508")]
+        public int Age { get; set; }
+        /// <summary>
+        /// 是否复诊
+        /// </summary>
+        [XmlElementAttribute("yke509")]
+        public  int IsRepeatedDiagnosis { get; set; }
+        /// <summary>
+        /// 是否外伤
+        /// </summary>
+        [XmlElementAttribute("yke510")]
+        public int IsTrauma { get; set; }
+        /// <summary>
+        /// 科室病区编号
+        /// </summary>
+        [XmlElementAttribute("yke414")]
+        public string DepartmentAreaCode { get; set; }
+        /// <summary>
+        /// 医生编号
+        /// </summary>
+        [XmlElementAttribute("yke419")]
+        public string DoctorCode { get; set; }
+        /// <summary>
+        /// 现病使
+        /// </summary>
+        [XmlElementAttribute("yke513")]
+        public string AntecedentHistory { get; set; }
+        /// <summary>
+        /// 体格检查
+        /// </summary>
+        [XmlElementAttribute("yke517")]
+        public string PhysiqueInspect { get; set; }
+
+       public  string  WesternDrugPrescription { get; set; }
+
     }
     /// <summary>
     /// 
     /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class OutpatientDetailUploadDatadatasetykc328DetailXmlDto
+    public class OutpatientDetailUploadDataSymptomDetailXmlDto
     {/// <summary>
      /// 门诊症状-诊断代码
      /// </summary>
@@ -340,6 +324,119 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         [XmlElementAttribute("ykc311", IsNullable = false)]
         public string DiagnosisName { get; set; }
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public class OutpatientDetailUploadDataDiagnosisDetailXmlDto
+    {
+        /// <summary>
+        ///诊断分类
+        /// </summary>
+        [XmlElementAttribute("yke526", IsNullable = false)]
+        public string DiagnosisType { get; set; }
 
+        /// <summary>
+        ///诊断代码
+        /// </summary>
+        [XmlElementAttribute("ykc312", IsNullable = false)]
+        public string DiagnosisCode { get; set; }
+        /// <summary>
+        ///诊断名称
+        /// </summary>
+        [XmlElementAttribute("ykc312", IsNullable = false)]
+        public string DiagnosisName { get; set; }
+      
+    }
+    /// <summary>
+    /// 西药处方
+    /// </summary>
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public class OutpatientWesternDrugPrescriptionDetail
+    {
+        /// <summary>
+        ///处方号
+        /// </summary>
+        [XmlElementAttribute("yke134", IsNullable = false)]
+        public string PrescriptionNo { get; set; }
+        /// <summary>
+        /// 取药人
+        /// </summary>
+        [XmlElementAttribute("yke346", IsNullable = false)]
+        public  string GetDrugPerson { get; set; }
+        /// <summary>
+        /// 药物开始使用时间
+        /// </summary>
+        [XmlElementAttribute("yke359", IsNullable = false)]
+        public  string UseDrugStartTime { get; set; }
+        /// <summary>
+        /// 药物结束使用时间
+        /// </summary>
+        [XmlElementAttribute("yke360", IsNullable = false)]
+        public string UseDrugEndTime { get; set; }
+    }
+    /// <summary>
+    /// 病人医嘱
+    /// </summary>
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public class OutpatientPatientOrdersDetail
+    {  /// <summary>
+       /// 医嘱编号
+       /// </summary>
+        [XmlElementAttribute("yke112", IsNullable = false)]
+        public string OrdersNo { get; set; }
+
+        /// <summary>
+        /// 医嘱内容
+        /// </summary>yke113
+        [XmlElementAttribute("yke113", IsNullable = false)]
+        public string OrdersContent { get; set; }
+        /// <summary>
+        /// 医生姓名
+        /// </summary>
+        [XmlElementAttribute("yka287", IsNullable = false)]
+        public  string DoctorName { get; set; }
+        /// <summary>
+        /// 医嘱开始时间
+        /// </summary>
+        [XmlElementAttribute("yke361", IsNullable = false)]
+        public  string OrdersStartTime { get; set; }
+        /// <summary>
+        /// 经办人
+        /// </summary>
+        [XmlElementAttribute("aae011", IsNullable = false)]
+        
+        public string OperatorName   { get; set; }
+        /// <summary>
+        /// 医职人员编码
+        /// </summary>
+        [XmlElementAttribute("ykf008", IsNullable = false)]
+
+        public string DoctorCode { get; set; }
+        /// <summary>
+        /// 医嘱科室编码
+        /// </summary>
+        [XmlElementAttribute("aaz307", IsNullable = false)]
+
+        public string OrdersDepartmentCode { get; set; }
+        /// <summary>
+        /// 医嘱科室名称
+        /// </summary>
+        [XmlElementAttribute("akf002", IsNullable = false)]
+
+        public string OrdersDepartmentName { get; set; }
+        /// <summary>
+        /// 项目对码编号
+        /// </summary>
+        [XmlElementAttribute("ake005", IsNullable = false)]
+
+        public string ProjectPairCode { get; set; }
+        /// <summary>
+        /// 使用天数
+        /// </summary>
+        [XmlElementAttribute("yke446", IsNullable = false)]
+
+        public int UseDay { get; set; }
+    } 
 
 }

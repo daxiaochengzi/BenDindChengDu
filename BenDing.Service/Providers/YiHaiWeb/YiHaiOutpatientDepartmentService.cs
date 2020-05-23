@@ -338,7 +338,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
         {
           
             var resultData = new GetYiHaiBaseParm();
-
             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
@@ -354,6 +353,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             //获取初始门诊费用明细
             var iniCostDetail = dataValue.DetailInfo;
             var outpatientBase = dataValue.OutpatientPersonBase;
+            
             //获取未对码的项目
             var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode) == true)
                 .Select(d => new UnCodeDataDto
@@ -366,6 +366,15 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 string unCodeDataInfo = "医保未对码项目:";
                 unCodeDataInfo += JsonConvert.SerializeObject(unCodeData);
                 throw new Exception(unCodeDataInfo);
+            }
+            //获取未对码的诊断
+            var unDiagnosisCodeData = dataValue.DiagnosisList.Where(c => c.ProjectCode == null).ToList();
+           
+            if (unDiagnosisCodeData.Any())
+            {
+                string unPairCodeInfo = "诊断未对码信息:";
+                unPairCodeInfo += JsonConvert.SerializeObject(unCodeData);
+                throw new Exception(unPairCodeInfo);
             }
             return resultData;
         }
@@ -467,8 +476,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
             });
 
         }
-
-
         #endregion
 
         private UploadHospitalInfoDataXmlDto GetUploadHospitalInfoDataXml(List<HospitalGeneralCatalogEntity> param, UserInfoDto user)
@@ -574,6 +581,114 @@ namespace BenDing.Service.Providers.YiHaiWeb
 
             return resultData;
         }
+        /// <summary>
+        /// 获取门诊明细上传
+        /// </summary>
+        /// <returns></returns>
+        private OutpatientDetailUploadDataXmlDto OutpatientDetailUploadDataXml(
+            List<OutpatientDetailJsonDto> costDetail,
+            OutpatientPersonJsonDto dataValue,
+            string organizationCode
+            )
+        {
+            //获取初始门诊费用明细
+            var outpatientBase = dataValue.OutpatientPersonBase;
+            //获取医院所有医生
+            var operatorAllInfo= _systemManageRepository.QueryHospitalOperatorAllInfo(organizationCode);
+            //获取诊断列表
+            var diagnosisList = dataValue.DiagnosisList;
+
+        
+            var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
+            {
+                DirectoryCodeList = costDetail.Select(c => c.DirectoryCode).ToList(),
+                OrganizationCode = organizationCode
+            });
+            var resultData = new OutpatientDetailUploadDataXmlDto();
+            var uploadCostDetail = new List<OutpatientDetailUploadDataCostDetailXmlDto>();
+            resultData.DetailRow = uploadCostDetail;
+            //挂号信息
+            resultData.RegisterDetail=new OutpatientDetailUploadDataRegisterDetailXmlDto()
+            { //医生编号需从门诊基础信息中获取编码
+                OperateDoctorCode =CommonHelp.GuidToStr(operatorAllInfo.Where(c => c.F_RealName == outpatientBase.DiagnosticDoctor)
+                    .Select(d => d.F_HisUserId).FirstOrDefault()) ,
+                OperateDoctorName = outpatientBase.DiagnosticDoctor
+            };
+            var mainDiagnosis = diagnosisList.Where(c => c.IsMainDiagnosis == "是")
+                .Select(d => d.DiseaseName)
+                .FirstOrDefault();
+        
+              var medicalRecordDetail = new OutpatientDetailUploadDataOutpatientMedicalRecordDetailXmlDto()
+            {
+                DiagnosisStartTime= outpatientBase.VisitDate ,
+                MainDiagnosis = mainDiagnosis
+                };
+            resultData.MedicalRecordDetail = medicalRecordDetail;
+            foreach (var item in costDetail)
+            {
+                
+                //流水号
+                string detailFixedEncoding = CommonHelp.GuidToStr(item.DetailId);
+                string ordersSortNo = item.CostDocumentType == "3" ? detailFixedEncoding : null;
+                //获取医生
+                var operatorInfo = operatorAllInfo.FirstOrDefault(c => c.F_HisUserId == item.BillDoctorId);
+
+                var itemDetail = new OutpatientDetailUploadDataCostDetailXmlDto()
+                {
+
+                    DetailId = detailFixedEncoding,
+                    ProjectCode = item.MedicalInsuranceProjectCode,
+                    DirectoryName = item.DirectoryName,
+                    Quantity= item.Quantity,
+                    UnitPrice = item.UnitPrice,
+                    Amount = item.Amount,
+                    ApprovalMark= item.ApprovalMark,
+                    Operators= outpatientBase.Operator,
+                    OrdersSortNo= ordersSortNo,
+                    PrescriptionNo= outpatientBase.InvoiceNo,
+                    OutpatientCostType= GetOutpatientCostType(item.CostDocumentType),
+                    DirectoryCode= CommonHelp.GuidToStr(item.DirectoryCode),
+                    OperateDoctorDepartment = CommonHelp.GuidToStr(item.OperateDepartmentId),
+                    OperateDoctorRange= operatorInfo.F_DoctorTreatmentRange,
+                    HospitalPairingCode=null,
+                    OperateDoctorNo= CommonHelp.GuidToStr(item.BillDoctorId)
+                };
+                uploadCostDetail.Add(itemDetail);
+            }
+
+            return resultData;
+        }
+        /// <summary>
+        /// 获取门诊费用
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        private string GetOutpatientCostType(string param)
+        {
+            string resultData = null;
+            switch (param)
+            {
+                case "0":
+                    resultData = "03";
+                 break;
+                case "1":
+                    resultData = "01";
+                    break;
+                case "2":
+                    resultData = "04";
+                    break;
+                case "3":
+                    resultData = "10";
+                    break;
+            }
+           
+           
+
+
+            return resultData;
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
