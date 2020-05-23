@@ -23,18 +23,34 @@ namespace BenDing.Domain.Models.Params.YinHai
         [XmlArrayAttribute("datasetyz")]
         [XmlArrayItem("row")]
         public List<TestParamRow> RowDataList { get; set; }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        [XmlArrayAttribute("datasetyzc")]
+        [XmlArrayItem("row")]
+        public List<TestParamccRow> RowDataLists { get; set; }
     }
 }
 
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class TestParamRow
-{/// <summary>
+  {/// <summary>
  /// 流水号
  /// </summary>
     [XmlElementAttribute("ykc120", IsNullable = false)]
         public string SerialNumber { get; set; }
 
     }
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+public class TestParamccRow
+{/// <summary>
+    /// 流水号
+    /// </summary>
+    [XmlElementAttribute("ykc120", IsNullable = false)]
+    public string SerialNumber { get; set; }
 
-    
+}
+
+
 

@@ -116,10 +116,22 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// </summary>
         [XmlElementAttribute("ykh012")]
         public decimal CashPayment { get; set; }
+        /// <summary>
+        /// 数据明细
+        /// </summary>
+        [XmlElementAttribute("dataset")]
+        [XmlArrayItem("row")]
+        public List<OutpatientRegisterOutputXmlDataSetDto> DataSetRow { get; set; }
+        /// <summary>
+        /// 费用明细
+        /// </summary>
+        [XmlElementAttribute("fymxdataset")]
+        [XmlArrayItem("row")]
+        public List<OutpatientRegisterOutputXmlCostDetailDto> CostDetailRow { get; set; }
 
-        
     }
-    public class OutpatientRegisterOutputXmlDatasetDto 
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public class OutpatientRegisterOutputXmlDataSetDto 
     {/// <summary>
      /// 参保中心
      /// </summary>
@@ -186,6 +198,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
     /// <summary>
     /// 费用明细
     /// </summary>
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class OutpatientRegisterOutputXmlCostDetailDto
     {/// <summary>
      /// 项目明细编号

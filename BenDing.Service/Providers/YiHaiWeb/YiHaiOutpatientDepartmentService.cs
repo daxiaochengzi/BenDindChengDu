@@ -10,6 +10,7 @@ using BenDing.Domain.Models.Dto.YiHai.Base;
 using BenDing.Domain.Models.Dto.YiHai.Web;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment;
+using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.SystemManage;
@@ -245,6 +246,32 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// <param name="param"></param>
         public void OutpatientRegister(OutpatientRegisterUiParam param)
         {
+            var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
+            var outputData = XmlHelp.DeSerializer<OutpatientRegisterOutputXmlDto>(resultDto.TransactionOutputXml);
+            //中间层数据写入
+            var saveData = new MedicalInsuranceDto
+            {
+                AdmissionInfoJson = param.ResultJson,
+                BusinessId = param.BusinessId,
+                Id = Guid.NewGuid(),
+                IsModify = false,
+                InsuranceType = 999,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
+                MedicalInsuranceHospitalizationNo = outputData.InpatientFixedEncoding,
+              
+                IdentityMark = outputData.PayType
+            };
+            //存中间库
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(baseUser, saveData);
+
+            //日志写入
+            _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+            {
+                User = baseUser,
+                JoinOrOldJson = JsonConvert.SerializeObject(param.ResultJson),
+                Remark = "门诊挂号"
+            });
 
         }
         /// <summary>
@@ -303,14 +330,43 @@ namespace BenDing.Service.Providers.YiHaiWeb
         }
 
         /// <summary>
-        /// 获取没明细上传入参
+        /// 获取门诊明细上传入参
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         public GetYiHaiBaseParm GetOutpatientDetailUploadParam(GetOutpatientDepartmentUiParam param)
         {
+          
             var resultData = new GetYiHaiBaseParm();
 
+            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "48";//42MZ
+            xmlData.TransactionId = param.TransKey;
+            xmlData.AuthCode = userBase.AuthCode;
+            xmlData.UserId = userBase.UserId;
+            xmlData.OrganizationCode = userBase.OrganizationCode;
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            OutpatientPersonJsonDto dataValue = JsonConvert.DeserializeObject<OutpatientPersonJsonDto>(data.Msg);
+
+            //获取初始门诊费用明细
+            var iniCostDetail = dataValue.DetailInfo;
+            var outpatientBase = dataValue.OutpatientPersonBase;
+            //获取未对码的项目
+            var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode) == true)
+                .Select(d => new UnCodeDataDto
+                {
+                    名称 = d.DirectoryName,
+                    项目编号 = d.DirectoryCode
+                }).ToList();
+            if (unCodeData.Any())
+            {
+                string unCodeDataInfo = "医保未对码项目:";
+                unCodeDataInfo += JsonConvert.SerializeObject(unCodeData);
+                throw new Exception(unCodeDataInfo);
+            }
             return resultData;
         }
         /// <summary>

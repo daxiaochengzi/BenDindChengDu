@@ -60,7 +60,6 @@ namespace BenDing.Repository.Providers.Web
                     IDbTransaction transaction = sqlConnection.BeginTransaction();
                     try
                     {
-
                         string strSql = $"update [dbo].[HospitalOrganization] set DeleteTime=getDate(),IsDelete=1,DeleteUserId='{userInfo.UserId}'";
 
                         if (param.Any())

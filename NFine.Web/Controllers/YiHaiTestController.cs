@@ -19,11 +19,11 @@ namespace NFine.Web.Controllers
             {
                 var ddd = new TestParam();
                 ddd.MedicalInsuranceHospitalizationNo = "3434";
-                //
-                   var cc = new List<TestParamRow>();
+                var cc = new List<TestParamRow>();
                 cc.Add(new TestParamRow(){SerialNumber = "2333"});
                 ddd.RowDataList = cc;
-              //var csss=  XmlSerializeHelper.YinHaiXmlSerialize(ddd);
+                var csss=  XmlSerializeHelper.YinHaiXmlSerialize(ddd);
+                var outputData = XmlHelp.DeSerializer<TestsParam>(csss);
             });
 
         }
