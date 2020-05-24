@@ -6,8 +6,8 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.InHospital.QueryInHospitalTime
     /// <summary>
     /// 按入院经办时间入出院信息查询-交易输出详细
     /// </summary>
-    [XmlRoot("data", IsNullable = false)]
-    public class QueryInHospitalTimeOutPutDataXmlDto
+    [XmlRoot("output", IsNullable = false)]
+    public class QueryInHospitalTimeOutPutXmlDto
     {
         [XmlElement("row")]
         public QueryInHospitalTimeOutPutDataXmlRow Row { get; set; }
