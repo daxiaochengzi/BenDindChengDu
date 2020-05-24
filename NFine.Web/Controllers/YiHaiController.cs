@@ -194,8 +194,6 @@ namespace NFine.Web.Controllers
         //    });
 
         //}
-
-
         /// <summary>
         /// 获取门诊结算入参
         /// </summary>

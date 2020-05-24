@@ -169,7 +169,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         [XmlElementAttribute("yka384", IsNullable = false)]
         public string OperateDoctorCode { get; set; }
         /// <summary>
-        /// 医执人员编号  对应医生信息上传中的编码
+        /// 医执人员名称
         /// </summary>
         [XmlElementAttribute("yka287", IsNullable = false)]
         public string OperateDoctorName { get; set; }
@@ -300,7 +300,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         public string AntecedentHistory { get; set; }
         /// <summary>
         /// 体格检查
-        /// </summary>
+        /// </summary> T36.5℃
         [XmlElementAttribute("yke517")]
         public string PhysiqueInspect { get; set; }
        

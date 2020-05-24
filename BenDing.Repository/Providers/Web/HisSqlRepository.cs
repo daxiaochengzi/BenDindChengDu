@@ -843,7 +843,7 @@ namespace BenDing.Repository.Providers.Web
                         sqlConnection.Open();
                         string inStr = CommonHelp.ListToStr(detailIds);
                         insertSql = $@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getdate(),
-                        [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [Isdelete] = 0 and [DetailId] in ('{outpatientNo}')";
+                        [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [Isdelete] = 0 and [DetailId] in ('{inStr}')";
                         sqlConnection.Close();
                     }
 
