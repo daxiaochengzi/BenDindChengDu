@@ -30,6 +30,21 @@ namespace BenDing.Domain.Xml
             //resultData = "http://11.21.1.11:8002/WebService.asmx";
             return resultData;
         }
+        /// <summary>
+        /// 根据出生日期获取年龄
+        /// </summary>
+        /// <param name="birthdate"></param>
+        /// <returns></returns>
+        public static int GetAgeByBirthdate(DateTime birthdate)
+        {
+            DateTime now = DateTime.Now;
+            int age = now.Year - birthdate.Year;
+            if (now.Month < birthdate.Month || (now.Month == birthdate.Month && now.Day < birthdate.Day))
+            {
+                age--;
+            }
+            return age < 0 ? 0 : age;
+        }
 
         //编码
         public static string EncodeBase64(string code_type, string code)

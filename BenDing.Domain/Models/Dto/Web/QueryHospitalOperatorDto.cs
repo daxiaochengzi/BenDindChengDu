@@ -33,5 +33,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
 
         public  string AccountName { get; set; }
+        /// <summary>
+        /// 医保经办机构
+        /// </summary>
+        public string MedicalInsuranceHandleNo { get; set; }
     }
 }

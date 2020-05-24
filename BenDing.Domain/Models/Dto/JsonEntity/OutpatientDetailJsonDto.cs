@@ -10,6 +10,11 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
    public class OutpatientDetailJsonDto
     {
         /// <summary>
+        /// 单据号
+        /// </summary>
+        [JsonProperty(PropertyName = "单据号")]
+        public  string DocumentNo { get; set; }
+        /// <summary>
         /// 费用明细ID
         /// </summary>
         [JsonProperty(PropertyName = "记账流水号")]
@@ -60,11 +65,11 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "目录类别")]
         public string DirectoryCategoryName { get; set; }
-        /// <summary>
-        /// 项目类别编码
-        /// </summary>
-        [JsonProperty(PropertyName = "项目类别编码")]
-        public string DirectoryCategoryCode { get; set; }
+        ///// <summary>
+        ///// 项目类别编码
+        ///// </summary>
+        //[JsonProperty(PropertyName = "项目类别编码")]
+        //public string DirectoryCategoryCode { get; set; }
         /// <summary>
         /// 药品产地
         /// </summary>
@@ -107,11 +112,6 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "金额")]
         public decimal Amount { get; set; }
-
-
-
-
-
         /// <summary>
         /// 开单科室编码
         /// </summary>
@@ -169,9 +169,14 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "经办人")]
         public string Operators { get; set; }
-      
-       
-      
-        
+        /// <summary>
+        /// 门急费用标志
+        /// </summary>
+        [JsonProperty(PropertyName = "门急费用标志")]
+        public string EmergencySigns { get; set; }
+
+
+
+
     }
 }

@@ -153,7 +153,7 @@ namespace BenDing.Repository.Providers.Web
                 var resultData = new QueryHospitalOperatorDto();
                 sqlConnection.Open();
                 string querySql = @"select top 1 F_Account as HisUserAccount,F_HisUserPwd as HisUserPwd, F_RealName as AccountName,
-                                    F_HisUserId as   HisUserId, F_ManufacturerNumber as ManufacturerNumber ,
+                                    F_HisUserId as   HisUserId, F_ManufacturerNumber as ManufacturerNumber ,F_MedicalInsuranceHandleNo as MedicalInsuranceHandleNo,
                                 (select top 1 F_EnCode from [dbo].[Sys_Organize]  as a where a.F_Id=F_DepartmentId and a.F_DeleteMark=0)  as OrganizationCode
                                  from [dbo].[Sys_User]  where F_DeleteMark=0 ";
                 if (!string.IsNullOrWhiteSpace(param.Id))

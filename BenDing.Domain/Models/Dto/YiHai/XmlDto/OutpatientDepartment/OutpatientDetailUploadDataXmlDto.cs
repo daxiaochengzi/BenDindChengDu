@@ -19,7 +19,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// </summary>
         [XmlElementAttribute("datasetfymx")]
         [XmlArrayItem("row")]
-        public List<OutpatientDetailUploadDataCostDetailXmlDto> DetailRow { get; set; }
+        public List<OutpatientDetailUploadDataCostDetailXmlDto> CostDetail { get; set; }
 
         /// <summary>
         /// 挂号信息
@@ -53,8 +53,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         public List<OutpatientPatientOrdersDetail> OrdersDetail { get; set; }
 
     }
-
-    /// <summary>
+       /// <summary>
         /// 费用明细
         /// </summary>
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
@@ -190,7 +189,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// 经办时间
         /// </summary>
         [XmlElementAttribute("aae036", IsNullable = false)]
-        public string OperationTiem { get; set; }
+        public string OperationTime { get; set; }
 
     }
     /// <summary>
@@ -232,7 +231,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         [XmlElementAttribute("ykc315")]
         public string DiagnosisTime { get; set; }
         /// <summary>
-        /// 就诊类型
+        /// 就诊类型 代码(1.普通就诊,2.急救,3.抢救)
         /// </summary>
         [XmlElementAttribute("yke479")]
         public string VisitType { get; set; }
@@ -304,8 +303,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// </summary>
         [XmlElementAttribute("yke517")]
         public string PhysiqueInspect { get; set; }
-
-       public  string  WesternDrugPrescription { get; set; }
+       
 
     }
     /// <summary>
@@ -331,7 +329,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
     public class OutpatientDetailUploadDataDiagnosisDetailXmlDto
     {
         /// <summary>
-        ///诊断分类
+        ///诊断分类  1.中医 2.西医                                              
         /// </summary>
         [XmlElementAttribute("yke526", IsNullable = false)]
         public string DiagnosisType { get; set; }
