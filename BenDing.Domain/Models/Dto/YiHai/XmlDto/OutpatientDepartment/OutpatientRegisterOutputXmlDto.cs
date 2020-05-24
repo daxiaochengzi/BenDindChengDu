@@ -7,7 +7,9 @@ using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
-{   
+{   /// <summary>
+/// 门诊挂号回参
+/// </summary>
     [XmlRoot("output", IsNullable = false)]
     public class OutpatientRegisterOutputXmlDto
     {/// <summary>
@@ -29,7 +31,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// 就诊编号 len(20)
         /// </summary>
         [XmlElementAttribute("akc190")]
-        public string InpatientFixedEncoding { get; set; }
+        public string VisitNo { get; set; }
         /// <summary>
         /// 医保个人编号 
         /// </summary>
@@ -43,7 +45,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// <summary>
         /// 病人性别 1男 2女
         /// </summary>
-        [XmlElementAttribute("aac003")]
+        [XmlElementAttribute("aac004")]
         public string PatientSex { get; set; }
         /// <summary>
         /// 出生日期
@@ -53,11 +55,12 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// <summary>
         /// 报销类别
         /// </summary>
+        [XmlElementAttribute("ykd007")]
         public  string ReimbursementType { get; set; }
         /// <summary>
         /// 门诊统筹待遇享受状态
         /// </summary>
-        [XmlElementAttribute("aac006")]
+        [XmlElementAttribute("yke484")]
         public string OutpatientOverallPlanningState { get; set; }
         /// <summary>
         ///  经办人姓名
@@ -77,17 +80,17 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// <summary>
         ///  合计金额
         /// </summary>
-        [XmlElementAttribute("yka103")]
+        [XmlElementAttribute("yka055")]
         public decimal TotalAmount { get; set; }
         /// <summary>
         ///  全自费
         /// </summary>
-        [XmlElementAttribute("yka103")]
+        [XmlElementAttribute("yka056")]
         public decimal TotalSelfPay { get; set; }
         /// <summary>
         ///  挂钩自付
         /// </summary>
-        [XmlElementAttribute("yka103")]
+        [XmlElementAttribute("yka057")]
         public decimal HookSelfPay { get; set; }
         /// <summary>
         /// 符合范围

@@ -78,6 +78,8 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "结算编号")]
         public  string SettlementNo { get; set; }
+       
+        
     }
 
   

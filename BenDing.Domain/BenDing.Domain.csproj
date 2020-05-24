@@ -148,6 +148,7 @@
     <Compile Include="Models\Dto\YiHai\XmlDto\MedicalInsuranceSignInXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartmentControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartmentDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUploadControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUploadDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegisterControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegisterDataXmlDto.cs" />
@@ -429,6 +430,8 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\Dto\YiHai\OutpatientDepartment\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
