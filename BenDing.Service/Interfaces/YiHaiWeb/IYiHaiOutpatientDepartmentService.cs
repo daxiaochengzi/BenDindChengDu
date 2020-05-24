@@ -27,7 +27,7 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// <param name="param"></param>
         void MedicalInsuranceSignIn(MedicalInsuranceSignInUiParam param);
         /// <summary>
-        /// 获取门诊
+        /// 获取门诊结算入参
         /// </summary>
         /// <param name="param"></param>
         GetYiHaiBaseParm GetOutpatientSettlementParam(GetOutpatientDepartmentUiParam param);
@@ -38,11 +38,16 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// <returns></returns>
          GetYiHaiBaseParm GetHospitalInfoUploadParam(UploadHospitalInfoUiParam param);
         /// <summary>
+        /// 医院信息上传
+        /// </summary>
+        /// <param name="param"></param>
+        void HospitalInfoUpload(UploadHospitalInfoUiParam param);
+        /// <summary>
         /// 获取取消签到参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-         GetYiHaiBaseParm GetCancelMedicalInsuranceSignInParam(CancelMedicalInsuranceSignInParam param);
+        GetYiHaiBaseParm GetCancelMedicalInsuranceSignInParam(CancelMedicalInsuranceSignInParam param);
         /// <summary>
         /// 取消签到
         /// </summary>
@@ -55,9 +60,20 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// <returns></returns>
         GetYiHaiBaseParm GetOutpatientRegisterParam(UiBaseDataParam param);
         /// <summary>
-        /// 医院信息上传
+        /// 门诊挂号
         /// </summary>
         /// <param name="param"></param>
-         void HospitalInfoUpload(UploadHospitalInfoUiParam param);
+        void OutpatientRegister(OutpatientRegisterUiParam param);
+        /// <summary>
+        /// 获取门诊明细上传入参
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetOutpatientDetailUploadParam(GetOutpatientDetailUploadUiParam param);
+        /// <summary>
+        /// 门诊明细上传
+        /// </summary>
+        /// <param name="param"></param>
+        void OutpatientDetailUpload(GetOutpatientDetailUploadUiParam param);
     }
 }

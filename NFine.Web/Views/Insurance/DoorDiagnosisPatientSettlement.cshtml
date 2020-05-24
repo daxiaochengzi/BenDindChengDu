@@ -135,7 +135,9 @@
                 <button type="button" Id="queryData" class="layui-btn layui-btn-radius">查询</button>
 
             </div>
-         
+            <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="OutpatientRegisterDiv">
+                <button type="button" Id="OutpatientRegister" class="layui-btn layui-btn-disabled layui-btn-radius">门诊挂号</button>
+            </div>
             <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
                 <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
 
@@ -170,7 +172,7 @@
         iniMsg = layer;
         $("#InsuranceBalanceDiv").hide();
         $("#AccountPaymentDiv").hide();
-        $("#DoorDiagnosisPreSettlementDiv").hide();
+        $("#OutpatientRegisterDiv").hide();
         $("#DoorDiagnosisSettlementDiv").hide();
         $("#queryDataDiv").hide();
 
@@ -232,15 +234,156 @@
         //初始化病人基本信息
         function iniInpatientInfo() {
             $("#InsuranceBalance").val(baseInfo.Inpatient.AccountBalance);
-              //显示结算按钮
-                $("#DoorDiagnosisSettlementDiv").show();
-                //居民显示结算按钮
-                buttonStatus("DoorDiagnosisSettlement", true);
-                  $("#InsuranceBalanceDiv").show();
+            $("#OutpatientRegisterDiv").show();
+            buttonStatus("OutpatientRegister", true);
+           //   //显示结算按钮
+           // $("#DoorDiagnosisSettlementDiv").show();
+           //     //居民显示结算按钮
+           //buttonStatus("DoorDiagnosisSettlement", true);
+             $("#InsuranceBalanceDiv").show();
         }
         //获取医保病人信息
         window.getInpatientInfoBack = function () {
             iniInpatientInfo();
+        }
+        //获取挂号入参
+        function getOutpatientRegisterParam() {
+  
+           params["timestamp"] = (new Date()).valueOf();
+            $.ajax({
+                type: 'post',
+                url: hostNew + '/GetOutpatientRegisterParam',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                 
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        //样式类名:墨绿深蓝风
+
+                    } else {
+                        var dataValue = data.Data;
+                        if (dataValue.TransactionInputXml !== null) {
+                            var activeX = document.getElementById("CSharpActiveX");
+                  
+                            var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                                , "OutpatientRegister", $("#empid").val());
+                            var activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                $.modalAlert(activeJsonData.Message, "error");
+                         
+                            } else {
+                                var registerParam = params;
+                                registerParam["ResultJson"] = activeJsonData.Data;
+                                outpatientRegister(registerParam);
+                           
+                            }
+                       
+                        }
+                        }
+                }
+
+            });
+        }
+        //门诊挂号
+        function outpatientRegister(registerParam) {
+
+            $.ajax({
+                type: 'post',
+                url: hostNew + '/OutpatientRegister',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                 
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        //样式类名:墨绿深蓝风
+
+                    } else {
+                        getOutpatientDetailUploadParam();
+
+                    }
+                }
+
+            });
+        }
+        //获取门诊病人费用明细上传入参
+        function getOutpatientDetailUploadParam() {
+            params["timestamp"] = (new Date()).valueOf();
+            $.ajax({
+                type: 'post',
+                url: hostNew + '/GetOutpatientDetailUploadParam',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        //样式类名:墨绿深蓝风
+
+                    } else {
+                        var dataValue = data.Data;
+                        if (dataValue.TransactionInputXml !== null) {
+                            var activeX = document.getElementById("CSharpActiveX");
+                  
+                            var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                                , "OutpatientDetailUpload", $("#empid").val());
+                            var activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                $.modalAlert(activeJsonData.Message, "error");
+                         
+                            } else {
+                                var uploadParam = params;
+                                uploadParam["ResultJson"] = activeJsonData.Data;
+                                outpatientDetailUpload(uploadParam);
+                           
+                            }
+
+                        }
+                        }
+                }
+
+            });
+        }
+        //门诊病人费用明细上传
+        function outpatientDetailUpload(uploadParam) {
+            $.ajax({
+                type: 'post',
+                url: hostNew + '/OutpatientDetailUpload',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                 
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+
+                    } else {
+                           //显示结算按钮
+                         $("#DoorDiagnosisSettlementDiv").show();
+                             //居民显示结算按钮
+                        buttonStatus("DoorDiagnosisSettlement", true);
+
+
+                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
+                        //$('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                        //msgSuccess('门诊结算成功');
+                        //buttonStatus("DoorDiagnosisSettlement", false);
+                        ////添加结算信息
+                        //if (data.Data.PayMsg !== null) {
+                        //    settlementData(data.Data.PayMsg);
+                        //}
+                    }
+                }
+
+            });
         }
         //获取门诊结算参数
         function getOutpatientDepartmentCostInputParam() {
@@ -307,16 +450,23 @@
 
             });
         }
-        
+        //门诊挂号
+        $('#OutpatientRegister').on('click', function () {
+            //普通
+            getOutpatientDepartmentCostInputParam();
+
+        });
         //门诊结算
         $('#DoorDiagnosisSettlement').on('click', function () {
             //普通
             getOutpatientDepartmentCostInputParam();
 
         });
+        //查询
         $('#queryData').on('click', function () {
             getInpatientInfo(getInpatientInfoBack);
             $("#queryDataDiv").hide();
+           
         });
 
         $.ajax({

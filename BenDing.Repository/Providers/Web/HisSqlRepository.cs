@@ -823,23 +823,30 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+
         /// <summary>
         /// 更新门诊费用上传明细
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="outpatientNo"></param>
-        public void UpdateOutpatientDetail(UserInfoDto user, string outpatientNo)
+        
+        /// <param name="detailIds"></param>
+        public void UpdateOutpatientDetail(UserInfoDto user,List<string> detailIds)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 string insertSql = null;
                 try
                 {
-                    sqlConnection.Open();
+                   
+                    if (detailIds.Any())
+                    {
+                        sqlConnection.Open();
+                        string inStr = CommonHelp.ListToStr(detailIds);
+                        insertSql = $@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getdate(),
+                        [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [Isdelete] = 0 and [DetailId] in ('{outpatientNo}')";
+                        sqlConnection.Close();
+                    }
 
-                    insertSql = $@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getdate(),
-                        [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [Isdelete] = 0 and [OutpatientNo]='{outpatientNo}'";
-                    sqlConnection.Close();
                 }
                 catch (Exception e)
                 {

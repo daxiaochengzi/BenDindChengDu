@@ -174,11 +174,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         void SaveInpatientInfoDetail(SaveInpatientInfoDetailParam param);
         /// <summary>
-        /// 更新门诊上传状态
+        /// 更新门诊明细上传状态
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="outpatientNo"></param>
-        void UpdateOutpatientDetail(UserInfoDto user, string outpatientNo);
+        /// <param name="detailIds"></param>
+        void UpdateOutpatientDetail(UserInfoDto user, List<string> detailIds);
         /// <summary>
         /// 住院病人查询
         /// </summary>

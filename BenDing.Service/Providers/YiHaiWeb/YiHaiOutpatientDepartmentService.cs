@@ -42,13 +42,14 @@ namespace BenDing.Service.Providers.YiHaiWeb
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebBasicRepository _webServiceBasic;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
-
+        private readonly IHisSqlRepository _hisSqlRepository; 
         public YiHaiOutpatientDepartmentService(
             IWebServiceBasicService iWebServiceBasicService,
             IYiHaiSqlRepository iHaiSqlRepository,
             ISystemManageRepository iSystemManageRepository,
             IWebBasicRepository iWebBasicRepository,
-            IMedicalInsuranceSqlRepository insuranceSqlRepository
+            IMedicalInsuranceSqlRepository insuranceSqlRepository,
+            IHisSqlRepository hisSqlRepository
             )
         {
             _webServiceBasicService = iWebServiceBasicService;
@@ -56,6 +57,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             _systemManageRepository = iSystemManageRepository;
             _webServiceBasic = iWebBasicRepository;
             _medicalInsuranceSqlRepository = insuranceSqlRepository;
+            _hisSqlRepository = hisSqlRepository;
         }
         #region comm
         /// <summary>
@@ -322,6 +324,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
             controlData.TotalAmount = medicalTreatmentTotalCost;
             controlData.nums = costDetail.Count;
             controlData.edition = "5.0";
+            //1.更新门诊明细判断是
+            //2.否费用全部更新
             var dataXml = OutpatientDepartmentDataXml(iniCostDetail, outpatientBase, userBase.OrganizationCode);
             resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlData);
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
@@ -333,7 +337,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public GetYiHaiBaseParm GetOutpatientDetailUploadParam(GetOutpatientDepartmentUiParam param)
+        public GetYiHaiBaseParm GetOutpatientDetailUploadParam(GetOutpatientDetailUploadUiParam param)
         {
 
             var resultData = new GetYiHaiBaseParm();
@@ -377,6 +381,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             }
             //排除挂号费 
             var costDetail = iniCostDetail;
+            
             //获取医保病人
             var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
                 new QueryMedicalInsuranceResidentInfoParam()
@@ -421,6 +426,26 @@ namespace BenDing.Service.Providers.YiHaiWeb
             resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlXmlData);
             return resultData;
         }
+        /// <summary>
+        /// 门诊明细上传
+        /// </summary>
+        /// <param name="param"></param>
+        public void OutpatientDetailUpload(GetOutpatientDetailUploadUiParam param)
+        {
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
+            var outputData = XmlHelp.DeSerializer<OutpatientDetailUploadOutputXmlDto>(resultDto.TransactionOutputXml);
+            var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+
+            if (outputData.CostDetail.Any())
+            {
+                var detailIdList = outputData.CostDetail.Select(d => d.DetailId).ToList();
+                _hisSqlRepository.UpdateOutpatientDetail(userBase, detailIdList);
+            }
+
+          
+        }
+
+
         /// <summary>
         /// 获取门诊取消结算入参
         /// </summary>
@@ -519,7 +544,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
             });
 
         }
-
         #endregion
         /// <summary>
         /// 获取门诊上传明细
@@ -527,7 +551,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// <param name="param"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-
         private UploadHospitalInfoDataXmlDto GetUploadHospitalInfoDataXml(List<HospitalGeneralCatalogEntity> param, UserInfoDto user)
         {
             var resultData = new UploadHospitalInfoDataXmlDto();
