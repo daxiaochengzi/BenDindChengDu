@@ -13,20 +13,20 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
     {   /// <summary>
        /// 费用明细
        /// </summary>
-        [XmlElementAttribute("datasetfymx")]
+        [XmlArrayAttribute("datasetfymx")]
         [XmlArrayItem("row")]
         public List<OutpatientDepartmentDataXmlRowDto> CostDetail { get; set; }
         /// <summary>
         /// 医嘱明细
         /// </summary>
-        [XmlElementAttribute("datasetyz")]
+        [XmlArrayAttribute("datasetyz")]
         [XmlArrayItem("row")]
         public List<OutpatientDepartmentDataXmlDetailDto> OrdersDetail { get; set; }
 
         /// <summary>
         /// 离休门诊结算诊断明细(最多24条)
         /// </summary>
-        [XmlElementAttribute("datasetyz")]
+        [XmlArrayAttribute("datasetyz")]
         [XmlArrayItem("row")]
         public List<OutpatientDepartmentDataXmlDetailQuitDto> QuitDetail { get; set; }
     }

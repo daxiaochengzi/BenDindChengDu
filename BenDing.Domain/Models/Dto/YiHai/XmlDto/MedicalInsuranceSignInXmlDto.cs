@@ -15,7 +15,6 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
     {/// <summary>
         ///  
         /// </summary>
-        
         [XmlArrayItem("row")]
         public List<MedicalInsuranceSignInXmlRowDto> Row { get; set; }
     }
