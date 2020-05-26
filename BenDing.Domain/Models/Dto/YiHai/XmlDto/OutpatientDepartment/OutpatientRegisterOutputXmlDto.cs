@@ -122,13 +122,13 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// <summary>
         /// 数据明细
         /// </summary>
-        [XmlElementAttribute("dataset")]
+        [XmlArrayAttribute("dataset")]
         [XmlArrayItem("row")]
         public List<OutpatientRegisterOutputXmlDataSetDto> DataSetRow { get; set; }
         /// <summary>
         /// 费用明细
         /// </summary>
-        [XmlElementAttribute("fymxdataset")]
+        [XmlArrayAttribute("fymxdataset")]
         [XmlArrayItem("row")]
         public List<OutpatientRegisterOutputXmlCostDetailDto> CostDetailRow { get; set; }
 
@@ -184,7 +184,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// <summary>
         /// 清算分中心
         /// </summary>
-        [XmlElementAttribute("ykc121")]
+        [XmlElementAttribute("ykb037")]
         public string SettlementPlaceCenter { get; set; }
         /// <summary>
         /// 清算方式
@@ -194,7 +194,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// <summary>
         /// 清算类别  城镇职工:城镇职工门;城乡居民城:乡居民门诊;
         /// </summary>
-        [XmlElementAttribute("yka054")]
+        [XmlElementAttribute("yka316")]
         public string CenterSettlementCostType { get; set; }
         
     }

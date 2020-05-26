@@ -546,7 +546,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         }
         #endregion
         /// <summary>
-        /// 获取门诊上传明细
+        /// 获取科室明细
         /// </summary>
         /// <param name="param"></param>
         /// <param name="user"></param>
@@ -568,15 +568,18 @@ namespace BenDing.Service.Providers.YiHaiWeb
             //获取医生数据
             var doctorDataIni = paramNew.Where(c => c.DirectoryType == "1").ToList();
             //获取病区数据
-            var inpatientAreaData = paramNew.Where(c => c.DirectoryType == "1").ToList();
+            var inpatientAreaData = paramNew.Where(c => c.DirectoryType == "2").ToList();
             //总床位数
-            resultData.BedNum.TotalBadNum = badCount;
+            resultData.BedNum =new UploadHospitalInfoBeDNumData()
+            {
+                TotalBadNum = badCount
+            }; 
             //床位xml数据
             var badXmlData = new List<UploadHospitalInfoDataBedXmlDto>();
             foreach (var item in badData)
             {
                 var inpatientAreaItemData = inpatientAreaData
-                    .FirstOrDefault(c => c.DirectoryCode == item.DirectoryCode);
+                    .FirstOrDefault(c => c.DirectoryCode == item.Remark);
                 if (inpatientAreaItemData == null) throw new Exception("当前床位未分配病区");
                 var departmentItemData =
                     departmentData.FirstOrDefault(c => c.InpatientAreaCode == inpatientAreaItemData.DirectoryCode);
@@ -594,7 +597,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 };
                 badXmlData.Add(itemData);
             }
-            //添加床位明细数据
+            ////添加床位明细数据
             if (badXmlData.Any()) resultData.BedDetail = badXmlData;
             var departmentXmlData = new List<UploadHospitalInfoDataDepartmentXmlDto>();
             foreach (var item in departmentData)
@@ -611,7 +614,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 };
                 departmentXmlData.Add(itemData);
             }
-            //添加科室明细数据
+            ////添加科室明细数据
             if (departmentXmlData.Any()) resultData.DepartmentDetail = departmentXmlData;
 
             var doctorXmlData = new List<UploadHospitalInfoDataDoctorXmlDto>();
@@ -649,7 +652,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 doctorXmlData.Add(itemData);
 
             }
-            //添加科室明细数据
+            ////添加医保资料医生
             if (doctorXmlData.Any()) resultData.DoctorDetail = doctorXmlData;
 
             return resultData;

@@ -40,7 +40,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
             {
                 Id = loginInfo.UserId
             });
-          if (!string.IsNullOrEmpty(userBase.HisUserId)) throw new  Exception("当前页面操作人员为基层账户人员!!!");
+          if (string.IsNullOrWhiteSpace(userBase.HisUserId)) throw new  Exception("当前页面操作人员为基层账户人员!!!");
             ViewBag.empid = userBase.HisUserId;
             return View();
         }
