@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
+namespace BenDing.Domain.Models.Dto.YiHai.CancelMedicalInsuranceSignIn
 {
     [XmlRoot("Control", IsNullable = false)]
     public class CancelMedicalInsuranceSignInControlXmlDto

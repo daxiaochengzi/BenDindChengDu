@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.YiHai.Web;
 using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Web;
@@ -18,7 +19,7 @@ using NFine.Domain._03_Entity.BenDingManage;
 
 namespace BenDing.Repository.Providers.YiHaiWeb
 {
-   public class YiHaiSqlRepository: IYiHaiSqlRepository
+    public class YiHaiSqlRepository : IYiHaiSqlRepository
     {
         private readonly string _connectionString;
         private readonly Log _log;
@@ -34,7 +35,7 @@ namespace BenDing.Repository.Providers.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public List<MedicalInsuranceSignInEntity>  QueryMedicalInsuranceSignIn(QueryMedicalInsuranceSignInParam param)
+        public List<MedicalInsuranceSignInEntity> QueryMedicalInsuranceSignIn(QueryMedicalInsuranceSignInParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -105,10 +106,8 @@ namespace BenDing.Repository.Providers.YiHaiWeb
 
             }
         }
-
-
         /// <summary>
-        /// 码表查询
+        /// 医院信息查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -158,9 +157,9 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                     {
                         strSql += $" and DirectoryCode = '{param.DirectoryCode}'";
                     }
-                  
-                    
-                   var data = sqlConnection.Query<HospitalGeneralCatalogEntity>(strSql);
+
+
+                    var data = sqlConnection.Query<HospitalGeneralCatalogEntity>(strSql);
                     sqlConnection.Close();
                     return data.ToList();
                 }
@@ -203,8 +202,137 @@ namespace BenDing.Repository.Providers.YiHaiWeb
 
             }
         }
+        /// <summary>
+        /// 结算流程新增
+        /// </summary>
+        /// <param name="param"></param>
+
+        public void InsertSettlementProcess(SettlementProcessDto param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string strSql = null;
+                try
+                {
+                    strSql = $@"INSERT INTO [dbo].[SettlementProcess]
+                               ([Id]
+                               ,[BusinessId]
+                               ,[ProcessStep]
+                               ,[JosnContent]
+                               ,[BatchNo]
+                               ,[SerialNumber]
+                               ,[VerificationCode]
+                               ,[IsDelete]
+                               ,[CreateUserId]
+                               ,[CreateTime]
+                              )
+                             VALUES
+                               ('{param.Id}'
+                               ,'{param.BusinessId}'
+                               , {param.ProcessStep}
+                               ,'{param.JosnContent}'
+                               ,'{param.BatchNo}'
+                               ,'{param.SerialNumber}'
+                               ,'{param.VerificationCode}'
+                               ,0
+                               ,'{param.CreateUserId}'
+                               ,getdate()
+                               )";
+
+                    var data = sqlConnection.Execute(strSql);
+                    sqlConnection.Close();
 
 
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+            }
+        }
+        /// <summary>
+        /// 结算流程查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public List<SettlementProcessDto> QuerySettlementProcess(QuerySettlementProcessParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string strSql = null;
+                try
+                {
+                    strSql = $@"
+                      SELECT [Id]
+                      ,[BusinessId]
+                      ,[ProcessStep]
+                      ,[JosnContent]
+                      ,[BatchNo]
+                      ,[SerialNumber]
+                      ,[VerificationCode]
+                      ,[IsDelete]
+                      ,[Version]
+                      ,[CreateTime]
+                      ,[CreateUserId]
+                  FROM [dbo].[SettlementProcess] where BusinessId='{param.BusinessId}'  and IsDelete=0                           ";
+                    if (param.ProcessStep != null)
+                    {
+                        strSql += $" and ProcessStep={param.ProcessStep}";
+                    }
+
+                    var data = sqlConnection.Query<SettlementProcessDto>(strSql);
+                    sqlConnection.Close();
+                    return data.ToList();
+
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
+            }
+        }
+        //更新门诊病人结算状态
+        public void UpdateOutpatientSettlement(UpdateOutpatientSettlementParam param)
+        {
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string strSql = null;
+                try
+                {
+
+
+                    if (!string.IsNullOrWhiteSpace(param.VisitNo) && param.ProcessStep != null)
+                    {
+                           strSql = $@"update [dbo].[Outpatient] set [VisitNo]='{param.VisitNo}' ,[ProcessStep]={param.ProcessStep}
+                            where BusinessId='{param.BusinessId}' and IsDelete=0";
+                    } else
+                    {
+                        strSql = $@"update [dbo].[Outpatient] set [ProcessStep]={param.ProcessStep}
+                            where BusinessId='{param.BusinessId}' and IsDelete=0";
+                    }
+                       
+                            
+                            
+                            var data = sqlConnection.Execute(strSql);
+                        sqlConnection.Close();
+
+                    
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
+            }
+        }
     }
 
 }

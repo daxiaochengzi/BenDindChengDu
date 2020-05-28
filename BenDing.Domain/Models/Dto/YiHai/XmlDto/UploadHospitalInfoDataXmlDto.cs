@@ -18,7 +18,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
         /// <summary>
         /// 床位明细
         /// </summary>
-        [XmlElementAttribute("datasetcw")]
+        [XmlArrayAttribute("datasetcw")]
         [XmlArrayItem("row")]
         public List<UploadHospitalInfoDataBedXmlDto> BedDetail { get; set; }
 
@@ -26,13 +26,13 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
         /// <summary>
         /// 科室明细
         /// </summary>
-        [XmlElementAttribute("datasetks")]
+        [XmlArrayAttribute("datasetks")]
         [XmlArrayItem("row")]
         public List<UploadHospitalInfoDataDepartmentXmlDto> DepartmentDetail { get; set; }
         /// <summary>
         /// 医生
         /// </summary>
-        [XmlElementAttribute("datasetyzry")]
+        [XmlArrayAttribute("datasetyzry")]
         [XmlArrayItem("row")]
         public List<UploadHospitalInfoDataDoctorXmlDto> DoctorDetail { get; set; }
 
@@ -221,7 +221,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
         /// <summary>
         /// 医生执业地点
         /// </summary>
-        [XmlElementAttribute("yke431", IsNullable = false)]
+        [XmlElementAttribute("yke432", IsNullable = false)]
         public string DoctorAddress { get; set; }
 
         

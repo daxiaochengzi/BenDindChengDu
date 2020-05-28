@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BenDing.Domain.Models.Params.Resident;
 
-namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
+namespace BenDing.Domain.Models.Dto.YiHai.MedicalInsuranceSignIn
 {/// <summary>
 /// 
 /// </summary>
     [XmlRoot("output", IsNullable = false)]
-    public class MedicalInsuranceSignInXmlDto
+    public class MedicalInsuranceSignInOutputXmlDto
     {/// <summary>
         ///  
         /// </summary>
-        
         [XmlArrayItem("row")]
         public List<MedicalInsuranceSignInXmlRowDto> Row { get; set; }
     }

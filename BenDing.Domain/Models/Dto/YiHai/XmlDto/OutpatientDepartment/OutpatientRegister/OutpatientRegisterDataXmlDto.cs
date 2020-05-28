@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
+namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
 {   /// <summary>
 /// 门诊挂号
 /// </summary>
@@ -14,22 +14,22 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
     {   /// <summary>
         /// 挂号类型 (1.普通门诊 2.急诊 3.专家门诊 4.其他 )
         /// </summary>
-        [XmlElementAttribute("YKE309")]
+        [XmlElementAttribute("yka309")]
         public string RegisterType { get; set; }
         /// <summary>
         /// 医保科室编码
         /// </summary>
-        [XmlElementAttribute("YKA382")]
+        [XmlElementAttribute("yka382")]
         public string MedicalInsuranceDepartmentCode { get; set; }
         /// <summary>
         /// 基层科室编码
         /// </summary>
-        [XmlElementAttribute("YKE506")]
+        [XmlElementAttribute("yke506")]
         public string BaseDepartmentCode { get; set; }
         /// <summary>
         /// 基层科室名称
         /// </summary>
-        [XmlElementAttribute("YKA383")]
+        [XmlElementAttribute("yka383")]
         public string BaseDepartmentName { get; set; }
         /// <summary>
         /// 经办人姓名
@@ -39,13 +39,14 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// <summary>
         /// 经办时间 (yyyy-MM-dd HH:mm:ss)
         /// </summary>
-        [XmlElementAttribute("AAE011")]
+        [XmlElementAttribute("aae036")]
         public string OperatorTime { get; set; }
 
         /// <summary>
         /// 费用明细
         /// </summary>
-        [XmlElementAttribute("datasetfymx")]
+        [XmlArrayAttribute("datasetfymx")]
+    
         [XmlArrayItem("row")]
         public List<OutpatientRegisterDataXmlRow> DetailRow { get; set; }
     }
@@ -94,15 +95,16 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         [XmlElementAttribute("aae011")]
         public string Operator { get; set; }
         /// <summary>
-        /// 发生时间
-        /// </summary>
-        [XmlElementAttribute("yke123")]
-        public string HappenTime { get; set; }
-        /// <summary>
         /// 录入时间
         /// </summary>
         [XmlElementAttribute("aae036")]
         public string InputTime { get; set; }
+        /// <summary>
+        /// 发生时间
+        /// </summary>
+        [XmlElementAttribute("yke123")]
+        public string HappenTime { get; set; }
+        
         /// <summary>
         /// 备注
         /// </summary>

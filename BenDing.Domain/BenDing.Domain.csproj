@@ -91,11 +91,12 @@
     <Compile Include="Models\Dto\YiHai\Base\GetYiHaiBaseParm.cs" />
     <Compile Include="Models\Dto\YiHai\Base\YiHaiResultData.cs" />
     <Compile Include="Models\Dto\YiHai\JsonEntity\MedicalInsuranceSignInJsonDto.cs" />
+    <Compile Include="Models\Dto\YiHai\OutpatientDepartment\SettlementProcessDto.cs" />
     <Compile Include="Models\Dto\YiHai\Web\CodeTableDto.cs" />
     <Compile Include="Models\Dto\YiHai\Web\MedicalInsuranceSignInDto.cs" />
     <Compile Include="Models\Dto\YiHai\Web\UnCodeDataDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\CancelMedicalInsuranceSignInControlXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\CancelMedicalInsuranceSignInDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\CancelMedicalInsuranceSignIn\CancelMedicalInsuranceSignInControlXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\CancelMedicalInsuranceSignIn\CancelMedicalInsuranceSignInDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\ControlXmlBaseDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\AdmissionForHospitalUpdate\AdmissionForHospitalUpdateControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\AdmissionForHospitalUpdate\AdmissionForHospitalUpdateDataXmlDto.cs" />
@@ -145,19 +146,23 @@
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeOutPutXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\MedicalInsuranceSignInXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartmentControlXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartmentDataXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUploadControlXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUploadDataXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUploadOutputXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegisterControlXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegisterDataXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegisterOutputXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\MedicalInsuranceSignInOutputXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlement\OutpatientSettlementControlXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlement\OutpatientSettlementDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\CancelOutpatientSettlement\CancelOutpatientSettlementControlXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\CancelOutpatientSettlement\CancelOutpatientSettlementDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUpload\OutpatientDetailUploadControlXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUpload\OutpatientDetailUploadDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientDetailUpload\OutpatientDetailUploadOutputXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegister\OutpatientRegisterControlXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegister\OutpatientRegisterDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientRegister\OutpatientRegisterOutputXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlement\OutpatientSettlementOutputXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutputXmlBaseDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\SignInControlXmlDto.cs" />
-    <Compile Include="Models\Dto\YiHai\XmlDto\SignInDataXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\SignInControlXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\SignInDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\UploadHospitalInfoDataXmlDto.cs" />
+    <Compile Include="Models\Enums\ProcessStepEnum.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationCancelParam.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\MonthlyHospitalizationDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientCostReturnDataDto.cs" />
@@ -408,6 +413,8 @@
     <Compile Include="Models\Params\Workers\WorkerSettlementCancelParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerStrokeCardParam.cs" />
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\HospitalInfoUploadUpdateParam.cs" />
+    <Compile Include="Models\Params\YinHai\OutpatientDepartment\QuerySettlementProcessParam.cs" />
+    <Compile Include="Models\Params\YinHai\OutpatientDepartment\UpdateOutpatientSettlementParam.cs" />
     <Compile Include="Models\Params\YinHai\TestsParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\GetOutpatientDetailUploadUiParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\UploadHospitalInfoUiParam.cs" />
@@ -432,8 +439,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Dto\YiHai\OutpatientDepartment\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
+namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
 {/// <summary>
  /// 门诊挂号控制
  /// </summary>

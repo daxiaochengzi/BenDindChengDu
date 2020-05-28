@@ -10,5 +10,7 @@ namespace BenDing.Domain.Models.Dto.Web
 /// </summary>
    public class QueryOutpatientDto: BaseOutpatientInfoDto
     {
+        public string VisitNo { get; set; }
+        public  int? ProcessStep { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.YiHai.Web;
 using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Web;
@@ -35,7 +36,22 @@ namespace BenDing.Repository.Interfaces.YiHaiWeb
       /// </summary>
       /// <param name="param"></param>
       void HospitalInfoUploadUpdate(HospitalInfoUploadUpdateParam param);
-
+        /// <summary>
+        /// 结算流程新增
+        /// </summary>
+        /// <param name="param"></param>
+      void InsertSettlementProcess(SettlementProcessDto param);
+        /// <summary>
+        /// 结算流程查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        List<SettlementProcessDto> QuerySettlementProcess(QuerySettlementProcessParam param);
+        /// <summary>
+        /// 更新病人结算流程
+        /// </summary>
+        /// <param name="param"></param>
+         void UpdateOutpatientSettlement(UpdateOutpatientSettlementParam param);
 
   }
 }

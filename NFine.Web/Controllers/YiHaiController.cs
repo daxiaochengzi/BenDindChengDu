@@ -1,16 +1,8 @@
-﻿using BenDing.Domain.Models.Params.Web;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+﻿using System.Web.Http;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
-using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Ui;
 using BenDing.Domain.Models.Params.YinHai.Web;
-using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces.YiHaiWeb;
 
 namespace NFine.Web.Controllers

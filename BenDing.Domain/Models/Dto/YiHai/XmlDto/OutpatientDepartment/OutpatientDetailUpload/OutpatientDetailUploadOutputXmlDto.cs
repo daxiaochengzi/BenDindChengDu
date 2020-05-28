@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
+namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDetailUpload
 {   /// <summary>
     /// 门诊明细上传回参
     /// </summary>

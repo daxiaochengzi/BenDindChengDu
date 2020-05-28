@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace BenDing.Domain.Models.Dto.YiHai.XmlDto
+namespace BenDing.Domain.Models.Dto.YiHai.MedicalInsuranceSignIn
 {
     [XmlRoot("data", IsNullable = false)]
     public class SignInDataXmlDto

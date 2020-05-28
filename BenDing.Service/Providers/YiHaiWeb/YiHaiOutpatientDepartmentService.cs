@@ -7,9 +7,15 @@ using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.YiHai.Base;
+using BenDing.Domain.Models.Dto.YiHai.CancelMedicalInsuranceSignIn;
+using BenDing.Domain.Models.Dto.YiHai.MedicalInsuranceSignIn;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement;
 using BenDing.Domain.Models.Dto.YiHai.Web;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDetailUpload;
+using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
@@ -99,7 +105,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         {
             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
             var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
-            var outputData = XmlHelp.DeSerializer<MedicalInsuranceSignInXmlDto>(resultDto.TransactionOutputXml);
+            var outputData = XmlHelp.DeSerializer<MedicalInsuranceSignInOutputXmlDto>(resultDto.TransactionOutputXml);
             if (outputData != null && outputData.Row.Any())
             {
                 var entityId = Guid.NewGuid();
@@ -176,8 +182,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 RelationId = Guid.Parse(param.KeyWord)
             });
         }
-
-
         #endregion
         #region 门诊
         /// <summary>
@@ -319,8 +323,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
             decimal medicalTreatmentTotalCost = string.IsNullOrEmpty(outpatientBase.MedicalTreatmentTotalCost) == true
                 ? Convert.ToDecimal(outpatientBase.MedicalTreatmentTotalCost)
                 : 0;
-            var controlData = new OutpatientDepartmentControlXmlDto();
-            controlData.PaymentCategory = param.PaymentCategory; //【城职普通门诊0201】、【城居普通门诊0203】
+            var controlData = new OutpatientSettlementControlXmlDto();
+            //controlData.PaymentCategory = param.PaymentCategory; //【城职普通门诊0201】、【城居普通门诊0203】
             controlData.TotalAmount = medicalTreatmentTotalCost;
             controlData.nums = costDetail.Count;
             controlData.edition = "5.0";
@@ -331,7 +335,42 @@ namespace BenDing.Service.Providers.YiHaiWeb
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
             return resultData;
         }
+        /// <summary>
+        /// 门诊结算
+        /// </summary>
+        /// <param name="param"></param>
+        public void OutpatientSettlement(GetOutpatientDepartmentUiParam param)
+        {
+            var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
+            var outputData = XmlHelp.DeSerializer<OutpatientSettlementOutputXmlDto>(resultDto.TransactionOutputXml);
 
+            //更新门诊病人状态
+             _yiHaiSqlRepository.UpdateOutpatientSettlement(
+                new UpdateOutpatientSettlementParam {
+                    BusinessId=param.BusinessId,
+                    ProcessStep=(int)ProcessStepEnum.门诊结算,
+                    VisitNo= outputData.VisitNo
+                });
+            _yiHaiSqlRepository.InsertSettlementProcess(new SettlementProcessDto() {
+                Id = Guid.NewGuid(),
+                BatchNo = resultDto.BatchNo,
+                SerialNumber = resultDto.SerialNumber,
+                JosnContent = param.ResultJson,
+                ProcessStep = (int)ProcessStepEnum.门诊结算,
+                BusinessId = param.BusinessId,
+                CreateUserId = param.UserId,
+                CreateTime = DateTime.Now,
+                VerificationCode= resultDto.VerificationCode
+            });
+            //日志写入
+            _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+            {
+                User = baseUser,
+                JoinOrOldJson = JsonConvert.SerializeObject(param.ResultJson),
+                Remark = "门诊挂号"
+            });
+        }
         /// <summary>
         /// 获取门诊明细上传入参
         /// </summary>
@@ -546,7 +585,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         }
         #endregion
         /// <summary>
-        /// 获取门诊上传明细
+        /// 获取科室明细
         /// </summary>
         /// <param name="param"></param>
         /// <param name="user"></param>
@@ -568,15 +607,18 @@ namespace BenDing.Service.Providers.YiHaiWeb
             //获取医生数据
             var doctorDataIni = paramNew.Where(c => c.DirectoryType == "1").ToList();
             //获取病区数据
-            var inpatientAreaData = paramNew.Where(c => c.DirectoryType == "1").ToList();
+            var inpatientAreaData = paramNew.Where(c => c.DirectoryType == "2").ToList();
             //总床位数
-            resultData.BedNum.TotalBadNum = badCount;
+            resultData.BedNum =new UploadHospitalInfoBeDNumData()
+            {
+                TotalBadNum = badCount
+            }; 
             //床位xml数据
             var badXmlData = new List<UploadHospitalInfoDataBedXmlDto>();
             foreach (var item in badData)
             {
                 var inpatientAreaItemData = inpatientAreaData
-                    .FirstOrDefault(c => c.DirectoryCode == item.DirectoryCode);
+                    .FirstOrDefault(c => c.DirectoryCode == item.Remark);
                 if (inpatientAreaItemData == null) throw new Exception("当前床位未分配病区");
                 var departmentItemData =
                     departmentData.FirstOrDefault(c => c.InpatientAreaCode == inpatientAreaItemData.DirectoryCode);
@@ -594,7 +636,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 };
                 badXmlData.Add(itemData);
             }
-            //添加床位明细数据
+            ////添加床位明细数据
             if (badXmlData.Any()) resultData.BedDetail = badXmlData;
             var departmentXmlData = new List<UploadHospitalInfoDataDepartmentXmlDto>();
             foreach (var item in departmentData)
@@ -611,7 +653,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 };
                 departmentXmlData.Add(itemData);
             }
-            //添加科室明细数据
+            ////添加科室明细数据
             if (departmentXmlData.Any()) resultData.DepartmentDetail = departmentXmlData;
 
             var doctorXmlData = new List<UploadHospitalInfoDataDoctorXmlDto>();
@@ -649,7 +691,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 doctorXmlData.Add(itemData);
 
             }
-            //添加科室明细数据
+            ////添加医保资料医生
             if (doctorXmlData.Any()) resultData.DoctorDetail = doctorXmlData;
 
             return resultData;
@@ -859,7 +901,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// <param name="outpatientBase"></param>
         /// <param name="organizationCode"></param>
         /// <returns></returns>
-        private OutpatientDepartmentDataXmlDto OutpatientDepartmentDataXml(
+        private OutpatientSettlementDataXmlDto OutpatientDepartmentDataXml(
             List<OutpatientDetailJsonDto> costDetail,
             OutpatientPersonBaseJsonDto outpatientBase, string organizationCode)
         {
@@ -869,7 +911,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 DirectoryCodeList = costDetail.Select(c => c.DirectoryCode).ToList(),
                 OrganizationCode = organizationCode
             });
-            var resultData = new OutpatientDepartmentDataXmlDto();
+            var resultData = new OutpatientSettlementDataXmlDto();
             var costDetailData = new List<OutpatientDepartmentDataXmlRowDto>();
             var ordersDetailData = new List<OutpatientDepartmentDataXmlDetailDto>();
             foreach (var item in costDetail)
