@@ -88,7 +88,21 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 诊断json
         /// </summary>
         public  string DiagnosticJson { get; set; }
-       
+        /// <summary>
+        /// 是否西医诊断
+        /// </summary>
+        public int IsWestMedicineDiagnosis { get; set; }
+        /// <summary>
+        /// 是否挂号项目
+        /// </summary>
+
+
+        public int IsRegisteredProject { get; set; }
+        /// <summary>
+        /// 用药天数
+        /// </summary>
+
+        public int UseDrugDay { get; set; }
 
         /// <summary>
         /// 诊断列表

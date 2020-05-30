@@ -24,16 +24,17 @@ var baseInfo = {
 //判断插件是否存在
 function DetectActiveX() {
     try {
+       
         var activeX = document.getElementById("CSharpActiveX");
         var versionNumber = activeX.name;
         var activeVersionNumber = activeX.GetVersionNumber();
         if (parseInt(versionNumber) > parseInt(activeVersionNumber)) {
             msgError("当前插件版本过低,请下载新的版本!!!");
         }//签到检查
-        else {
+        //else {
 
-            SignInCheck();
-        }
+        //    SignInCheck();
+        //}
 
     }
     catch (e) {
@@ -101,45 +102,45 @@ function medicalInsuranceSignIn(signInParam) {
 
     });
 }
-function queryData(getInpatientInfoBack) {
-   layer.open({
-        type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
-        area: ['500px', '220px'],
-        shift: 2, //可选动画类型0-6
-        scrollbar: false,
-        title: false,
-        moveType: 1,//拖拽模式，0或者1
-        content: "Card?IdCardNo=" + baseInfo.HospitalInfo.IdentityMark,
-        btn: ['确定', '取消']
-        , yes: function (index) {
+//function queryData(getInpatientInfoBack) {
+//   layer.open({
+//        type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
+//        area: ['500px', '220px'],
+//        shift: 2, //可选动画类型0-6
+//        scrollbar: false,
+//        title: false,
+//        moveType: 1,//拖拽模式，0或者1
+//        content: "Card?IdCardNo=" + baseInfo.HospitalInfo.IdentityMark,
+//        btn: ['确定', '取消']
+//        , yes: function (index) {
 
-            var res = window["layui-layer-iframe" + index];
-            var cardData = res.getMyData();
-            if (cardData.AfferentSign === "3") {
-                if (cardData.CardPwd === "" || cardData.CardPwd === null) {
-                    msgError("请输入卡密码!!!");
-                } else {
-                    baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
-                    baseInfo.HospitalInfo.CardPwd = cardData.CardPwd;
-                    getReadCardInpatientInfo(getInpatientInfoBack);
+//            var res = window["layui-layer-iframe" + index];
+//            var cardData = res.getMyData();
+//            if (cardData.AfferentSign === "3") {
+//                if (cardData.CardPwd === "" || cardData.CardPwd === null) {
+//                    msgError("请输入卡密码!!!");
+//                } else {
+//                    baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
+//                    baseInfo.HospitalInfo.CardPwd = cardData.CardPwd;
+//                    getReadCardInpatientInfo(getInpatientInfoBack);
 
-                    layer.close(index);
-                }
+//                    layer.close(index);
+//                }
 
-            } else {
-                baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
-                baseInfo.HospitalInfo.IdentityMark = cardData.IdentityMark;
-                getInpatientInfo(getInpatientInfoBack);
-                layer.close(index);
-            }
+//            } else {
+//                baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
+//                baseInfo.HospitalInfo.IdentityMark = cardData.IdentityMark;
+//                getInpatientInfo(getInpatientInfoBack);
+//                layer.close(index);
+//            }
 
 
-        }, btn2: function (index) {
-            layer.close(index);
-        }
+//        }, btn2: function (index) {
+//            layer.close(index);
+//        }
 
-    });
-}
+//    });
+//}
 //按钮状态
 function buttonStatus(buttonId, status) {
     //取消禁用

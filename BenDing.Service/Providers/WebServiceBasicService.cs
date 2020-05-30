@@ -275,7 +275,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param)
         {
-            BaseOutpatientInfoDto resultData = null;
+           var  resultData = new BaseOutpatientInfoDto() ;
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.UiParam.BusinessId;
             xmlData.HealthInsuranceNo = "48";//42MZ
@@ -289,11 +289,22 @@ namespace BenDing.Service.Providers
             var dataValueFirst = dataValue.OutpatientPersonBase;
             if (dataValueFirst != null)
             {
+                
                 resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(dataValueFirst);
                 resultData.Id = param.Id;
                 resultData.BusinessId = param.UiParam.BusinessId;
-                resultData.DiagnosticJson = JsonConvert.SerializeObject(dataValue.DiagnosisList);
-                resultData.DiagnosisList = dataValue.DiagnosisList;
+                resultData.DiagnosticJson = JsonConvert.SerializeObject(resultData.DiagnosisList);
+                if (dataValue.WestMedicineDiagnosisList.Any())
+                {
+                    resultData.IsWestMedicineDiagnosis = 0;
+                    resultData.DiagnosisList = dataValue.WestMedicineDiagnosisList;
+                }
+                else
+                {
+                    resultData.IsWestMedicineDiagnosis = 1;
+                    resultData.DiagnosisList = dataValue.ChineseMedicineDiagnosisList;
+                }
+
                 if (param.IsSave)
                 {
                     _hisSqlRepository.SaveOutpatient(param.User, resultData);

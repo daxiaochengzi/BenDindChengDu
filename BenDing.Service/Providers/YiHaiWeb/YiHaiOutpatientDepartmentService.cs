@@ -14,6 +14,7 @@ using BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement;
 using BenDing.Domain.Models.Dto.YiHai.Web;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment.OutpatientDetailUpload;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDetailUpload;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister;
 using BenDing.Domain.Models.Enums;
@@ -349,7 +350,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
              _yiHaiSqlRepository.UpdateOutpatientSettlement(
                 new UpdateOutpatientSettlementParam {
                     BusinessId=param.BusinessId,
-                    ProcessStep=(int)ProcessStepEnum.门诊结算,
+                    ProcessStep=(int)OutpatientSettlementStep.OutpatientSettlement,
                     VisitNo= outputData.VisitNo
                 });
             _yiHaiSqlRepository.InsertSettlementProcess(new SettlementProcessDto() {
@@ -357,7 +358,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 BatchNo = resultDto.BatchNo,
                 SerialNumber = resultDto.SerialNumber,
                 JosnContent = param.ResultJson,
-                ProcessStep = (int)ProcessStepEnum.门诊结算,
+                ProcessStep = (int)OutpatientSettlementStep.OutpatientSettlement,
                 BusinessId = param.BusinessId,
                 CreateUserId = param.UserId,
                 CreateTime = DateTime.Now,
@@ -409,8 +410,19 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 unCodeDataInfo += JsonConvert.SerializeObject(unCodeData);
                 throw new Exception(unCodeDataInfo);
             }
+            //诊断信息
+            var diagnosisList = new List<InpatientDiagnosisDataDto>();
+            if (dataValue.WestMedicineDiagnosisList.Any())
+            {
+                diagnosisList = dataValue.WestMedicineDiagnosisList;
+            }
+            else
+            {
+                diagnosisList = dataValue.ChineseMedicineDiagnosisList;
+            }
+
             //获取未对码的诊断
-            var unDiagnosisCodeData = dataValue.DiagnosisList.Where(c => c.ProjectCode == null).ToList();
+            var unDiagnosisCodeData = diagnosisList.Where(c => c.ProjectCode == null).ToList();
 
             if (unDiagnosisCodeData.Any())
             {
@@ -711,9 +723,17 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var outpatientBase = dataValue.OutpatientPersonBase;
             //获取医院所有医生
             var operatorAllInfo = _systemManageRepository.QueryHospitalOperatorAllInfo(organizationCode);
+            
             //获取诊断列表
-            var diagnosisList = dataValue.DiagnosisList;
-
+            var diagnosisList = new List<InpatientDiagnosisDataDto>();
+            if (dataValue.WestMedicineDiagnosisList.Any())
+            {
+                diagnosisList = dataValue.WestMedicineDiagnosisList;
+            }
+            else
+            {
+                diagnosisList = dataValue.ChineseMedicineDiagnosisList;
+            }
             var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
             {
                 DirectoryCodeList = costDetail.Select(c => c.DirectoryCode).ToList(),

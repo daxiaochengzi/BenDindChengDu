@@ -14,10 +14,15 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         [JsonProperty(PropertyName = "基础信息")]
         public OutpatientPersonBaseJsonDto OutpatientPersonBase { get; set; }
         /// <summary>
-        /// 诊断列表
+        /// 诊断列表chinese medicine
         /// </summary>
-        [JsonProperty(PropertyName = "诊断信息")]
-        public List<InpatientDiagnosisDataDto> DiagnosisList { get; set; }
+        [JsonProperty(PropertyName = "西医诊断信息")]
+        public List<InpatientDiagnosisDataDto> WestMedicineDiagnosisList { get; set; }
+        /// <summary>
+        /// 诊断列表ChineseMedicine
+        /// </summary>
+        [JsonProperty(PropertyName = "中医诊断信息")]
+        public List<InpatientDiagnosisDataDto> ChineseMedicineDiagnosisList { get; set; }
         /// <summary>
         /// 
         /// </summary>

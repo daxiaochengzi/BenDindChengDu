@@ -162,7 +162,7 @@
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\SignInControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\SignInDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\UploadHospitalInfoDataXmlDto.cs" />
-    <Compile Include="Models\Enums\ProcessStepEnum.cs" />
+    <Compile Include="Models\Enums\OutpatientSettlementStep.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationCancelParam.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\MonthlyHospitalizationDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientCostReturnDataDto.cs" />

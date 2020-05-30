@@ -8,8 +8,8 @@ using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
 {   /// <summary>
-/// 门诊挂号回参
-/// </summary>
+    /// 门诊挂号回参
+    /// </summary>
     [XmlRoot("output", IsNullable = false)]
     public class OutpatientRegisterOutputXmlDto
     {/// <summary>
@@ -26,7 +26,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// 支付类别 (城职门诊0201,城居门诊0203)
         /// </summary>
         [XmlElementAttribute("aka130")]
-        public  string PayType { get; set; }
+        public string PayType { get; set; }
         /// <summary>
         /// 就诊编号 len(20)
         /// </summary>
@@ -41,7 +41,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// 病人姓名
         /// </summary>
         [XmlElementAttribute("aac003")]
-        public  string PatientName { get; set; }
+        public string PatientName { get; set; }
         /// <summary>
         /// 病人性别 1男 2女
         /// </summary>
@@ -56,7 +56,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// 报销类别
         /// </summary>
         [XmlElementAttribute("ykd007")]
-        public  string ReimbursementType { get; set; }
+        public string ReimbursementType { get; set; }
         /// <summary>
         /// 门诊统筹待遇享受状态
         /// </summary>
@@ -101,8 +101,9 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// <summary>
         /// 个人账户余额
         /// </summary>
-        [XmlElementAttribute("grzhye")]
-        public UserInfogrzhye AccountBalance { get; set; }
+        [XmlArrayAttribute("grzhye")]
+        [XmlArrayItem("row")]
+        public List<UserInfoDatagrzhyeList> AccountBalance { get; set; }
 
         /// <summary>
         /// 账户支付合计
@@ -129,17 +130,18 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// 费用明细
         /// </summary>
         [XmlArrayAttribute("fymxdataset")]
+
         [XmlArrayItem("row")]
         public List<OutpatientRegisterOutputXmlCostDetailDto> CostDetailRow { get; set; }
 
     }
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class OutpatientRegisterOutputXmlDataSetDto 
-    {/// <summary>
-     /// 参保中心
-     /// </summary>
+    public class OutpatientRegisterOutputXmlDataSetDto
+    {
+        /// <summary>
+        /// 参保中心
+        /// </summary>
         [XmlElementAttribute("yab139")]
-        
         public string InsuranceCenter { get; set; }
         /// <summary>
         /// 费用分段标准
@@ -177,7 +179,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         public decimal AccountPay { get; set; }
 
         /// <summary>
-        /// 结算方式
+        /// 就诊结算方式
         /// </summary>
         [XmlElementAttribute("ykc121")]
         public string SettlementType { get; set; }
@@ -196,7 +198,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// </summary>
         [XmlElementAttribute("yka316")]
         public string CenterSettlementCostType { get; set; }
-        
+
     }
     /// <summary>
     /// 费用明细
@@ -212,22 +214,22 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// 限制价格
         /// </summary>
         [XmlElementAttribute("yka299")]
-        public  decimal LimitPrice { get; set; }
+        public decimal LimitPrice { get; set; }
         /// <summary>
         ///自付比例
         /// </summary>
-        [XmlElementAttribute("yka299")]
+        [XmlElementAttribute("yka096")]
         public decimal SelfPayProportion { get; set; }
         /// <summary>
         ///  全自费
         /// </summary>
-        [XmlElementAttribute("yka103")]
+        [XmlElementAttribute("yka056")]
         public decimal TotalSelfPay { get; set; }
 
         /// <summary>
         ///  挂钩自付
         /// </summary>
-        [XmlElementAttribute("yka103")]
+        [XmlElementAttribute("yka057")]
         public decimal HookSelfPay { get; set; }
         /// <summary>
         /// 符合范围
@@ -242,25 +244,20 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
 
     }
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class UserInfogrzhye
-    {
-        public List<UserInfogrzhyeList> Row { get; set; }
-    }
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class UserInfogrzhyeList
+    public class UserInfoDatagrzhyeList
     {
         /// <summary>
         /// 账户种类
         /// </summary>
         [XmlElementAttribute("ykc303")]
-      
+
         public string AccountType { get; set; }
         /// <summary>
         /// 账户余额
         /// </summary>
         [XmlElementAttribute("ykc194")]
-       
+
         public decimal AccountBalance { get; set; }
-    }
+    } 
 
 }

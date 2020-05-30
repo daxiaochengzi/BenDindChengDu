@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDetailUpload
-{   /// <summary>
+namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment.OutpatientDetailUpload
+{
+    /// <summary>
     /// 门诊明细上传回参
     /// </summary>
     [XmlRoot("output", IsNullable = false)]
     public class OutpatientDetailUploadOutputXmlDto
     {
-
-
         /// <summary>
         /// 费用明细
         /// </summary>
-        [XmlElementAttribute("fymxdataset")]
+        [XmlArrayAttribute("fymxdataset")]
         [XmlArrayItem("row")]
         public List<OutpatientDetailUploadOutputCostDetailXmlDto> CostDetail { get; set; }
     }
@@ -27,15 +22,15 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDetailUpload
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class OutpatientDetailUploadOutputCostDetailXmlDto
     {/// <summary>
-        /// 费用明细ID len(20)
-        /// </summary>
+     /// 费用明细ID len(20)
+     /// </summary>
         [XmlElementAttribute("yka105", IsNullable = false)]
         public string DetailId { get; set; }
         /// <summary>
         /// 基层项目名称
         /// </summary>
         [XmlElementAttribute("yka095", IsNullable = false)]
-        public string DirectoryName { get; set; }
+        public decimal DirectoryName { get; set; }
         /// <summary>
         /// 数量
         /// </summary>
@@ -54,13 +49,13 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDetailUpload
         /// <summary>
         /// 基金支付单价
         /// </summary>
-        [XmlElementAttribute("yka055", IsNullable = false)]
-        public decimal FundPayUnitPrice { get; set; }
+        [XmlElementAttribute("yke474", IsNullable = false)]
+        public string FundPayUnitPrice { get; set; }
         /// <summary>
         /// 基金支付总价
         /// </summary>
         [XmlElementAttribute("yke492", IsNullable = false)]
-        public decimal FundPayAmount { get; set; }
+        public string FundPayAmount { get; set; }
 
 
         /// <summary>

@@ -374,7 +374,7 @@ namespace BenDing.Repository.Providers.Web
                                 string insterSql = $@"
                                         insert into [dbo].[ICD10]([id],[DiseaseCoding],[DiseaseName],[MnemonicCode],[Remark],[DiseaseId],
                                           Icd10CreateTime, CreateTime,CreateUserId,IsDelete,IsMedicalInsurance)
-                                        values('{Guid.NewGuid()}','{itmes.DiseaseCoding}','{itmes.DiseaseName}','{itmes.MnemonicCode}','{itmes.Remark}','{itmes.DiseaseId}','{itmes.Icd10CreateTime}',
+                                        values('{Guid.NewGuid()}','{itmes.DiseaseCoding}','{itmes.DiseaseName.Replace("'", "")}','{itmes.MnemonicCode.Replace("'", "")}','{itmes.Remark}','{itmes.DiseaseId}','{itmes.Icd10CreateTime}',
                                         getDate(),'{user.UserId}',0,0);";
 
                                 insterCount += insterSql;
@@ -629,11 +629,11 @@ namespace BenDing.Repository.Providers.Web
                    Id,[PatientName],[IdCardNo],[PatientSex],[BusinessId],[OutpatientNumber],[VisitDate]
                    ,[DepartmentId],[DepartmentName],[DiagnosticDoctor],[DiagnosticJson]
                    ,[Operator] ,[MedicalTreatmentTotalCost],[Remark],[ReceptionStatus],[FixedEncoding]
-                   ,[CreateTime],[DeleteTime],OrganizationCode,OrganizationName,CreateUserId,IsDelete)
+                   ,[CreateTime],[DeleteTime],OrganizationCode,OrganizationName,CreateUserId,IsDelete,IsRegisteredProject,UseDrugDay,IsWestMedicineDiagnosis)
                    VALUES('{param.Id}','{param.PatientName}','{param.IdCardNo}','{param.PatientSex}','{param.BusinessId}','{param.OutpatientNumber}','{param.VisitDate}'
                          ,'{param.DepartmentId}','{param.DepartmentName}','{param.DiagnosticDoctor}','{param.DiagnosticJson}' 
                         ,'{param.Operator}','{param.MedicalTreatmentTotalCost}','{param.Remark}','{param.ReceptionStatus}','{CommonHelp.GuidToStr(param.BusinessId)}'
-                         ,getDate(),null,'{user.OrganizationCode}','{user.OrganizationName}','{user.UserId}',0
+                         ,getDate(),null,'{user.OrganizationCode}','{user.OrganizationName}','{user.UserId}',0,{param.IsRegisteredProject},'{param.UseDrugDay}',{param.IsWestMedicineDiagnosis}
                     );";
                     sqlConnection.Execute(strSql);
                     sqlConnection.Close();

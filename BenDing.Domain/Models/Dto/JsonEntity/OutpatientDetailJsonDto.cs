@@ -40,10 +40,20 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         [JsonProperty(PropertyName = "医院32位项目编码")]
         public string DirectoryCode { get; set; }
         /// <summary>
-        /// 本单收费单位
+        /// 是否挂号项目
         /// </summary>
-        [JsonProperty(PropertyName = "本单收费单位")]
-        public string ThisOrderUnit { get; set; }
+        [JsonProperty(PropertyName = "是否挂号项目")]
+        public int IsRegisteredProject { get; set; }
+        /// <summary>
+        /// 用药天数
+        /// </summary>
+        [JsonProperty(PropertyName = "用药天数")]
+        public int UseDrugDay { get; set; }
+        ///// <summary>
+        ///// 本单收费单位
+        ///// </summary>
+        //[JsonProperty(PropertyName = "本单收费单位")]
+        //public string ThisOrderUnit { get; set; }
         /// <summary>
         /// 最小收费单位
         /// </summary>
@@ -91,11 +101,11 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         [JsonProperty(PropertyName = "每次用量")]
         public string Dosage { get; set; }
 
-        /// <summary>
-        /// 单位
-        /// </summary>
-        [JsonProperty(PropertyName = "本单收费单位")]
-        public string Unit { get; set; }
+        ///// <summary>
+        ///// 单位
+        ///// </summary>
+        //[JsonProperty(PropertyName = "本单收费单位")]
+        //public string Unit { get; set; }
        
         /// <summary>
         /// 单价
