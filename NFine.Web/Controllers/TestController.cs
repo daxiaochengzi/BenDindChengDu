@@ -22,6 +22,7 @@ using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Models.Params.YinHai.Ui;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
@@ -130,6 +131,21 @@ namespace NFine.Web.Controllers
                
                 //y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
                 //y.Data = userService.GetUserInfo();
+
+            });
+
+        }
+        /// <summary>
+        /// 确认步骤
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData ConfirmProcessStep([FromBody]ConfirmProcessStepUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var ddd = param;
 
             });
 

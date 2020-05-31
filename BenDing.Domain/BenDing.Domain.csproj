@@ -87,6 +87,7 @@
     <Compile Include="Models\Dto\Resident\AdmissionRegistrationCancelInfoDto.cs" />
     <Compile Include="Models\Dto\Resident\QueryAllICD10Dto.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogBatchUploadDto.cs" />
+    <Compile Include="Models\Dto\YiHai\Base\ConfirmInfoDto.cs" />
     <Compile Include="Models\Dto\YiHai\Base\DealModelDto.cs" />
     <Compile Include="Models\Dto\YiHai\Base\GetYiHaiBaseParm.cs" />
     <Compile Include="Models\Dto\YiHai\Base\YiHaiResultData.cs" />
@@ -416,6 +417,7 @@
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\QuerySettlementProcessParam.cs" />
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\UpdateOutpatientSettlementParam.cs" />
     <Compile Include="Models\Params\YinHai\TestsParam.cs" />
+    <Compile Include="Models\Params\YinHai\Ui\ConfirmProcessStepUiParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\GetOutpatientDetailUploadUiParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\UploadHospitalInfoUiParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\OutpatientRegisterUiParam.cs" />

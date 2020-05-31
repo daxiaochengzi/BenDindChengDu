@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
-{  /// <summary>
-   /// 门诊挂号
-   /// </summary>
+{
+    /// <summary>
+    /// 门诊挂号
+    /// </summary>
     [XmlRoot("data", IsNullable = false)]
     public class OutpatientRegisterDataXmlDto
     {   /// <summary>
@@ -34,7 +35,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// <summary>
         /// 经办人姓名
         /// </summary>
-        [XmlElementAttribute("AAE011")]
+        [XmlElementAttribute("aae011")]
         public string OperatorName { get; set; }
         /// <summary>
         /// 经办时间 (yyyy-MM-dd HH:mm:ss)
@@ -57,10 +58,10 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
     {
 
         /// <summary>
-        /// 单据号
+        /// 流水号
         /// </summary>
         [XmlAttribute("yka105")]
-        public string DocumentNo { get; set; }
+        public string BusinessId { get; set; }
         /// <summary>
         /// 医保项目编码
         /// </summary>
@@ -111,6 +112,5 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         public string Remark { get; set; } = "";
 
     }
-
 
 }

@@ -226,6 +226,7 @@ namespace NFine.Web.Controllers
                         DiseaseId = param.DiseaseId,
                         ProjectCode = param.ProjectCode,
                         ProjectName = param.ProjectName,
+                        MedicalInsuranceDiseaseId= param.MedicalInsuranceDiseaseId
                     });
              
                 _webServiceBasicService.Icd10PairCode(new Icd10PairCodeParam()

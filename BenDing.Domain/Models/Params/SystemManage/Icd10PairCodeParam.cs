@@ -33,5 +33,9 @@ namespace BenDing.Domain.Models.Params.SystemManage
         /// 基层名称
         /// </summary>
         public string ProjectName { get; set; }
+        /// <summary>
+        /// 医保疾病id
+        /// </summary>
+        public string MedicalInsuranceDiseaseId { get; set; }
     }
 }

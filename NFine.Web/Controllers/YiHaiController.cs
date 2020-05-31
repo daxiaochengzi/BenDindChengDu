@@ -135,11 +135,27 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                _yiHaiOutpatientDepartmentService.OutpatientRegister(param);
-                
+               var data= _yiHaiOutpatientDepartmentService.OutpatientRegister(param);
+                y.Data = data;
             });
 
         }
+        /// <summary>
+        /// 确认步骤
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData ConfirmProcessStep([FromBody]ConfirmProcessStepUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                _yiHaiOutpatientDepartmentService.ConfirmProcessStep(param);
+               
+            });
+
+        }
+     
         /// <summary>
         /// 获取门诊病人费用明细上传入参
         /// </summary>

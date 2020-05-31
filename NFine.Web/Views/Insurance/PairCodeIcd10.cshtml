@@ -77,8 +77,10 @@
                 { type: 'numbers', fixed: 'left' }
                 , { title: '对码', toolbar: '#tableCodeBtn', width: 100 ,align: 'center', fixed: true }
                 , { field: 'DiseaseCoding', title: '医保项目编码', width: 160, sort: true }
-                , { field: 'DiseaseName', title: '医保项目名称', width: 160}
-                , { field: 'MnemonicCode', title: '助记码', width: 300 }
+                , { field: 'DiseaseName', title: '医保项目名称', width: 160 }
+                , { field: 'DiseaseId', title: '医保疾病id', width: 200 }
+               
+               
             ]]
             , height: $(window).height() - 128
             , page: true
@@ -104,7 +106,8 @@
                 ProjectName: data.DiseaseName,
                 UserId: $("#EmpId").val(),
                 BusinessId: $("#BId").val(),
-                TransKey: $("#TransKey").val()
+                TransKey: $("#TransKey").val(),
+                MedicalInsuranceDiseaseId: data.DiseaseId
             };
           
             //var pairCodeList = []; //对码数据

@@ -99,7 +99,7 @@ namespace BenDing.Domain.Xml
         /// <returns></returns>
         public static string YinHaiXmlSerialize<T>(T o)
         {
-            var encoding = Encoding.UTF8;
+            var encoding = Encoding.GetEncoding("GBK");
             if (o == null)
                 throw new ArgumentNullException("实体不能为空!!!");
 

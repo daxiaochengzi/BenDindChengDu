@@ -262,9 +262,9 @@ namespace BenDing.Repository.Providers.Web
             {
                 var item = new ICD10InfoDto
                 {
-                    DiseaseCoding = dr["AAZ164"].ToString(),
-                    DiseaseName = dr["AKA121"].ToString(),
-                    MnemonicCode = dr["AKA020"].ToString(),
+                    DiseaseCoding = dr["疾病ICD"].ToString(),
+                    DiseaseName = dr["疾病名称"].ToString(),
+                    DiseaseId = dr["疾病ID"].ToString(),
                 };
                 addIcd10Data.Add(item);
                 if (addIcd10Data.Count() >= 300)
@@ -586,10 +586,10 @@ namespace BenDing.Repository.Providers.Web
                         {
                             sqlStrNew += $@" insert into  [dbo].[ICD10PairCode] 
                             ([Id],[DiseaseId],[ProjectName],[ProjectCode],
-                             [State],[CreateTime],[CreateUserId],[IsDelete],[PairCodeUserName])
+                             [State],[CreateTime],[CreateUserId],[IsDelete],[PairCodeUserName],[MedicalInsuranceDiseaseId])
                             values
                             ('{Guid.NewGuid()}','{item.DiseaseId}','{item.ProjectName}','{item.ProjectCode}',
-                             1,GETDATE(),'{param.User.UserId}',0,'{param.User.UserName}');";
+                             1,GETDATE(),'{param.User.UserId}',0,'{param.User.UserName}','{item.MedicalInsuranceDiseaseId}');";
 
                         }
                         sqlConnection.Execute(sqlStrNew);

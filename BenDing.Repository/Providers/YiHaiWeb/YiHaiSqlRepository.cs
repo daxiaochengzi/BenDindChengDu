@@ -215,11 +215,13 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                 string strSql = null;
                 try
                 {
-                    strSql = $@"INSERT INTO [dbo].[SettlementProcess]
+                    strSql = $@"update [dbo].[SettlementProcess] set [IsDelete]=1 ,[DeleteUserId]='{param.CreateUserId}',[DeleteTime]=getDate()
+                              where [IsDelete]=0  and [BusinessId]='{param.BusinessId}' and ProcessStep='{param.ProcessStep}';
+                              INSERT INTO [dbo].[SettlementProcess]
                                ([Id]
                                ,[BusinessId]
                                ,[ProcessStep]
-                               ,[JosnContent]
+                               ,[JsonContent]
                                ,[BatchNo]
                                ,[SerialNumber]
                                ,[VerificationCode]
@@ -231,13 +233,13 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                                ('{param.Id}'
                                ,'{param.BusinessId}'
                                , {param.ProcessStep}
-                               ,'{param.JosnContent}'
+                               ,'{param.JsonContent}'
                                ,'{param.BatchNo}'
                                ,'{param.SerialNumber}'
                                ,'{param.VerificationCode}'
                                ,0
                                ,'{param.CreateUserId}'
-                               ,getdate()
+                               ,getDate()
                                )";
 
                     var data = sqlConnection.Execute(strSql);
@@ -306,24 +308,18 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                 string strSql = null;
                 try
                 {
+                    string strSet = null;
+                    if (!string.IsNullOrWhiteSpace(param.VisitNo)) strSet += $" [VisitNo]='{param.VisitNo}',";
+                    if (!string.IsNullOrWhiteSpace(param.PersonalCode)) strSet += $" [PersonalCode]='{param.PersonalCode}',";
+                    if (!string.IsNullOrWhiteSpace(param.PayType)) strSet += $" [PayType]='{param.PayType}',";
+                    if (param.ProcessStep != null) strSet += $" [ProcessStep]={param.ProcessStep},";
 
-
-                    if (!string.IsNullOrWhiteSpace(param.VisitNo) && param.ProcessStep != null)
+                    if (!string.IsNullOrWhiteSpace(strSet))
                     {
-                           strSql = $@"update [dbo].[Outpatient] set [VisitNo]='{param.VisitNo}' ,[ProcessStep]={param.ProcessStep}
-                            where BusinessId='{param.BusinessId}' and IsDelete=0";
-                    } else
-                    {
-                        strSql = $@"update [dbo].[Outpatient] set [ProcessStep]={param.ProcessStep}
-                            where BusinessId='{param.BusinessId}' and IsDelete=0";
+                        strSql = strSet.Substring(0, strSet.Length - 1);
+                        sqlConnection.Execute(strSql);
                     }
-                       
-                            
-                            
-                            var data = sqlConnection.Execute(strSql);
-                        sqlConnection.Close();
-
-                    
+                    sqlConnection.Close();
                 }
                 catch (Exception e)
                 {

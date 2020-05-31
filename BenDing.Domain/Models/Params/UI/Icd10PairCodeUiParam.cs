@@ -27,5 +27,11 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "医保项目名称")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string ProjectName { get; set; }
+        /// <summary>
+        /// 医保疾病id
+        /// </summary>
+        [Display(Name = "医保疾病id")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string MedicalInsuranceDiseaseId { get; set; }
     }
 }

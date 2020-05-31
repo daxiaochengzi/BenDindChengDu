@@ -139,7 +139,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 });
             }
         }
-
         /// <summary>
         /// 获取取消签到参数
         /// </summary>
@@ -201,40 +200,66 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 BusinessId = param.BusinessId,
             };
             var data = _webServiceBasicService.GetOutpatientDetailPerson(outpatientDetailParam);
-            var registerData = data.FirstOrDefault(d => d.DirectoryName.Contains("挂号"));
-            if (registerData == null) throw new Exception("当前病人没有挂号费,不能进行医保门诊挂号");
-
+            if (!data.Any()) throw new Exception("当前病人没处方信息不能进行医保报账!!!");
+            //获取挂号数据
+            var registerData = data.FirstOrDefault(c=>c.IsRegisteredProject==1);
+            //获取第一个项目数据
+            var firstProjectData = data.FirstOrDefault(c => c.IsRegisteredProject == 0);
+            if (firstProjectData==null) throw new Exception("当前病人没处方信息不能进行医保报账!!!");
             var controlXmlData = new OutpatientRegisterControlXmlDto()
             {
-                TotalAmount = registerData.Amount,
+                TotalAmount = registerData?.Amount ?? 0,
                 Nums = 1,
             };
-            //获取科室
-            var hospitalGeneralCatalogData = _yiHaiSqlRepository.HospitalGeneralCatalog(new HospitalGeneralCatalogYiHaiParam()
+          
+             //获取科室
+             var hospitalGeneralCatalogData = _yiHaiSqlRepository.HospitalGeneralCatalog(new HospitalGeneralCatalogYiHaiParam()
             {
                 User = baseUser,
                 DirectoryType = "0",
-                DirectoryCode = registerData.DirectoryCode
+                DirectoryCode = firstProjectData.BillDepartmentId
             }).FirstOrDefault();
             if (hospitalGeneralCatalogData == null) throw new Exception("当前科室中间库中不存在,请更新中间库科室");
             if (hospitalGeneralCatalogData.MedicalInsuranceCode == null) throw new Exception("科室未医保对码");
             var detailRow = new List<OutpatientRegisterDataXmlRow>();
-            detailRow.Add(new OutpatientRegisterDataXmlRow()
+            
+            if (registerData != null)
             {
-                DirectoryName = hospitalGeneralCatalogData.DirectoryName,
-                MedicalInsuranceProjectCode = hospitalGeneralCatalogData.MedicalInsuranceCode,
-                DocumentNo = CommonHelp.GuidToStr(param.BusinessId),
-                HappenTime = Convert.ToDateTime(registerData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
-                InputTime = Convert.ToDateTime(registerData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
-                Num = registerData.Amount > 0 ? 1 : 0,
-                Price = registerData.Amount > 0 ? registerData.Amount : 1,
-                Operator = baseUser.UserName,
-                TotalAmount = registerData.Amount
+               var itemRegisterData =new OutpatientRegisterDataXmlRow()
+                {
+                    DirectoryName = hospitalGeneralCatalogData.DirectoryName,
+                    MedicalInsuranceProjectCode = hospitalGeneralCatalogData.MedicalInsuranceCode,
+                    BusinessId = CommonHelp.GuidToStr(param.BusinessId),
+                    HappenTime = Convert.ToDateTime(registerData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
+                    InputTime = Convert.ToDateTime(registerData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
+                    Num = registerData.Amount > 0 ? 1 : 0,
+                    Price = registerData.Amount > 0 ? registerData.Amount : 1,
+                    Operator = baseUser.UserName,
+                    TotalAmount = registerData.Amount
 
-            });
+                };
+                detailRow.Add(itemRegisterData);
+            }
+            else
+            {
+                var itemRegisterData = new OutpatientRegisterDataXmlRow()
+                {
+                    DirectoryName ="免费挂号",
+                    BusinessId = CommonHelp.GuidToStr(param.BusinessId),
+                    HappenTime = Convert.ToDateTime(firstProjectData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
+                    InputTime = Convert.ToDateTime(firstProjectData.BillTime).ToString("yyyy-MM-dd HH:mm:ss"),
+                    Num =   0,
+                    Price = 1,
+                    Operator = baseUser.UserName,
+                    TotalAmount =0
+
+                };
+                detailRow.Add(itemRegisterData);
+            }
+
             var xmlData = new OutpatientRegisterDataXmlDto()
             {
-                RegisterType = "1",
+                RegisterType = firstProjectData.EmergencySigns=="1"?"2":"1",
                 MedicalInsuranceDepartmentCode = hospitalGeneralCatalogData.MedicalInsuranceCode,
                 OperatorTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 OperatorName = baseUser.UserName,
@@ -245,40 +270,58 @@ namespace BenDing.Service.Providers.YiHaiWeb
             };
             resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlXmlData);
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(xmlData);
+            //保存病人信息
+            var paramIni = new GetOutpatientPersonParam {User = baseUser, IsSave = true, UiParam = param};
+            _webServiceBasicService.GetOutpatientPerson(paramIni);
             return resultData;
         }
         /// <summary>
         /// 门诊挂号
         /// </summary>
         /// <param name="param"></param>
-        public void OutpatientRegister(OutpatientRegisterUiParam param)
+        public ConfirmInfoDto OutpatientRegister(OutpatientRegisterUiParam param)
         {
             var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
             var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
             var outputData = XmlHelp.DeSerializer<OutpatientRegisterOutputXmlDto>(resultDto.TransactionOutputXml);
-            //中间层数据写入
-            var saveData = new MedicalInsuranceDto
-            {
-                AdmissionInfoJson = param.ResultJson,
+            var entityId = Guid.NewGuid();
+            _yiHaiSqlRepository.InsertSettlementProcess(new SettlementProcessDto()
+            {   Id = entityId,
                 BusinessId = param.BusinessId,
-                Id = Guid.NewGuid(),
-                IsModify = false,
-                InsuranceType = 999,
-                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
-                MedicalInsuranceHospitalizationNo = outputData.VisitNo,
-                IdentityMark = outputData.PayType
-            };
-            //存中间库
-            _medicalInsuranceSqlRepository.SaveMedicalInsurance(baseUser, saveData);
+                CreateUserId = param.UserId,
+                ProcessStep = (int)OutpatientSettlementStep.Register,
+                SerialNumber = resultDto.SerialNumber,
+                BatchNo = resultDto.BatchNo,
+                VerificationCode = resultDto.VerificationCode,
+                CreateTime = DateTime.Now,
+                JsonContent = resultDto.TransactionOutputXml
 
+            });
+            //更新门诊病人状态
+            _yiHaiSqlRepository.UpdateOutpatientSettlement(
+                new UpdateOutpatientSettlementParam
+                {
+                    BusinessId = param.BusinessId,
+                    ProcessStep = (int)OutpatientSettlementStep.Register,
+                    VisitNo = outputData.VisitNo,
+                    PayType = outputData.PayType
+                });
             //日志写入
             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
             {
                 User = baseUser,
                 JoinOrOldJson = JsonConvert.SerializeObject(param.ResultJson),
-                Remark = "门诊挂号"
+                Remark = "门诊挂号",
+                RelationId = entityId,
             });
 
+            var resultData = new ConfirmInfoDto()
+            {
+                SerialNumber = resultDto.SerialNumber,
+                VerificationCode = resultDto.VerificationCode
+            };
+
+            return resultData;
         }
         /// <summary>
         /// 获取门诊结算入参
@@ -357,7 +400,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 Id = Guid.NewGuid(),
                 BatchNo = resultDto.BatchNo,
                 SerialNumber = resultDto.SerialNumber,
-                JosnContent = param.ResultJson,
+                JsonContent = param.ResultJson,
                 ProcessStep = (int)OutpatientSettlementStep.OutpatientSettlement,
                 BusinessId = param.BusinessId,
                 CreateUserId = param.UserId,
@@ -382,6 +425,12 @@ namespace BenDing.Service.Providers.YiHaiWeb
 
             var resultData = new GetYiHaiBaseParm();
             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+
+            //获取门诊病人信息
+            var outpatientInfo = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam()
+            {
+                BusinessId = param.BusinessId
+            });
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
             xmlData.HealthInsuranceNo = "48";//42MZ
@@ -398,7 +447,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var outpatientBase = dataValue.OutpatientPersonBase;
 
             //获取未对码的项目
-            var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode) == true)
+            var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode))
                 .Select(d => new UnCodeDataDto
                 {
                     名称 = d.DirectoryName,
@@ -420,7 +469,6 @@ namespace BenDing.Service.Providers.YiHaiWeb
             {
                 diagnosisList = dataValue.ChineseMedicineDiagnosisList;
             }
-
             //获取未对码的诊断
             var unDiagnosisCodeData = diagnosisList.Where(c => c.ProjectCode == null).ToList();
 
@@ -431,19 +479,24 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 throw new Exception(unPairCodeInfo);
             }
             //排除挂号费 
-            var costDetail = iniCostDetail;
-            
-            //获取医保病人
-            var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
-                new QueryMedicalInsuranceResidentInfoParam()
+            var costDetail = iniCostDetail.Where(c=>c.IsRegisteredProject==0).ToList();
+            if (costDetail == null) throw new Exception("当前病人没有处方数据，不能进行医保报账!!!");
+            //获取第一个项目数据
+            var firstProjectData = costDetail.FirstOrDefault(c => c.IsRegisteredProject == 0);
+            //获取结算步骤数据
+            var processData = _yiHaiSqlRepository.QuerySettlementProcess(
+                new QuerySettlementProcessParam()
                 {
-                    OrganizationCode = userBase.OrganizationCode,
-                    BusinessId = param.BusinessId
+                    BusinessId = param.BusinessId,
+                    ProcessStep = (int)OutpatientSettlementStep.Register
                 });
-            //病人信息
-            var patientInfo = XmlHelp.DeSerializer<OutpatientRegisterOutputXmlDto>(queryData.AdmissionInfoJson);
-
-            var inputXmlData = OutpatientDetailUploadDataXml(costDetail, dataValue, userBase.OrganizationCode, patientInfo);
+            //获取挂号信息
+            var registerData = processData.FirstOrDefault();
+            if (registerData==null) throw  new  Exception("中间库未查到挂号信息，请检查挂号是否成功!!!");
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(registerData.JsonContent);
+            var outputData = XmlHelp.DeSerializer<OutpatientRegisterOutputXmlDto>(resultDto.TransactionOutputXml);
+            //获取输入数据
+            var inputXmlData = OutpatientDetailUploadDataXml(costDetail, dataValue, userBase.OrganizationCode, outputData);
             //获取所有科室
             var departmentList = _yiHaiSqlRepository.HospitalGeneralCatalog(new HospitalGeneralCatalogYiHaiParam()
             {
@@ -451,7 +504,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 User = userBase
             });
             //科室信息
-            var departmentInfo = departmentList.FirstOrDefault(c => c.DirectoryName == outpatientBase.DepartmentName);
+            var departmentInfo = departmentList.FirstOrDefault(c => c.DirectoryCode == firstProjectData.BillDepartmentId);
             if (departmentInfo == null) throw new Exception("科室:" + outpatientBase.DepartmentName + "在中心库不存在,请在后台管理中更新");
             if (string.IsNullOrEmpty(departmentInfo.InpatientAreaCode)) throw new Exception("科室:" + outpatientBase.DepartmentName + "未设置病区,请在后台管理中设置");
             //设置病区编号
@@ -468,9 +521,9 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 Edition = "5.0",
                 MedicalInsuranceOrganization = hospitalOperatorInfo.MedicalInsuranceHandleNo,
                 Nums = costDetail.Count(),
-                PersonalCode = patientInfo.PersonalCoding,
-                PayType = patientInfo.PayType,
-                VisitNo = patientInfo.VisitNo,
+                PersonalCode = outpatientInfo.PersonalCode,
+                PayType = outpatientInfo.PayType,
+                VisitNo = outpatientInfo.VisitNo,
                 TotalAmount = CommonHelp.ValueToDouble(costDetail.Sum(c => c.Amount))
             };
 
@@ -496,6 +549,43 @@ namespace BenDing.Service.Providers.YiHaiWeb
           
         }
 
+        public void ConfirmProcessStep(ConfirmProcessStepUiParam param)
+        {
+            var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
+            
+            var entityId = Guid.NewGuid();
+            _yiHaiSqlRepository.InsertSettlementProcess(new SettlementProcessDto()
+            {
+                Id = entityId,
+                BusinessId = param.BusinessId,
+                CreateUserId = param.UserId,
+                ProcessStep = (int)param.SettlementStep,
+                SerialNumber = resultDto.SerialNumber,
+                BatchNo = resultDto.BatchNo,
+                VerificationCode = resultDto.VerificationCode,
+                CreateTime = DateTime.Now,
+                JsonContent = resultDto.TransactionOutputXml
+
+            });
+            //更新门诊病人状态
+            _yiHaiSqlRepository.UpdateOutpatientSettlement(
+                new UpdateOutpatientSettlementParam
+                {
+                    BusinessId = param.BusinessId,
+                    ProcessStep = (int)param.SettlementStep,
+                    
+                });
+            //日志写入
+            _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+            {
+                User = baseUser,
+                JoinOrOldJson = JsonConvert.SerializeObject(param.ResultJson),
+                Remark = param.SettlementStep.ToString(),
+                RelationId = entityId,
+            });
+
+        }
 
         /// <summary>
         /// 获取门诊取消结算入参

@@ -102,9 +102,19 @@ namespace BenDing.Domain.Models.Dto.Web
       
         public string DrugProducingArea { get; set; }
         /// <summary>
+        /// 是否挂号项目
+        /// </summary>
+    
+        public int IsRegisteredProject { get; set; }
+        /// <summary>
+        /// 用药天数
+        /// </summary>
+      
+        public int UseDrugDay { get; set; }
+        /// <summary>
         /// 处方号
         /// </summary>
-        
+
         public string RecipeCode { get; set; }
         /// <summary>
         /// 费用单据类型
@@ -192,8 +202,14 @@ namespace BenDing.Domain.Models.Dto.Web
       
         public string OrganizationName { get; set; }
 
-       
+        /// <summary>
+        /// 门急费用标志
+        /// </summary>
       
+        public string EmergencySigns { get; set; }
+
+
+
 
     }
 }

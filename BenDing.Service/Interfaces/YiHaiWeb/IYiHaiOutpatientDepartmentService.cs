@@ -32,11 +32,16 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// <param name="param"></param>
         GetYiHaiBaseParm GetOutpatientSettlementParam(GetOutpatientDepartmentUiParam param);
         /// <summary>
+        /// 门诊结算
+        /// </summary>
+        /// <param name="param"></param>
+         void OutpatientSettlement(GetOutpatientDepartmentUiParam param);
+        /// <summary>
         /// 获取医院上传信息
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-         GetYiHaiBaseParm GetHospitalInfoUploadParam(UploadHospitalInfoUiParam param);
+        GetYiHaiBaseParm GetHospitalInfoUploadParam(UploadHospitalInfoUiParam param);
         /// <summary>
         /// 医院信息上传
         /// </summary>
@@ -52,7 +57,7 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// 取消签到
         /// </summary>
         /// <param name="param"></param>
-         void CancelMedicalInsuranceSignIn(CancelMedicalInsuranceSignInParam param);
+        void CancelMedicalInsuranceSignIn(CancelMedicalInsuranceSignInParam param);
         /// <summary>
         /// 获取门诊挂号入参
         /// </summary>
@@ -63,7 +68,7 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// 门诊挂号
         /// </summary>
         /// <param name="param"></param>
-        void OutpatientRegister(OutpatientRegisterUiParam param);
+        ConfirmInfoDto  OutpatientRegister(OutpatientRegisterUiParam param);
         /// <summary>
         /// 获取门诊明细上传入参
         /// </summary>
@@ -75,5 +80,10 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         void OutpatientDetailUpload(GetOutpatientDetailUploadUiParam param);
+        /// <summary>
+        /// 确认步骤
+        /// </summary>
+        /// <param name="param"></param>
+        void ConfirmProcessStep(ConfirmProcessStepUiParam param);
     }
 }

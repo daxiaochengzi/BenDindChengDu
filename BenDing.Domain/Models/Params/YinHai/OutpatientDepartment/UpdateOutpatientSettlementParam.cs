@@ -13,6 +13,17 @@ namespace BenDing.Domain.Models.Params.YinHai.OutpatientDepartment
         /// 业务id
         /// </summary>
         public string BusinessId { get; set; }
+        /// <summary>
+        /// 步骤
+        /// </summary>
         public int? ProcessStep { get; set; } = null;
+        /// <summary>
+        /// 支付类型
+        /// </summary>
+        public string PayType { get; set; }
+        /// <summary>
+        /// 个人编号
+        /// </summary>
+        public  string PersonalCode { get; set; }
     } 
 }

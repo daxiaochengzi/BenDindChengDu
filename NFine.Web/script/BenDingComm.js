@@ -17,7 +17,8 @@ var baseInfo = {
         "InsuranceType": null, // 险种类型,
         "IdCardNo": null ,// 身份证,
         "AccountBalance": null,//账户余额
-        "MedicalInsuranceSign": null//医保标识
+        "MedicalInsuranceSign": null,//医保标识
+        "InsuranceName": null//医保标识
        
     }
 };
@@ -208,15 +209,15 @@ function getHospitalInfo(getHospitalInfoParam) {
 
 }
 //获取患者基本信息
-function getInpatientInfo(getInpatientInfoBack)
-{
-  
+function getInpatientInfo(getInpatientInfoBack) {
+   
       var activeX = document.getElementById("CSharpActiveX");
     var activeData = activeX.YiHaiOutpatientMethods("", "","GetUserInfo","");
         var activeJsonData = JSON.parse(activeData);
         if (activeJsonData.Success === false) {
             msgError(activeJsonData.Message);
         } else {
+         
             //病人信息赋值
             var activeJsonInfo = JSON.parse(activeJsonData.Data);
             baseInfo.Inpatient["PersonalCoding"] = activeJsonInfo.PersonalCoding;
@@ -227,6 +228,7 @@ function getInpatientInfo(getInpatientInfoBack)
             baseInfo.Inpatient["IdCardNo"] = activeJsonInfo.IdCardNo;
             baseInfo.Inpatient["AccountBalance"] = activeJsonInfo.AccountBalance;
             baseInfo.Inpatient["MedicalInsuranceSign"] = activeJsonInfo.MedicalInsuranceSign;
+            baseInfo.Inpatient["InsuranceName"] = activeJsonInfo.InsuranceName;
             baseInfo.HospitalInfo.AfferentSign = "2";
             baseInfo.HospitalInfo.IdentityMark = activeJsonInfo.PersonalCoding;
             getInpatientInfoBack();

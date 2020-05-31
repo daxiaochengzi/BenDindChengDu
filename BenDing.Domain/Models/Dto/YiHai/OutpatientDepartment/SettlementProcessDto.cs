@@ -23,7 +23,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment
         /// 
         /// </summary>
 
-        public string JosnContent { get; set; }
+        public string JsonContent { get; set; }
         /// <summary>
         /// 交易批次号
         /// </summary>
