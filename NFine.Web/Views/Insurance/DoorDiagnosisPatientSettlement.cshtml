@@ -135,9 +135,9 @@
                 <button type="button" Id="queryData" class="layui-btn layui-btn-radius">读卡</button>
 
             </div>
-            @*<div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="OutpatientRegisterDiv">
+            <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="OutpatientRegisterDiv">
                     <button type="button" Id="OutpatientRegister" class="layui-btn layui-btn-disabled layui-btn-radius">门诊挂号</button>
-                </div>*@
+                </div>
             <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
                 <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
 
@@ -237,8 +237,15 @@
             $("#InsuranceName").val(baseInfo.Inpatient.InsuranceName);
             $("#InsuranceNameDiv").show();
             $("#InsuranceBalanceDiv").show();
-            $("#DoorDiagnosisSettlementDiv").show();
-            buttonStatus("DoorDiagnosisSettlement", true);
+            //居民
+            if (baseInfo.Inpatient.InsuranceType === "342") {
+                $("#OutpatientRegisterDiv").show();
+                buttonStatus("OutpatientRegister", true);
+            } else {
+                $("#DoorDiagnosisSettlementDiv").show();
+                buttonStatus("DoorDiagnosisSettlement", true);
+            }
+           
         }
         //获取医保病人信息
         window.getInpatientInfoBack = function () {
@@ -260,7 +267,6 @@
                         var errData = data.Message;
                         msgError(errData);
                         //样式类名:墨绿深蓝风
-
                     }
                        else {
                         var dataValue = data.Data;
@@ -276,8 +282,10 @@
                             } else {
                                 var registerParam = params;
                                 registerParam["ResultJson"] = activeJsonData.Data;
+                                //挂号回写
                                 outpatientRegister(registerParam);
 
+                               
                             }
 
                         }
@@ -316,7 +324,7 @@
         }
         //门诊挂号
         function outpatientRegister(registerParam) {
-
+            var confirmParam = params;
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientRegister',
@@ -343,7 +351,9 @@
                                 $.modalAlert(activeJsonData.Message, "error");
 
                             } else {
-                                getOutpatientDetailUploadParam();
+                                confirmParam["ResultJson"] = activeJsonData.Data;
+                                confirmParam["SettlementStep"] = "2";
+                                confirmProcessStep(confirmParam, getOutpatientDetailUploadParam);
 
                             }
 
@@ -414,16 +424,6 @@
                         $("#DoorDiagnosisSettlementDiv").show();
                         //居民显示结算按钮
                         buttonStatus("DoorDiagnosisSettlement", true);
-
-
-                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
-                        //$('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        //msgSuccess('门诊结算成功');
-                        //buttonStatus("DoorDiagnosisSettlement", false);
-                        ////添加结算信息
-                        //if (data.Data.PayMsg !== null) {
-                        //    settlementData(data.Data.PayMsg);
-                        //}
                     }
                 }
 
@@ -494,22 +494,15 @@
 
             });
         }
-        ////门诊挂号
-        //$('#OutpatientRegister').on('click', function () {
-        //    //普通
-        //    getOutpatientDepartmentCostInputParam();
+        //门诊挂号
+        $('#OutpatientRegister').on('click', function () {
+            //普通
+            getOutpatientRegisterParam();
 
-        //});
+        });
         //门诊结算
         $('#DoorDiagnosisSettlement').on('click', function () {
-            //居民需挂号后直接上传费用再结算
-            if (baseInfo.Inpatient.InsuranceType === "342") {
-                getOutpatientRegisterParam();
-            }
-            else {
-                getOutpatientDepartmentCostInputParam();
-            }
-
+            getOutpatientDepartmentCostInputParam();
 
         });
         //查询

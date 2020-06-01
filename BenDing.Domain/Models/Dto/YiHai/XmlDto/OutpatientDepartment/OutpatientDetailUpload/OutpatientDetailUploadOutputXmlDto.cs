@@ -30,7 +30,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment.Outpatient
         /// 基层项目名称
         /// </summary>
         [XmlElementAttribute("yka095", IsNullable = false)]
-        public decimal DirectoryName { get; set; }
+        public string DirectoryName { get; set; }
         /// <summary>
         /// 数量
         /// </summary>

@@ -788,14 +788,14 @@ namespace BenDing.Repository.Providers.Web
                                 sort++;
                                 var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
                                 string str = $@"INSERT INTO [dbo].[OutpatientFee](
-                               id,[OutpatientNo] ,[DetailId] ,[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
+                               id,[OutpatientNo] ,[DetailId] ,[DetailIdFixedEncoding],[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
                                ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
 		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
 			                   ,[BillDepartmentId] ,[BillDoctorName],[BillDoctorId] ,[BillTime] ,[OperateDepartmentName],[OperateDepartmentId]
                                ,[OperateDoctorName] ,[OperateDoctorId],[OperateTime] ,[PrescriptionDoctor] ,[Operators],[PracticeDoctorNumber]
                                ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId
                                ,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime,MedicalInsuranceProjectCode)
-                           VALUES('{Guid.NewGuid()}','{item.OutpatientNo}','{item.DetailId}','{item.DirectoryName}','{item.DirectoryCode}','{item.DirectoryCategoryName}','{item.DirectoryCategoryCode}'
+                           VALUES('{Guid.NewGuid()}','{item.OutpatientNo}','{item.DetailId}','{CommonHelp.GuidToStr(item.DetailId)}','{item.DirectoryName}','{item.DirectoryCode}','{item.DirectoryCategoryName}','{item.DirectoryCategoryCode}'
                                  ,'{item.Unit}','{item.Formulation}','{item.Specification}',{item.UnitPrice},{item.Quantity},{item.Amount},'{item.Dosage}','{item.Usage}','{item.MedicateDays}',
                                  '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
                                  ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
@@ -825,12 +825,10 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
         /// <summary>
         /// 更新门诊费用上传明细
         /// </summary>
         /// <param name="user"></param>
-        
         /// <param name="detailIds"></param>
         public void UpdateOutpatientDetail(UserInfoDto user,List<string> detailIds)
         {
@@ -844,8 +842,8 @@ namespace BenDing.Repository.Providers.Web
                     {
                         sqlConnection.Open();
                         string inStr = CommonHelp.ListToStr(detailIds);
-                        insertSql = $@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getdate(),
-                        [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [Isdelete] = 0 and [DetailId] in ('{inStr}')";
+                        insertSql = $@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getDate(),
+                        [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [IsDelete] = 0 and [DetailIdFixedEncoding] in ('{inStr}')";
                         sqlConnection.Close();
                     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
+using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Models.Params.YinHai.Ui;
 using BenDing.Domain.Models.Params.YinHai.Web;
 using BenDing.Service.Interfaces.YiHaiWeb;
@@ -168,6 +169,7 @@ namespace NFine.Web.Controllers
             {
                var data= _yiHaiOutpatientDepartmentService.GetOutpatientDetailUploadParam(param);
                 y.Data = data;
+               
             });
 
         }
@@ -187,21 +189,7 @@ namespace NFine.Web.Controllers
 
         }
         
-        ///// <summary>
-        ///// 获取门诊病人费用明细上传入参
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public ApiJsonResultData GetOutpatientDetailUploadParam([FromBody]GetOutpatientDepartmentUiParam param)
-        //{
-        //    return new ApiJsonResultData(ModelState).RunWithTry(y =>
-        //    {
-        //        var data = _yiHaiOutpatientDepartmentService.GetOutpatientDetailUploadParam(param);
-        //        y.Data = data;
-        //    });
-
-        //}
+        
         /// <summary>
         /// 获取门诊结算入参
         /// </summary>

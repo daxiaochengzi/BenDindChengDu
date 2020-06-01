@@ -495,8 +495,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             if (registerData==null) throw  new  Exception("中间库未查到挂号信息，请检查挂号是否成功!!!");
             var resultDto = JsonConvert.DeserializeObject<DealModelDto>(registerData.JsonContent);
             var outputData = XmlHelp.DeSerializer<OutpatientRegisterOutputXmlDto>(resultDto.TransactionOutputXml);
-            //获取输入数据
-            var inputXmlData = OutpatientDetailUploadDataXml(costDetail, dataValue, userBase.OrganizationCode, outputData);
+           
             //获取所有科室
             var departmentList = _yiHaiSqlRepository.HospitalGeneralCatalog(new HospitalGeneralCatalogYiHaiParam()
             {
@@ -507,6 +506,9 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var departmentInfo = departmentList.FirstOrDefault(c => c.DirectoryCode == firstProjectData.BillDepartmentId);
             if (departmentInfo == null) throw new Exception("科室:" + outpatientBase.DepartmentName + "在中心库不存在,请在后台管理中更新");
             if (string.IsNullOrEmpty(departmentInfo.InpatientAreaCode)) throw new Exception("科室:" + outpatientBase.DepartmentName + "未设置病区,请在后台管理中设置");
+            //获取输入数据
+            var inputXmlData = OutpatientDetailUploadDataXml(costDetail, dataValue, userBase.OrganizationCode, outputData, departmentInfo);
+
             //设置病区编号
             inputXmlData.MedicalRecordDetail.DepartmentAreaCode = departmentInfo.InpatientAreaCode;
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(inputXmlData);
@@ -528,6 +530,15 @@ namespace BenDing.Service.Providers.YiHaiWeb
             };
 
             resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlXmlData);
+            //保存门诊明细
+            var outpatientDetailParam = new OutpatientDetailParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+                IsSave = true
+
+            };
+            _webServiceBasicService.GetOutpatientDetailPerson(outpatientDetailParam);
             return resultData;
         }
         /// <summary>
@@ -806,16 +817,20 @@ namespace BenDing.Service.Providers.YiHaiWeb
             List<OutpatientDetailJsonDto> costDetail,
             OutpatientPersonJsonDto dataValue,
             string organizationCode,
-            OutpatientRegisterOutputXmlDto patientInfo
+            OutpatientRegisterOutputXmlDto patientInfo,
+            HospitalGeneralCatalogEntity hospitalGeneralCatalog
             )
         {
-            //获取初始门诊费用明细
+            //获取门诊信息
             var outpatientBase = dataValue.OutpatientPersonBase;
             //获取医院所有医生
             var operatorAllInfo = _systemManageRepository.QueryHospitalOperatorAllInfo(organizationCode);
-            
+            //获取第一个项目数据
+            var firstProjectData = costDetail.FirstOrDefault(c => c.IsRegisteredProject == 0);
             //获取诊断列表
             var diagnosisList = new List<InpatientDiagnosisDataDto>();
+            //是否西医诊断
+            var isWestMedicineDiagnosis = true;
             if (dataValue.WestMedicineDiagnosisList.Any())
             {
                 diagnosisList = dataValue.WestMedicineDiagnosisList;
@@ -823,22 +838,21 @@ namespace BenDing.Service.Providers.YiHaiWeb
             else
             {
                 diagnosisList = dataValue.ChineseMedicineDiagnosisList;
+                isWestMedicineDiagnosis = false;
             }
-            var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
-            {
-                DirectoryCodeList = costDetail.Select(c => c.DirectoryCode).ToList(),
-                OrganizationCode = organizationCode
-            });
+            //var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
+            //{
+            //    DirectoryCodeList = costDetail.Select(c => c.DirectoryCode).ToList(),
+            //    OrganizationCode = organizationCode
+            //});
             var resultData = new OutpatientDetailUploadDataXmlDto();
             var uploadCostDetail = new List<OutpatientDetailUploadDataCostDetailXmlDto>();
 
             //医生编码 
-            var operateDoctorCode = CommonHelp.GuidToStr(operatorAllInfo
-                .Where(c => c.F_RealName == outpatientBase.DiagnosticDoctor)
-                .Select(d => d.F_HisUserId).FirstOrDefault());
+            var operateDoctorCode = CommonHelp.GuidToStr(firstProjectData.BillDoctorId);
             //收费时间
-            var visitDate = outpatientBase.VisitDate;
-
+            var visitDate = firstProjectData.BillTime;
+            //获取主诊断
             var mainDiagnosis = diagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
 
             //诊断症状
@@ -857,14 +871,11 @@ namespace BenDing.Service.Providers.YiHaiWeb
             //门诊病历
             var medicalRecordDetail = new OutpatientDetailUploadDataOutpatientMedicalRecordDetailXmlDto()
             {
-                DiagnosisStartTime = visitDate,
-                MainDiagnosis = mainDiagnosis.DiseaseCoding,
                 Age = CommonHelp.GetAgeByBirthdate(Convert.ToDateTime(patientInfo.Birthday)),
                 Birthday = patientInfo.Birthday,
-                Job = "工人",
-                OperatorName = outpatientBase.Operator,
-                OperatorTime = visitDate,
-                DepartmentAreaCode = "",
+                AntecedentHistory = mainDiagnosis.DiseaseName,
+                DepartmentAreaCode = hospitalGeneralCatalog.InpatientAreaCode,
+                DiagnosisStartTime = visitDate,
                 DiagnosisTime = visitDate,
                 DoctorCode = operateDoctorCode,
                 FindDiseaseTime = visitDate,
@@ -872,9 +883,13 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 IsConsultation = 1,
                 IsRepeatedDiagnosis = 0,
                 IsTrauma = 0,
+                Job = "工人",
+                MainDiagnosis = mainDiagnosis.DiseaseCoding,
+                OperatorName = outpatientBase.Operator,
+                WestMedicineFirstDiagnosis = isWestMedicineDiagnosis == true? mainDiagnosis.ProjectCode:null,
                 PhysiqueInspect = "T36.5℃",
                 VisitType = "1",
-                AntecedentHistory = mainDiagnosis.DiseaseName,
+                ChineseMedicineFirstDiagnosis =isWestMedicineDiagnosis == false ? mainDiagnosis.ProjectCode : null,
                 SymptomDetail = symptomDetail,
 
             };
@@ -883,46 +898,47 @@ namespace BenDing.Service.Providers.YiHaiWeb
 
                 //流水号
                 string detailFixedEncoding = CommonHelp.GuidToStr(item.DetailId);
-                string ordersSortNo = item.CostDocumentType == "3" ? detailFixedEncoding : null;
+                string ordersSortNo = isWestMedicineDiagnosis==false ? detailFixedEncoding : null;
                 //获取医生
                 var operatorInfo = operatorAllInfo.FirstOrDefault(c => c.F_HisUserId == item.BillDoctorId);
 
                 var itemDetail = new OutpatientDetailUploadDataCostDetailXmlDto()
                 {
-
-                    DetailId = detailFixedEncoding,
-                    ProjectCode = item.MedicalInsuranceProjectCode,
-                    DirectoryName = item.DirectoryName,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice,
                     Amount = item.Amount,
                     ApprovalMark = item.ApprovalMark,
-                    Operators = outpatientBase.Operator,
-                    OrdersSortNo = ordersSortNo,
-                    PrescriptionNo = outpatientBase.InvoiceNo,
-                    OutpatientCostType = GetOutpatientCostType(item.CostDocumentType),
+                    DetailId = detailFixedEncoding,
                     DirectoryCode = CommonHelp.GuidToStr(item.DirectoryCode),
-                    OperateDoctorDepartment = CommonHelp.GuidToStr(item.OperateDepartmentId),
+                    DirectoryName = item.DirectoryName,
+                    ProjectCode = item.MedicalInsuranceProjectCode,
+                    OperateDoctorCode = operateDoctorCode,
+                    OperateDoctorDepartment = hospitalGeneralCatalog.MedicalInsuranceCode,
+                    OperateDoctorNo = CommonHelp.GuidToStr(item.BillDoctorId),
+                    Operators = outpatientBase.Operator,
+                    PrescriptionNo = outpatientBase.InvoiceNo,
+                    OutpatientCostType = GetOutpatientCostType(item.DirectoryCategoryName),
+                    Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice,
+                    OrdersSortNo = ordersSortNo,
+                    DetailInputTime = firstProjectData.BillTime,
+                    DetailHappenTime = firstProjectData.BillTime,
                     OperateDoctorRange = operatorInfo.F_DoctorTreatmentRange,
-                    HospitalPairingCode = null,
-                    OperateDoctorNo = CommonHelp.GuidToStr(item.BillDoctorId)
+                 
                 };
                 uploadCostDetail.Add(itemDetail);
 
 
                 //用药天数
-                int useDays = Convert.ToInt32(item.Quantity)
-                              / (Convert.ToInt32(item.Dosage) * 3);
+                int useDays = item.UseDrugDay;
                 //医嘱序号加一
                 ordersNo++;
-                var useDrugEndTime = Convert.ToDateTime(item.BillTime).AddDays(useDays).ToString("yyyy-MM-dd HH:mm:ss");
-                //根据处方类型判断是西药还是中药处方
-                if (item.DirectoryCategoryName == "西药" || item.DirectoryCategoryName == "中药")
+                var useDrugEndTime = Convert.ToDateTime(item.BillTime).AddDays(item.UseDrugDay).ToString("yyyy-MM-dd HH:mm:ss");
+                
+                if (item.DirectoryCategoryName=="西药"|| item.DirectoryCategoryName == "中药")
                 {
 
                     westernDrugDetail.Add(new OutpatientWesternDrugPrescriptionDetail()
                     {
-                        PrescriptionNo = CommonHelp.GuidToStr(item.DocumentNo),
+                        PrescriptionNo = outpatientBase.InvoiceNo,
                         GetDrugPerson = dataValue.OutpatientPersonBase.PatientName,
                         UseDrugStartTime = item.BillTime,
                         UseDrugEndTime = useDrugEndTime
@@ -934,7 +950,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                     ordersDetail.Add(new OutpatientPatientOrdersDetail()
                     {
                         OperatorName = outpatientBase.Operator,
-                        DoctorName = outpatientBase.DiagnosticDoctor,
+                        DoctorName = item.BillDoctorName,
                         DoctorCode = CommonHelp.GuidToStr(item.OperateDoctorId),
                         OrdersContent = item.DirectoryName,
                         OrdersDepartmentCode = CommonHelp.GuidToStr(item.BillDepartmentId),
@@ -964,7 +980,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             {
                 DiagnosisCode = d.ProjectCode,
                 DiagnosisName = d.DiseaseName,
-                DiagnosisType = westernDrugDetail.Count > 0 ? "1" : "2",
+                DiagnosisType = isWestMedicineDiagnosis==true ? "2" : "1",
             }).ToList();
             resultData.OrdersDetail = ordersDetail;
             resultData.WesternDrugDetail = westernDrugDetail;
@@ -974,6 +990,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             resultData.CostDetail = uploadCostDetail;
             return resultData;
         }
+
         /// <summary>
         /// 获取门诊费用
         /// </summary>
@@ -982,6 +999,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         private string GetOutpatientCostType(string param)
         {
             string resultData = null;
+
             switch (param)
             {
                 case "0":
