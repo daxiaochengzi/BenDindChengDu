@@ -1,11 +1,9 @@
 ﻿using System.Web.Http;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
-using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Models.Params.YinHai.Ui;
 using BenDing.Domain.Models.Params.YinHai.Web;
 using BenDing.Service.Interfaces.YiHaiWeb;
-
 namespace NFine.Web.Controllers
 {/// <summary>
 /// 银海医保接口
@@ -24,9 +22,7 @@ namespace NFine.Web.Controllers
         {
             _yiHaiOutpatientDepartmentService = iHaiOutpatientDepartmentService;
         }
-
         #region comm
-
         /// <summary>
         /// 医保签到
         /// </summary>
@@ -156,7 +152,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-     
         /// <summary>
         /// 获取门诊病人费用明细上传入参
         /// </summary>
@@ -188,8 +183,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-        
-        
         /// <summary>
         /// 获取门诊结算入参
         /// </summary>
@@ -204,9 +197,22 @@ namespace NFine.Web.Controllers
             });
 
         }
-        
+        /// <summary>
+        /// 门诊结算
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData OutpatientSettlement([FromBody]GetOutpatientDepartmentUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                _yiHaiOutpatientDepartmentService.OutpatientSettlement(param);
 
+            });
 
+        }
         #endregion
+
+
     }
 }

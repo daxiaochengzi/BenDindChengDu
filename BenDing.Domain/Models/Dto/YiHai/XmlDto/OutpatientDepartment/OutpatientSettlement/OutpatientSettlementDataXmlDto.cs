@@ -26,8 +26,8 @@ namespace BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement
         [XmlArrayAttribute("datasetyz")]
         [XmlArrayItem("row")]
         public List<OutpatientDepartmentDataXmlDetailDto> OrdersDetail { get; set; }
-
-
+        [XmlElementAttribute("row", IsNullable = false)]
+        public List<OutpatientDepartmentDataXmlSerialNumberDto> SerialNumber { get; set; }
     }
     /// <summary>
     /// 费用明细
@@ -286,7 +286,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement
         /// 频次
         /// </summary>
         [XmlElementAttribute("yke350", IsNullable = false)]
-        public int Frequency { get; set; } = 1;
+        public string Frequency { get; set; }
         /// <summary>
         /// 使用天数
         /// </summary>
@@ -294,7 +294,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement
         public int UseDays { get; set; } = 1;
 
     }
-    /// <summary>
+   ///
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class OutpatientDepartmentDataXmlSerialNumberDto
     {

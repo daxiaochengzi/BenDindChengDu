@@ -46,7 +46,12 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// </summary>
         [XmlElementAttribute("yka055", IsNullable = false)]
         public decimal TotalAmount { get; set; }
-
+       /// <summary>
+       /// 现金支付
+       /// </summary>
+        [XmlElementAttribute("ykh012", IsNullable = false)]
+        public decimal SelfPayFeeAmount { get; set; }
+        
         /// <summary>
         /// 社保支付总合计
         /// </summary>
@@ -57,6 +62,28 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         /// </summary>
         [XmlElementAttribute("yka065", IsNullable = false)]
         public decimal AccountPay { get; set; }
+        /// <summary>
+        /// 个人账户信息
+        /// </summary>
+        [XmlArrayAttribute("grzhye")]
+        [XmlArrayItem("row")]
+        public List<PatientAccountInfo>  AccountInfo { get; set; }
 
+    }
+    /// <summary>
+    /// 个人账户信息
+    /// </summary>
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public class PatientAccountInfo
+    {/// <summary>
+     ///  账户类型
+     /// </summary>
+        [XmlElementAttribute("ykc303")]
+        public string AccountType { get; set; }
+        /// <summary>
+        /// 账户余额
+        /// </summary>
+        [XmlElementAttribute("ykc194")]
+        public decimal Balance { get; set; }
     }
 }

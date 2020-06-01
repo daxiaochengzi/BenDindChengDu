@@ -307,6 +307,7 @@ namespace BenDing.Service.Providers
 
                 if (param.IsSave)
                 {
+                    if (resultData.Id == Guid.Empty) resultData.Id=Guid.NewGuid();
                     _hisSqlRepository.SaveOutpatient(param.User, resultData);
                     
                 }

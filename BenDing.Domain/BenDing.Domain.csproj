@@ -148,6 +148,7 @@
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeOutPutXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\MedicalInsuranceSignInOutputXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlementPrint\OutpatientSettlementPrintInputXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlement\OutpatientSettlementControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlement\OutpatientSettlementDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\CancelOutpatientSettlement\CancelOutpatientSettlementControlXmlDto.cs" />
@@ -414,6 +415,7 @@
     <Compile Include="Models\Params\Workers\WorkerSettlementCancelParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerStrokeCardParam.cs" />
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\HospitalInfoUploadUpdateParam.cs" />
+    <Compile Include="Models\Params\YinHai\OutpatientDepartment\OutpatientDepartmentDataXmlParam.cs" />
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\QuerySettlementProcessParam.cs" />
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\UpdateOutpatientSettlementParam.cs" />
     <Compile Include="Models\Params\YinHai\TestsParam.cs" />

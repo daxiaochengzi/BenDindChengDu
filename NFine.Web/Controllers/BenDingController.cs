@@ -424,7 +424,6 @@ namespace NFine.Web.Controllers
                     paramIni.UiParam = param;
                     var data = _webServiceBasicService.GetOutpatientPerson(paramIni);
                     y.Data = data;
-
                 }
 
             });
@@ -444,16 +443,10 @@ namespace NFine.Web.Controllers
               {
                   User = baseUser,
                   BusinessId = param.BusinessId,
-
               };
               var data = _webServiceBasicService.GetOutpatientDetailPerson(outpatientDetailParam);
               y.Data = data;
 
-              //var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
-              //if (queryData != null)
-              //{
-
-              //}
           });
         }
         /// <summary>

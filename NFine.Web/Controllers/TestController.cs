@@ -7,18 +7,14 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using BenDing.Domain.Models.Dto;
 using BenDing.Domain.Models.Dto.Base;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
-using BenDing.Domain.Models.Dto.Resident;
-using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.DifferentPlaces;
-using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -145,8 +141,22 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var ddd = param;
+                var ddds = new List<OutpatientDepartmentDataXmlSerialNumberDto>();
 
+                ddds.Add(new OutpatientDepartmentDataXmlSerialNumberDto()
+                {
+                    SerialNumber = "3333"
+                });
+                ddds.Add(new OutpatientDepartmentDataXmlSerialNumberDto()
+                {
+                    SerialNumber = "2222"
+                });
+                var ddd = new OutpatientSettlementDataXmlDto();
+                ddd.SerialNumber = ddds;
+
+
+
+                var casdas =   XmlSerializeHelper.YinHaiXmlSerialize(ddd);
             });
 
         }

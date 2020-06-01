@@ -271,7 +271,7 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                       SELECT [Id]
                       ,[BusinessId]
                       ,[ProcessStep]
-                      ,[JosnContent]
+                      ,[JsonContent]
                       ,[BatchNo]
                       ,[SerialNumber]
                       ,[VerificationCode]
@@ -316,7 +316,8 @@ namespace BenDing.Repository.Providers.YiHaiWeb
 
                     if (!string.IsNullOrWhiteSpace(strSet))
                     {
-                        strSql = strSet.Substring(0, strSet.Length - 1);
+                        strSql = $@"update [dbo].[Outpatient] set {strSet.Substring(0, strSet.Length - 1)}
+                                 where BusinessId='{param.BusinessId}' and IsDelete=0";
                         sqlConnection.Execute(strSql);
                     }
                     sqlConnection.Close();

@@ -130,7 +130,6 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister
         /// 费用明细
         /// </summary>
         [XmlArrayAttribute("fymxdataset")]
-
         [XmlArrayItem("row")]
         public List<OutpatientRegisterOutputXmlCostDetailDto> CostDetailRow { get; set; }
 

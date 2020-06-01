@@ -142,6 +142,10 @@
                 <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
 
             </div>
+            <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="SettlementPrintDiv">
+                <button type="button" Id="SettlementPrint" class="layui-btn layui-btn-radius">结算打印</button>
+
+            </div>
             <div class="layui-card-body" lay-size="sm">
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>医保结算信息</legend>
@@ -174,6 +178,7 @@
         $("#InsuranceNameDiv").hide();
         $("#OutpatientRegisterDiv").hide();
         $("#DoorDiagnosisSettlementDiv").hide();
+        $("#SettlementPrintDiv").hide();
         $("#queryDataDiv").hide();
 
         // 插件检查
@@ -253,7 +258,6 @@
         }
         //获取挂号入参
         function getOutpatientRegisterParam() {
-
             params["timestamp"] = (new Date()).valueOf();
             $.ajax({
                 type: 'post',
@@ -284,8 +288,6 @@
                                 registerParam["ResultJson"] = activeJsonData.Data;
                                 //挂号回写
                                 outpatientRegister(registerParam);
-
-                               
                             }
 
                         }
@@ -303,7 +305,7 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
-
+                 
                     if (data.Success === false) {
                         var errData = data.Message;
                         msgError(errData);
@@ -312,9 +314,17 @@
                         if (nextStepName === "getOutpatientDetailUploadParam") {
                             getOutpatientDetailUploadParam();
                         }
-                       
+                        if (nextStepName === "OutpatientDepartmentCostInput") {
+                            $("#DoorDiagnosisSettlement").hide();
+                            $("#SettlementPrintDiv").show();
+                            buttonStatus("DoorDiagnosisSettlement", false); 
+                            ////添加结算信息
+                            //if (data.Data.PayMsg !== null) {
+                            //    settlementData(data.Data.PayMsg);
+                            //}
+                        };
 
-                      }
+                    }
 
                  }
              
@@ -337,11 +347,10 @@
                         var errData = data.Message;
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                         //样式类名:墨绿深蓝风
-
                     } else {
-                        //确认挂号
+                      
                         var dataValue = data.Data;
-                        if (dataValue== null) {
+                        if (dataValue!== null) {
                             var activeX = document.getElementById("CSharpActiveX");
 
                             var activeData = activeX.YiHaiOutpatientMethods(dataValue.SerialNumber, dataValue.VerificationCode
@@ -351,9 +360,10 @@
                                 $.modalAlert(activeJsonData.Message, "error");
 
                             } else {
+                               
                                 confirmParam["ResultJson"] = activeJsonData.Data;
                                 confirmParam["SettlementStep"] = "2";
-                                confirmProcessStep(confirmParam, getOutpatientDetailUploadParam);
+                                confirmProcessStep(confirmParam,"getOutpatientDetailUploadParam" );
 
                             }
 
@@ -380,7 +390,6 @@
                         var errData = data.Message;
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                         //样式类名:墨绿深蓝风
-
                     } else {
                         var dataValue = data.Data;
                         if (dataValue.TransactionInputXml !== null) {
@@ -410,7 +419,7 @@
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientDetailUpload',
-                data: params,
+                data: uploadParam,
                 dataType: "json",
                 async: false,
                 success: function (data) {
@@ -424,6 +433,10 @@
                         $("#DoorDiagnosisSettlementDiv").show();
                         //居民显示结算按钮
                         buttonStatus("DoorDiagnosisSettlement", true);
+                        //隐藏挂号按钮
+                        $("#OutpatientRegisterDiv").hide();
+                        //居民显示挂号按钮
+                        buttonStatus("OutpatientRegister", false);
                     }
                 }
 
@@ -435,26 +448,32 @@
 
             $.ajax({
                 type: 'post',
-                url: hostNew + '/GetOutpatientDepartmentCostInputParam',
+                url: hostNew + '/GetOutpatientSettlementParam',
                 data: params,
                 dataType: "json",
                 async: false,
                 success: function (data) {
-
+                    debugger;
                     if (data.Success === false) {
                         var errData = data.Message;
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                         //样式类名:墨绿深蓝风
 
                     } else {
+                        debugger;
+                        var dataValue = data.Data;
                         var activeX = document.getElementById("CSharpActiveX");
                         //门诊结算
-                        var activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "OutpatientDepartmentCostInput");
+                        var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                            , "OutpatientSettlement", $("#empid").val());
+                      
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
                             msgError(activeJsonData.Message);
                         } else {
-                            outpatientDepartmentCostInput(activeJsonData.Data, activeJsonData.OtherInfo);
+                            var costInputParams = params;
+                            costInputParams["ResultJson"] = activeJsonData.Data;
+                            outpatientDepartmentCostInput(costInputParams);
                         }
 
                     }
@@ -463,15 +482,13 @@
             });
         }
         //普通门诊结算
-        function outpatientDepartmentCostInput(costInputData, accountBalance) {
+        function outpatientDepartmentCostInput(costInputParams) {
 
-            params["SettlementJson"] = costInputData;
-            params["InsuranceType"] = $("#InsuranceType").val();
-            params["AccountBalance"] = accountBalance;
+            var confirmParam = params;
             $.ajax({
                 type: 'post',
-                url: hostNew + '/OutpatientDepartmentCostInput',
-                data: params,
+                url: hostNew + '/OutpatientSettlement',
+                data: costInputParams,
                 dataType: "json",
                 async: false,
                 success: function (data) {
@@ -481,14 +498,29 @@
                         msgError(errData);
 
                     } else {
-                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
-                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        msgSuccess('门诊结算成功');
-                        buttonStatus("DoorDiagnosisSettlement", false);
-                        //添加结算信息
-                        if (data.Data.PayMsg !== null) {
-                            settlementData(data.Data.PayMsg);
+                        var dataValue = data.Data;
+                        if (dataValue!== null) {
+                            var activeX = document.getElementById("CSharpActiveX");
+
+                            var activeData = activeX.YiHaiOutpatientMethods(dataValue.SerialNumber, dataValue.VerificationCode
+                                , "ConfirmDeal", $("#empid").val());
+                            var activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                $.modalAlert(activeJsonData.Message, "error");
+
+                            } else {
+                               
+                                confirmParam["ResultJson"] = activeJsonData.Data;
+                                confirmParam["SettlementStep"] = "5";
+                                confirmProcessStep(confirmParam,"getOutpatientDetailUploadParam" );
+
+                            }
+
                         }
+
+
+                        confirmProcessStep(outpatientDepartmentCostInput);
+                       
                     }
                 }
 
@@ -498,10 +530,10 @@
         $('#OutpatientRegister').on('click', function () {
             //普通
             getOutpatientRegisterParam();
-
         });
         //门诊结算
         $('#DoorDiagnosisSettlement').on('click', function () {
+            debugger;
             getOutpatientDepartmentCostInputParam();
 
         });
