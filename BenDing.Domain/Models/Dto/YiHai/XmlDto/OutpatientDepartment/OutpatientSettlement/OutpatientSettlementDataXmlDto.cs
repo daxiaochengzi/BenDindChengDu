@@ -291,7 +291,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement
         /// 使用天数
         /// </summary>
         [XmlElementAttribute("yke446", IsNullable = false)]
-        public int UseDays { get; set; } = 1;
+        public int UseDays { get; set; } 
 
     }
    ///

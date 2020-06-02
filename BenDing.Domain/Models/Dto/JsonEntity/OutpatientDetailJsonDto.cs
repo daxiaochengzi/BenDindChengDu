@@ -48,7 +48,7 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// 用药天数
         /// </summary>
         [JsonProperty(PropertyName = "用药天数")]
-        public int UseDrugDay { get; set; }
+        public string UseDrugDay { get; set; }
         ///// <summary>
         ///// 本单收费单位
         ///// </summary>

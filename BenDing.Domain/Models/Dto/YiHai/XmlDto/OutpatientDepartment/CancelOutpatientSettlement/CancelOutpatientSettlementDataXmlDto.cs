@@ -22,7 +22,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment.CancelOutp
         [XmlElement("yka107", IsNullable = false)]
         public decimal MedicalInsurancePayTotalAmount { get; set; }
         /// <summary>
-        /// 费用合计
+        /// 账户支付
         /// </summary>
         [XmlElement("yka065", IsNullable = false)]
         public decimal AccountPay { get; set; }

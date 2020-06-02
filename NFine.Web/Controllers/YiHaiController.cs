@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
+using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Ui;
 using BenDing.Domain.Models.Params.YinHai.Web;
 using BenDing.Service.Interfaces.YiHaiWeb;
@@ -206,11 +207,55 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                _yiHaiOutpatientDepartmentService.OutpatientSettlement(param);
+                var data = _yiHaiOutpatientDepartmentService.OutpatientSettlement(param);
+                y.Data = data;
+            });
+
+        }
+        /// <summary>
+        /// 获取门诊结算打印参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientSettlementPrintParam([FromBody]GetOutpatientSettlementPrintParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+              y.Data=  _yiHaiOutpatientDepartmentService.GetOutpatientSettlementPrintParam(param);
 
             });
 
         }
+        /// <summary>
+        /// 获取取消结算参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetCancelOutpatientSettlementParam([FromBody]GetCancelOutpatientSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                y.Data = _yiHaiOutpatientDepartmentService.GetCancelOutpatientSettlementParam(param);
+
+            });
+
+        }
+
+        /// <summary>
+        /// 获取取消结算参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData CancelOutpatientSettlement([FromBody]GetCancelOutpatientSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+               y.Data= _yiHaiOutpatientDepartmentService.CancelOutpatientSettlement(param);
+
+            });
+
+        }
+
         #endregion
 
 

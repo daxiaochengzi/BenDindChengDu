@@ -85,5 +85,18 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         void ConfirmProcessStep(ConfirmProcessStepUiParam param);
+
+        GetYiHaiBaseParm GetOutpatientSettlementPrintParam(GetOutpatientSettlementPrintParam param);
+        /// <summary>
+        /// 获取门诊取消结算参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         GetYiHaiBaseParm GetCancelOutpatientSettlementParam(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        /// 取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        ConfirmInfoDto CancelOutpatientSettlement(GetCancelOutpatientSettlementUiParam param);
     }
 }

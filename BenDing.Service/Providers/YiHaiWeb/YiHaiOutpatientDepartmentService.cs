@@ -14,7 +14,9 @@ using BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement;
 using BenDing.Domain.Models.Dto.YiHai.Web;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment.CancelOutpatientSettlement;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment.OutpatientDetailUpload;
+using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment.OutpatientSettlementPrint;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDetailUpload;
 using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientRegister;
 using BenDing.Domain.Models.Enums;
@@ -580,6 +582,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
         {
             var resultData = new ConfirmInfoDto();
             var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            baseUser.TransKey = param.TransKey;
             var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
             var outputData = XmlHelp.DeSerializer<OutpatientSettlementOutputXmlDto>(resultDto.TransactionOutputXml);
             //获取门诊病人信息
@@ -617,9 +620,9 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var xmlData = new OutpatientDepartmentCostXml()
             {
                 AccountBalance = accountBalance,
-                MedicalInsuranceOutpatientNo = outputData.SettlementNo,
+                MedicalInsuranceOutpatientNo = outputData.VisitNo,
                 CashPayment = outputData.SelfPayFeeAmount,
-                SettlementNo = outputData.SettlementNo,
+                SettlementNo = outputData.VisitNo,
                 AllAmount = outputData.TotalAmount,
                 PatientName = outpatientInfo.PatientName,
                 AccountAmountPay = 0,
@@ -636,7 +639,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 BackParam = strXmlBackParam
             };
             //存基层
-            //_webServiceBasicRepository.SaveXmlData(saveXml);
+            _webServiceBasicRepository.SaveXmlData(saveXml);
             //更新门诊病人状态
             _yiHaiSqlRepository.UpdateOutpatientSettlement(
                 new UpdateOutpatientSettlementParam
@@ -671,20 +674,35 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public GetYiHaiBaseParm GetOutpatientSettlementPrintParam(UiBaseDataParam param)
+        public GetYiHaiBaseParm GetOutpatientSettlementPrintParam(GetOutpatientSettlementPrintParam param)
         {
             var resultData = new GetYiHaiBaseParm();
             //获取结算步骤数据
            var settlementProcessData= _yiHaiSqlRepository.QuerySettlementProcess(new QuerySettlementProcessParam()
             {
                BusinessId = param.BusinessId,
-               ProcessStep = (int)OutpatientSettlementStep.ConfirmSettlement,
+               ProcessStep = (int)OutpatientSettlementStep.OutpatientSettlement,
             });
-            if (settlementProcessData.Any()==false) throw new Exception("获取门诊结算确认数据失败!!!");
+            if (settlementProcessData.Any()==false) throw new Exception("获取门诊结算数据失败!!!");
 
+           var hospitalOperator= _systemManageRepository.QueryHospitalOperator(new QueryHospitalOperatorParam()
+            {
+                UserId = param.UserId
+            });
             var settlementJsonData= settlementProcessData.FirstOrDefault();
             var resultDto = JsonConvert.DeserializeObject<DealModelDto>(settlementJsonData.JsonContent);
             var outputData = XmlHelp.DeSerializer<OutpatientSettlementOutputXmlDto>(resultDto.TransactionOutputXml);
+            var controlData = new OutpatientSettlementPrintControlXmlDto
+            {
+                PayType = outputData.PayType,
+                SettlementNo = outputData.SettlementNo,
+                PersonalCoding = outputData.PersonalCoding,
+                VisitNo = outputData.VisitNo,
+                MedicalInsuranceOrganization = hospitalOperator.MedicalInsuranceHandleNo
+            };
+            var dataXml = new DataXmlBaseDto();
+            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlData);
+            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
             return resultData;
 
         }
@@ -735,13 +753,131 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public GetYiHaiBaseParm GetCancelOutpatientSettlementParam(GetOutpatientDepartmentUiParam param)
+        public GetYiHaiBaseParm GetCancelOutpatientSettlementParam(GetCancelOutpatientSettlementUiParam param)
         {
             var resultData = new GetYiHaiBaseParm();
+            var settlementProcessData = _yiHaiSqlRepository.QuerySettlementProcess(new QuerySettlementProcessParam()
+            {
+                BusinessId = param.BusinessId,
+                ProcessStep = (int)OutpatientSettlementStep.OutpatientSettlement,
+            });
+            var settlementJsonData = settlementProcessData.FirstOrDefault();
+            if (settlementJsonData==null) throw  new  Exception("获取门诊结算信息失败!!!");
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(settlementJsonData.JsonContent);
+            var outputData = XmlHelp.DeSerializer<OutpatientSettlementOutputXmlDto>(resultDto.TransactionOutputXml);
+            var controlData = new CancelOutpatientSettlementDataXmlDto
+            {
+                AccountPay = outputData.AccountPay,
+                MedicalInsurancePayTotalAmount = outputData.MedicalInsurancePayTotalAmount,
+                TotalAmount = outputData.TotalAmount
+            };
 
+            var dataXml = new CancelOutpatientSettlementControlXmlDto
+            {
+               PayType = outputData.PayType,
+               SettlementNo = outputData.SettlementNo,
+               VisitNo = outputData.VisitNo
+            };
+            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(controlData);
+            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
+            return resultData;
+           
+        }
+        /// <summary>
+        /// 取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        public ConfirmInfoDto CancelOutpatientSettlement(GetCancelOutpatientSettlementUiParam param)
+        {
+          
+            var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            baseUser.TransKey = param.TransKey;
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
+            var resultData = new ConfirmInfoDto()
+            {
+                SerialNumber = resultDto.SerialNumber,
+                VerificationCode = resultDto.VerificationCode
+            };
+            //获取门诊病人信息
+            var outpatientInfo = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam()
+            {
+                BusinessId = param.BusinessId
+            });
+         
+            if (outpatientInfo.ProcessStep !=(int)OutpatientSettlementStep.ConfirmSettlement && outpatientInfo.ProcessStep!=8) throw new Exception("当前病人未确认结算,不能取消结算!!!");
+            if (outpatientInfo.ProcessStep == (int)OutpatientSettlementStep.ConfirmCancelSettlement ) throw new Exception("当前病人已确认取消结算,不能再次取消结算!!!");
+            var entityId = Guid.NewGuid();
+            _yiHaiSqlRepository.InsertSettlementProcess(new SettlementProcessDto()
+            {
+                Id = entityId,
+                BusinessId = param.BusinessId,
+                CreateUserId = param.UserId,
+                ProcessStep = (int)OutpatientSettlementStep.CancelSettlement,
+                SerialNumber = resultDto.SerialNumber,
+                BatchNo = resultDto.BatchNo,
+                VerificationCode = resultDto.VerificationCode,
+                CreateTime = DateTime.Now,
+                JsonContent = resultDto.TransactionOutputXml
+
+            });
+            //更新门诊病人状态
+            _yiHaiSqlRepository.UpdateOutpatientSettlement(
+            new UpdateOutpatientSettlementParam
+            {
+                BusinessId = param.BusinessId,
+                ProcessStep = (int)OutpatientSettlementStep.CancelSettlement,
+
+            });
+            //回参构建
+            var xmlData = new OutpatientDepartmentCostCancelXml()
+            {
+                SettlementNo = outpatientInfo.VisitNo
+            };
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = baseUser,
+                MedicalInsuranceBackNum = outpatientInfo.VisitNo,
+                MedicalInsuranceCode = "42MZ",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //存基层
+            _webServiceBasicRepository.SaveXmlData(saveXml);
+
+            _yiHaiSqlRepository.InsertSettlementProcess(new SettlementProcessDto()
+            {
+                Id = Guid.NewGuid(),
+                BusinessId = param.BusinessId,
+                CreateUserId = param.UserId,
+                ProcessStep = (int)OutpatientSettlementStep.HisCancelSettlement,
+                SerialNumber = resultDto.SerialNumber,
+                BatchNo = resultDto.BatchNo,
+                VerificationCode = resultDto.VerificationCode,
+                CreateTime = DateTime.Now,
+                JsonContent = resultDto.TransactionOutputXml
+
+            });
+            //更新门诊病人状态
+            _yiHaiSqlRepository.UpdateOutpatientSettlement(
+            new UpdateOutpatientSettlementParam
+            {
+                BusinessId = param.BusinessId,
+                ProcessStep = (int)OutpatientSettlementStep.HisCancelSettlement,
+
+            });
+            //添加日志
+            var logParam = new AddHospitalLogParam()
+            {
+                JoinOrOldJson = JsonConvert.SerializeObject(param),
+                User = baseUser,
+                Remark = "门诊取消结算",
+                RelationId = outpatientInfo.Id,
+            };
+            _systemManageRepository.AddHospitalLog(logParam);
+           
             return resultData;
         }
-
         /// <summary>
         /// 获取医院信息上传参数
         /// </summary>
@@ -1059,10 +1195,10 @@ namespace BenDing.Service.Providers.YiHaiWeb
 
 
                 //用药天数
-                int useDays = item.UseDrugDay;
+                int useDays =!string.IsNullOrWhiteSpace(item.UseDrugDay)?Convert.ToInt32(item.UseDrugDay):0 ;
                 //医嘱序号加一
                 ordersNo++;
-                var useDrugEndTime = Convert.ToDateTime(item.BillTime).AddDays(item.UseDrugDay).ToString("yyyy-MM-dd HH:mm:ss");
+                var useDrugEndTime = Convert.ToDateTime(item.BillTime).AddDays(useDays).ToString("yyyy-MM-dd HH:mm:ss");
                 
                 if (item.DirectoryCategoryName=="西药费"|| item.DirectoryCategoryName == "中药费"|| item.DirectoryCategoryName == "中成药")
                 {
@@ -1291,7 +1427,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                         Dosage = null,
                         DosageUnit = items.HospitalPricingUnit,
                         Frequency = "",
-                        UseDays = items.UseDrugDay
+                        UseDays =!string.IsNullOrWhiteSpace(items.UseDrugDay)?Convert.ToInt32(items.UseDrugDay):0
 
 
                     };
