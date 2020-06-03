@@ -8,6 +8,7 @@ using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.YiHai.Base;
 using BenDing.Domain.Models.Dto.YiHai.CancelMedicalInsuranceSignIn;
+using BenDing.Domain.Models.Dto.YiHai.JsonEntity;
 using BenDing.Domain.Models.Dto.YiHai.MedicalInsuranceSignIn;
 using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.YiHai.OutpatientSettlement;
@@ -625,7 +626,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 SettlementNo = outputData.VisitNo,
                 AllAmount = outputData.TotalAmount,
                 PatientName = outpatientInfo.PatientName,
-                AccountAmountPay = 0,
+                AccountAmountPay = outputData.AccountPay,
+                MedicalInsurancePayTotalAmount = outputData.MedicalInsurancePayTotalAmount,
                 MedicalInsuranceType = outpatientInfo.PayType == "0201" ? "1" : outpatientInfo.PayType,
             };
 
@@ -633,7 +635,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             var saveXml = new SaveXmlDataParam()
             {
                 User = baseUser,
-                MedicalInsuranceBackNum = "zydj",
+                MedicalInsuranceBackNum = "11",
                 MedicalInsuranceCode = "48",
                 BusinessId = param.BusinessId,
                 BackParam = strXmlBackParam
@@ -705,6 +707,53 @@ namespace BenDing.Service.Providers.YiHaiWeb
             resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(dataXml);
             return resultData;
 
+        }
+        /// <summary>
+        /// 查询门诊结算信息
+        /// </summary>
+        public QueryOutpatientSettlementCost QueryOutpatientSettlementCost(QueryOutpatientSettlementCostUiParam param)
+        {
+            //获取结算步骤数据
+            var settlementProcessData = _yiHaiSqlRepository.QuerySettlementProcess(new QuerySettlementProcessParam()
+            {
+                BusinessId = param.BusinessId,
+                ProcessStep = (int)OutpatientSettlementStep.OutpatientSettlement,
+            });
+            if (settlementProcessData.Any() == false) throw new Exception("获取门诊结算数据失败!!!");
+
+            //获取门诊病人信息
+            var outpatientInfo = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam()
+            {
+                BusinessId = param.BusinessId
+            });
+            if (outpatientInfo.ProcessStep!=(int) OutpatientSettlementStep.ConfirmSettlement) throw new Exception("当前病人没有确认结算信息不能,取消结算!!!");
+            var resultData = new QueryOutpatientSettlementCost()
+            {    BusinessId = param.BusinessId,
+                DepartmentName = outpatientInfo.DepartmentName,
+                DiagnosticDoctor = outpatientInfo.DiagnosticDoctor,
+                IdCardNo = outpatientInfo.IdCardNo,
+                InvoiceNo = outpatientInfo.InvoiceNo,
+                Operator = outpatientInfo.Operator,
+                OutpatientNumber = outpatientInfo.OutpatientNumber,
+                PatientName = outpatientInfo.PatientName,
+                VisitDate = outpatientInfo.VisitDate
+
+            };
+            var settlementJsonData = settlementProcessData.FirstOrDefault();
+            var resultDto = JsonConvert.DeserializeObject<DealModelDto>(settlementJsonData.JsonContent);
+            var outputData = XmlHelp.DeSerializer<OutpatientSettlementOutputXmlDto>(resultDto.TransactionOutputXml);
+            var outputJson= AutoMapper.Mapper.Map<OutpatientSettlementOutputJsonDto>(outputData);
+            if (outputData.AccountInfo.Any() && outputData.AccountInfo.Count>0)
+            {
+                var accountInfoData = outputData.AccountInfo.FirstOrDefault();
+                outputJson.AccountType = accountInfoData.AccountType;
+                outputJson.Balance = accountInfoData.Balance;
+            }
+
+            resultData.PayMsg=CommonHelp.GetPayMsg(JsonConvert.SerializeObject(outputJson));
+
+
+            return resultData;
         }
 
         /// <summary>
@@ -842,7 +891,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 BusinessId = param.BusinessId,
                 BackParam = strXmlBackParam
             };
-            //存基层
+            ////存基层
             _webServiceBasicRepository.SaveXmlData(saveXml);
 
             _yiHaiSqlRepository.InsertSettlementProcess(new SettlementProcessDto()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Base;
 
@@ -10,6 +11,7 @@ namespace BenDing.Domain.Models.Params.Web
 {/// <summary>
  /// 医保信息回写至基层系统
  /// </summary>
+ 
     public class SaveXmlDataParam: UserBaseParam
     {
         /// <summary>

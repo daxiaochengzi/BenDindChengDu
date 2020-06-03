@@ -227,6 +227,21 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
+        /// 查询门诊结算信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData QueryOutpatientSettlementCost([FromBody]QueryOutpatientSettlementCostUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                y.Data = _yiHaiOutpatientDepartmentService.QueryOutpatientSettlementCost(param);
+            });
+
+        }
+      
+        /// <summary>
         /// 获取取消结算参数
         /// </summary>
         /// <returns></returns>
@@ -240,9 +255,8 @@ namespace NFine.Web.Controllers
             });
 
         }
-
         /// <summary>
-        /// 获取取消结算参数
+        /// 取消门诊结算
         /// </summary>
         /// <returns></returns>
         [HttpPost]

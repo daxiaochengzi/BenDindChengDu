@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Params.Base;
 
-namespace BenDing.Domain.Models.Params.YinHai.OutpatientDepartment
+namespace BenDing.Domain.Models.Params.YinHai.Ui
 {
    public class GetCancelOutpatientSettlementUiParam : UiBaseDataParam
     {

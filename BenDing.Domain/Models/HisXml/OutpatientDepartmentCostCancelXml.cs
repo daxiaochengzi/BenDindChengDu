@@ -7,9 +7,10 @@ using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.HisXml
 {/// <summary>
-/// 门诊结算取消
-/// </summary>
-   public class OutpatientDepartmentCostCancelXml
+ /// 门诊结算取消
+ /// </summary>
+    [XmlRoot("output", IsNullable = false)]
+    public class OutpatientDepartmentCostCancelXml
     {
 
         /// <summary>

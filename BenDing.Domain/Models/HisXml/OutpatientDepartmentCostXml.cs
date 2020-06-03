@@ -7,7 +7,8 @@ using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.HisXml
 {
-   public class OutpatientDepartmentCostXml
+    [XmlRoot("output", IsNullable = false)]
+    public class OutpatientDepartmentCostXml
     {
         /// <summary>
         /// 医保门诊号
@@ -65,5 +66,12 @@ namespace BenDing.Domain.Models.HisXml
         /// </summary>
         [XmlElementAttribute("aac066", IsNullable = false)]
         public string MedicalInsuranceType { get; set; }
+
+        /// <summary>
+        /// 社保基金支付总额
+        /// </summary>
+        [XmlElementAttribute("ake039", IsNullable = false)]
+
+        public decimal MedicalInsurancePayTotalAmount { get; set; }
     }
 }

@@ -10,6 +10,8 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.Workers;
+using BenDing.Domain.Models.Dto.YiHai.JsonEntity;
+using BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -61,8 +63,13 @@ namespace NFine.Web.App_Start
                 cfg.CreateMap<DifferentPlacesUserInfoJsonDto, DifferentPlacesUserInfoDto>();
                cfg.CreateMap<DifferentPlacesHospitalizationRegisterJsonDto, DifferentPlacesHospitalizationRegisterDto>();
 
+                //银海-----------------------------------------------------
 
-                
+                //门诊
+                cfg.CreateMap<OutpatientSettlementOutputXmlDto, OutpatientSettlementOutputJsonDto>();
+
+                //-------------------------------------------------------
+
             });
         }
     }

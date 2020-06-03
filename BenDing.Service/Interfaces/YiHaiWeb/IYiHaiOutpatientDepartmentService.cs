@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.YiHai.Base;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
@@ -98,5 +99,11 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         ConfirmInfoDto CancelOutpatientSettlement(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        /// 查询门诊结算信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        QueryOutpatientSettlementCost QueryOutpatientSettlementCost(QueryOutpatientSettlementCostUiParam param);
     }
 }

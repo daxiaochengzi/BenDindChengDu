@@ -69,6 +69,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OutpatientDepartment
         [XmlArrayItem("row")]
         public List<PatientAccountInfo>  AccountInfo { get; set; }
 
+
     }
     /// <summary>
     /// 个人账户信息
