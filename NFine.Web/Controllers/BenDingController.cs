@@ -13,6 +13,7 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.Workers;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
@@ -811,11 +812,11 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData QueryProjectDownload([FromUri]QueryProjectUiParam param)
+        public ApiJsonResultData QueryMedicalInsuranceProject([FromUri]QueryProjectUiParam param)
         {
-            return new ApiJsonResultData(ModelState, new ResidentProjectDownloadRow()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState, new YiHaiMedicalInsuranceProjectDto()).RunWithTry(y =>
             {
-                var queryData = _medicalInsuranceSqlRepository.QueryProjectDownload(param);
+                var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceProject(param);
                 var data = new
                 {
                     data = queryData.Values.FirstOrDefault(),

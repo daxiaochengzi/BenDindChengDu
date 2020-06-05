@@ -5,6 +5,7 @@ using System.Text;
 
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -45,7 +46,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Dictionary<int, List<ResidentProjectDownloadRow>> QueryProjectDownload(QueryProjectUiParam param);
+        Dictionary<int, List<YiHaiMedicalInsuranceProjectDto>>QueryMedicalInsuranceProject(QueryProjectUiParam param);
         /// <summary>
         /// 下载医保项目 DownloadD
         /// </summary>

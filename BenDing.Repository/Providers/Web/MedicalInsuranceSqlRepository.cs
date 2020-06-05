@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
@@ -207,46 +208,28 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
-        /// 医保中心端项目下载
+        /// 医保项目查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public Dictionary<int, List<ResidentProjectDownloadRow>> QueryProjectDownload(QueryProjectUiParam param)
+        public Dictionary<int, List<YiHaiMedicalInsuranceProjectDto>> QueryMedicalInsuranceProject(QueryProjectUiParam param)
         {
-            List<ResidentProjectDownloadRow> dataList;
-            var resultData = new Dictionary<int, List<ResidentProjectDownloadRow>>();
+            List<YiHaiMedicalInsuranceProjectDto> dataList;
+            var resultData = new Dictionary<int, List<YiHaiMedicalInsuranceProjectDto>>();
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 string executeSql = null;
                 try
                 {
                     sqlConnection.Open();
-                    string querySql = @"
-                             select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,ProjectLevel,
-                             Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime from [dbo].[MedicalInsuranceProject] 
-                             where  IsDelete=0 and EffectiveSign=1";
-                    string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0  and EffectiveSign=1";
+                  
+                
+                    string querySql = $@"
+                             SELECT *  FROM [dbo].[MedicalInsuranceProject] 
+                             where  IsDelete=0 and ProjectType={param.ProjectCodeType}";
+                    string countSql = $@"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0 and ProjectType={param.ProjectCodeType}";
                     string whereSql = "";
-                    if (!string.IsNullOrWhiteSpace(param.ProjectCodeType))
-                    {   //西药
-                        if (param.ProjectCodeType == "1")
-                        {
-                            whereSql += $" and ProjectCodeType in('11','91','92')";
-                        }//中药
-                        if (param.ProjectCodeType == "0")
-                        {
-                            whereSql += $" and ProjectCodeType in('12','13','91','92')";
-                        }//耗材
-                        if (param.ProjectCodeType == "3")
-                        {
-                            whereSql += $" and ProjectCodeType in('41','81','91','92')";
-                        }
-                        //诊疗
-                        if (param.ProjectCodeType == "2")
-                        {
-                            whereSql += $" and ProjectCodeType not in('11','12','13','41','81','91','92')";
-                        }
-                    }
+              
                     if (!string.IsNullOrWhiteSpace(param.ProjectCode))
                     {
                         whereSql += $" and ProjectCode='{param.ProjectCode}'";
@@ -265,29 +248,7 @@ namespace BenDing.Repository.Providers.Web
                     var result = sqlConnection.QueryMultiple(executeSql);
 
                     int totalPageCount = result.Read<int>().FirstOrDefault();
-                    dataList = (from t in result.Read<ResidentProjectDownloadRow>()
-                                select    new ResidentProjectDownloadRow
-                                {
-                                    ProjectName = t.ProjectName,
-                                    ProjectCode = t.ProjectCode,
-                                     Id = t.Id,
-                                    MnemonicCode = t.MnemonicCode,
-                                    Formulation = t.Formulation,
-                                    Remark = t.Remark,
-                                    Specification = t.Specification,
-                                    Manufacturer = t.Manufacturer,
-                                    ProjectCodeType = ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString(),
-                                    ProjectLevel = ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString(),
-                                    NewCodeMark = t.NewCodeMark=="1"?"是":"否",
-                                    NewUpdateTime =t.NewUpdateTime,
-                                    QuasiFontSize = t.QuasiFontSize,
-                                    RestrictionSign = t.RestrictionSign,
-                                    LimitPaymentScope = t.LimitPaymentScope,
-                                    Unit = t.Unit
-                                        
-
-                                }
-                            ).ToList();
+                    dataList = result.Read<YiHaiMedicalInsuranceProjectDto>().ToList();
                     resultData.Add(totalPageCount, dataList);
                     sqlConnection.Close();
                     return resultData;
@@ -573,16 +534,13 @@ namespace BenDing.Repository.Providers.Web
                                         PairCodeTime = t.PairCodeTime,
                                         ProjectName = t.ProjectName,
                                         ProjectCode = t.ProjectCode,
-                                        ProjectLevel = t.ProjectLevel != null
-                                            ? ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString()
-                                            : t.ProjectLevel,
+                                        ProjectLevel = t.ProjectLevel,
                                         ProjectCodeType = t.ProjectCodeType != null
                                             ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString()
                                             : t.ProjectCodeType,
                                         QuasiFontSize = t.QuasiFontSize,
                                         Unit = t.Unit,
                                         Specification = t.Specification,
-                                        Remark = t.Remark,
                                         PairCodeUser = t.PairCodeUser != null
                                             ? hospitalOperatorAll.Where(c => c.HisUserId == t.PairCodeUser).Select(d => d.HisUserName)
                                                 .FirstOrDefault()

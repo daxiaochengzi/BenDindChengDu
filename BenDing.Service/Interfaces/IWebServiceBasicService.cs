@@ -49,6 +49,21 @@ namespace BenDing.Service.Interfaces
         /// <returns></returns>
         Int64 MedicalInsuranceDownloadIcd10(DataTable dt, string userId);
         /// <summary>
+        /// 医保药品导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+         Int64 DrugCatalogImportExcel(DataTable dt, string userId);
+
+        /// <summary>
+        /// 诊疗项目导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Int64 DiagnosisProjectImportExcel(DataTable dt, string userId);
+        /// <summary>
         /// Icd10对码
         /// </summary>
         /// <param name="param"></param>

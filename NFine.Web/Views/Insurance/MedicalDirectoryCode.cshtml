@@ -19,88 +19,17 @@
     }
 
 </style>
-<div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
+<div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="tabProject">
     <ul class="layui-tab-title">
-        <li class="layui-this">医院目录</li>
-        <li>医保目录</li>
-        <li>对码管理</li>
+        <li data-status="0" class="layui-this">医院目录</li>
+        <li data-status="1">医保药品目录</li>
+        <li data-status="2">医保材料诊疗目录</li>
+        <li data-status="3">对码管理</li>
     </ul>
     <input type="hidden" id="empid" value="@ViewBag.empid" />
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
-            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="app-content-list">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label-nw">目录类别</label>
-                        <div class="layui-input-inline">
-                            <select name="DirectoryCategoryCode">
-                                <option value="">请选择类别</option>
-                                <option value="0">中药</option>
-                                <option value="1">西药</option>
-                                <option value="2">诊疗</option>
-                                <option value="3">耗材</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label-nw">目录编码</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label-nw">目录名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-app-contlist-search">查询</button>
-                        <button class="layui-btn" data-type="cleanSearch">清除</button>
-                       
-                    </div>
-                </div>
-            </div>
-            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
-        </div>
-        <div class="layui-tab-item">
-            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="yibao-content-list">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label-nw">目录类别</label>
-                        <div class="layui-input-inline">
-                            <select name="ProjectCodeType">
-                                <option value="">请选择类别</option>
-                                <option value="0">中药</option>
-                                <option value="1">西药</option>
-                                <option value="2">诊疗</option>
-                                <option value="3">耗材</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label-nw">目录编码</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="ProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label-nw">目录名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="ProjectName" placeholder="请输入名称" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-yibao-content-list">查询</button>
-                        <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        @*<button class="layui-btn" data-type="updateSearch">更新目录</button>*@
-                    </div>
-                </div>
-            </div>
-            <table id="LAY-yibao-content-list" lay-filter="LAY-yibao-content-list"></table>
-        </div>
-        <div class="layui-tab-item">
-            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-pair-content-list">
+            <div class="layui-form layui-card-header layui-card-header-auto" >
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录类别</label>
@@ -117,195 +46,324 @@
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录编码</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                            <input type="text" Id="DirectoryCode" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录名称</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                            <input type="text" id="DirectoryName" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label-nw">关联状态</label>
+                        <button class="layui-btn" lay-submit=""  id="SearchBase" >查询</button>
+
+                    </div>
+                </div>
+            </div>
+            <table id="LAY-app-content-list" class="layui-hide"></table>
+        </div>
+        <div class="layui-tab-item">
+            <div class="layui-form layui-card-header layui-card-header-auto" >
+                <div class="layui-form-item">
+               
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录编码</label>
                         <div class="layui-input-inline">
-                            <select name="State">
-                                <option value="0">请选择状态</option>
-                                <option value="1">未对码</option>
-                                <option value="2">已对码</option>
+                            <input type="text" id="ProjectCode" name="ProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  id="ProjectName"  name="ProjectName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit=""  id="SearchDrugs" >查询</button>
+                       
+                        @*<button class="layui-btn" data-type="updateSearch">更新目录</button>*@
+                    </div>
+                </div>
+            </div>
+            <table id="LAY-yibao-content-list"  class="layui-hide" ></table>
+        </div>
+        <div class="layui-tab-item">
+            <div class="layui-form layui-card-header layui-card-header-auto" >
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录类别</label>
+                        <div class="layui-input-inline">
+                            <select id="yiBaoDiagnosisProjectCodeType" name="yiBaoDiagnosisProjectCodeType">
+                                <option value="2">诊疗</option>
+                                <option value="3">耗材</option>
                             </select>
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-pair-content-list">查询</button>
-                        <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        @*<button class="layui-btn" id="updateSearch"  data-type="updateSearch"  lay-filter="updateSearch">更新目录</button>*@
+                        <label class="layui-form-label-nw">目录编码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="yiBaoDiagnosisProjectCode" name="yiBaoDiagnosisProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="yiBaoDiagnosisProjectName" name="yiBaoDiagnosisProjectName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" id="SearchDiagnostic" >查询</button>
                     </div>
                 </div>
             </div>
-            <table class="layui-hide" id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
+                <table id="LAY_yiBao_Diagnosis_list" class="layui-hide" lay-filter="LAY_yiBao_Diagnosis_list"></table>
+            </div>
+        <div class="layui-tab-item">
+                <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-pair-content-list">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label-nw">目录类别</label>
+                            <div class="layui-input-inline">
+                                <select id="pairCode_DirectoryCategoryCode" name="DirectoryCategoryCode">
+                                    <option value="">请选择类别</option>
+                                    <option value="1">药品</option>
+                                    <option value="2">诊疗</option>
+                                    <option value="3">耗材</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label-nw">目录编码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="pairCode_DirectoryCode" name="pairCode_DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label-nw">目录名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="pairCode_DirectoryName" name="pairCode_DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label-nw">关联状态</label>
+                            <div class="layui-input-inline">
+                                <select id="pairCode_State" name="pairCode_State">
+                                    <option value="0">请选择状态</option>
+                                    <option value="1">未对码</option>
+                                    <option value="2">已对码</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" lay-submit="" id="SearchPairCode">查询</button>
+                          
+                            @*<button class="layui-btn" id="updateSearch"  data-type="updateSearch"  lay-filter="updateSearch">更新目录</button>*@
+                        </div>
+                    </div>
+                </div>
+                <table class="layui-hide" id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
+            </div>
         </div>
-    </div>
 </div>
 
 <script>
     (function () {
-        layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate'], function () {
-            var $ = layui.$
-                //Tab的切换功能，切换事件监听等，需要依赖element模块
-                , element = layui.element 
-                , form = layui.form
-                , layer = layui.layer
-                , table = layui.table
-                , laydate = layui.laydate;
-
-            form.render(null, 'app-content-list');
-            form.render(null, 'yibao-content-list');
-            form.render(null, 'LAY-pair-content-list');
-            var queryData=null;
-            //监听搜索
-            form.on('submit(LAY-app-contlist-search)', function (data) {
-                var field = data.field;
-                //执行重载
-                table.reload('LAY-app-content-list', {
-                    where: field
-                });
-            });
-            //监听搜索
-            form.on('submit(LAY-yibao-content-list)', function (data) {
-                var field = data.field;
-                //执行重载
-                table.reload('LAY-yibao-content-list', {
-                    where: field
-                });
-            });
-            //监听搜索
-            form.on('submit(LAY-pair-content-list)', function (data) {
-                queryData = data;
+        layui.use(['form', 'layer', 'table', 'element'], function () {
+            var $ = layui.$ ,
+                element = layui.element,  //Tab的切换功能，切换事件监听等，需要依赖element模块
+                form = layui.form,
+                table = layui.table,
+                layer = layui.layer;
+         
+            //查询条件初始化--------------
+            var baseParam = {
+                "UserId": $("#empid").val()
+            };
+            var yiBaoDrugsParam = {
+                "UserId": $("#empid").val(),
+                "ProjectCodeType": 1
+            };
+            var yiBaoDiagnosticParam = {
+                "UserId": $("#empid").val()
                
-                var field = data.field;
-                //if (queryData == null) {
-                //    field.Page = 1;
-                //}
-                //执行重载
-                table.reload('LAY-pair-content-list', {
-                    where: field
-                });
-            });
-
-            $('#updateSearch').on('click', function () {
-                var directoryCategoryCode = $("#DirectoryCategoryCode").val();
-                if (directoryCategoryCode === "" || directoryCategoryCode=== undefined)
-                {
-                    layer.alert("目录类别不能为空!!!", { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
-                    return false;
-                }
-               
-                var updateSearchParam =
-                {
-                    "CatalogType": directoryCategoryCode,
-                    "UserId": $("#empid").val()
-                };
-                
-                $.ajax({
-                    type: 'post',
-                    url: host + '/GetCatalog',
-                    data: JSON.stringify(updateSearchParam),
-                    dataType: "json",
-                    contentType: 'application/json',
-                    async: false,
-                    success: function (data) {
-                       
-                        if (data.Success === false) {
-                            var errData = data.Message;
-                            layer.alert(errData, { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
-                        } else {
-                        
-                            var field = data.field;
-                            //执行重载
-                            table.reload('LAY-pair-content-list', {
-                                where: field
-                            });
-                            layer.alert(data.Data, { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
-                           
-                        }
-                    }
-
-                });
-
-            });
-
-
-            //医院目录
-            table.render({
-                elem: '#LAY-app-content-list'
-                , height: $(window).height() - 128
-                , url: host +'/QueryCatalog' //数据接口
-                , parseData: function (res) { //res 即为原始返回的数据
-                    return {
-                        "code": res.Code, //解析接口状态
-                        "msg": res.Message, //解析提示文本
-                        "count": res.Data.count, //解析数据长度
-                        "data": res.Data.data //解析数据列表
-                    };
-                }
-                , page: true //开启分页
-                , cols: [[ //表头
-                    { type: 'numbers', fixed: 'left'  }
-                    , { field: 'DirectoryCode', title: '目录编码', width: 310}
-                    , { field: 'DirectoryName', title: '目录名称', width: 300 ,sort: true }
-                    , { field: 'MnemonicCode', title: '助记码', width: 300 }
-                    , { field: 'DirectoryCategoryName', title: '目录类别', width: 100, sort: true }
-                    , { field: 'Unit', title: '单位', width: 90 }
-                    , { field: 'Specification', title: '规格', width: 100 }
-                    , { field: 'Formulation', title: '剂型', width: 160 }
-                    , { field: 'ManufacturerName', title: '生产厂家', width: 300, sort: true }
-                    , { field: 'DirectoryCreateTime', title: '创建时间', sort: true, width: 120 }
-                    , { field: 'Remark', title: '备注' }
-                ]]
-            });
-            //医保目录
-            table.render({
-                elem: '#LAY-yibao-content-list'
-                , height: $(window).height() - 128
-                , url: host +'/QueryProjectDownload' //数据接口
-                , parseData: function (res) { //res 即为原始返回的数据
-                    return {
-                        "code": res.Code, //解析接口状态
-                        "msg": res.Message, //解析提示文本
-                        "count": res.Data.count, //解析数据长度
-                        "data": res.Data.data //解析数据列表
-                    };
-                }
-                , page: true
-                , cols: [[
-                    { type: 'numbers', fixed: 'left' }
-                    , {field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true}
-                    , { field: 'ProjectName', title: '医保项目名称', width: 160, sort: true}
-                    , { field: 'MnemonicCode', title: '助记码', width: 300, sort: true}
-                    , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
-                    , { field: 'ProjectLevel', title: '医保报销比例', width: 160 }
-                    , { field: 'QuasiFontSize', title: '药品准字号', width: 100 }
-                    , { field: 'Unit', title: '单位', width: 100 }
-                    , { field: 'Specification', title: '规格', width: 100 }
-                    , { field: 'Formulation', title: '剂型', width: 160 }
-                    , { field: 'RestrictionSign', title: '限制用药标志', width: 100 }
-                    , { field: 'Manufacturer', title: '生产厂家', width: 300, sort: true }
-                    , { field: 'NewCodeMark', title: '新码标志', width: 100 }
-                    , { field: 'LimitPaymentScope', title: '限制支付范围', width: 100 }
-                    , { field: 'NewUpdateTime', title: '变更日期', width: 160 }
-                    , { field: 'Remark', title: '医保备注', width: 100 }
-
-                ]]
-                //,skin: 'line'
-            });
+            };
+            var pairCodeParam = {
+                "UserId": $("#empid").val()
+     
+            };
+            //---------------------
+            //初始查询
+            getList('0');
+            //tab切换触发
+            element.on('tab(tabProject)', function (indexData) {
            
-                //对码管理
+                //location.hash = 'test1=' + this.getAttribute('lay-id');
+                var status = $(this).attr('data-status');
+              
+
+                getList(status);
+            });
+            var queryData=null;
+            function getList(status) {
+               
+                switch (status) {
+                    case '0':
+                        //基层目录表格
+                        baseContentsTable();
+                        break;
+                    case '1':
+                        //医保药品目录表格
+                        yiBaoDrugsContentsTable();
+                        break;
+                    case '2':
+                        //医保诊疗材料目录表格
+                        yiBaoDiagnosticContentsTable();
+                        break;
+                    case '3':
+                        //对码目录表格
+                        pairCodeContentsTable();
+                        break;
+                }
+                form.render();
+            }
+          
+            
+            //基层目录表格
+            function baseContentsTable() {
+              
+                //医院目录
+                baseParam["DirectoryCode"] = $("#DirectoryCode").val();
+                baseParam["DirectoryName"] = $("#DirectoryName").val();
+                baseParam["DirectoryCategoryCode"] = $("#DirectoryCategoryCode").val();
+                table.render({
+                    elem: '#LAY-app-content-list'
+                    , height: $(window).height() - 128
+                    , url: host + '/QueryCatalog'
+                    , where: baseParam
+                    //数据接口
+                    , parseData: function (res) { //res 即为原始返回的数据
+                        return {
+                            "code": res.Code, //解析接口状态
+                            "msg": res.Message, //解析提示文本
+                            "count": res.Data.count, //解析数据长度
+                            "data": res.Data.data //解析数据列表
+                        };
+                    }
+                    , page: true //开启分页
+                    , cols: [[ //表头
+                        { type: 'numbers', fixed: 'left'  }
+                        , { field: 'DirectoryCode', title: '目录编码', width: 310}
+                        , { field: 'DirectoryName', title: '目录名称', width: 300 ,sort: true }
+                        , { field: 'MnemonicCode', title: '助记码', width: 300 }
+                        , { field: 'DirectoryCategoryName', title: '目录类别', width: 100, sort: true }
+                        , { field: 'Unit', title: '单位', width: 90 }
+                        , { field: 'Specification', title: '规格', width: 100 }
+                        , { field: 'Formulation', title: '剂型', width: 160 }
+                        , { field: 'ManufacturerName', title: '生产厂家', width: 300, sort: true }
+                        , { field: 'DirectoryCreateTime', title: '目录创建时间', sort: true, width: 120 }
+                        , { field: 'Remark', title: '备注' }
+                    ]]
+                });
+              
+            }
+            //医保药品目录表格
+            function yiBaoDrugsContentsTable() {
+                 //医保目录
+                yiBaoDrugsParam["ProjectCode"] = $("#ProjectCode").val();
+                yiBaoDrugsParam["ProjectName"] = $("#ProjectName").val();
+                 table.render({
+                     elem: '#LAY-yibao-content-list'
+                     , height: $(window).height() - 128
+                     , url: host + '/QueryMedicalInsuranceProject'
+                     , where: yiBaoDrugsParam//数据接口
+                     , parseData: function (res) { //res 即为原始返回的数据
+                         return {
+                             "code": res.Code, //解析接口状态
+                             "msg": res.Message, //解析提示文本
+                             "count": res.Data.count, //解析数据长度
+                             "data": res.Data.data //解析数据列表
+                         };
+                     }
+                     , page: true
+                     , cols: [[ //表头
+                         { type: 'numbers', fixed: 'left' }
+                         , { field: 'ProjectCode', title: '目录编码', width: 200 }
+                         , { field: 'ProjectName', title: '目录名称', width: 300, sort: true }
+                         , { field: 'ProjectLevel', title: '项目等级', width: 100 }
+                         , { field: 'PharmacologyType', title: '药理类别', width: 120 }
+                         , { field: 'GeneralCoding', title: '大类编码', width: 100 }
+                         , { field: 'QuasiFontSize', title: '准字号', width: 150 }
+                         , { field: 'BaseDrug', title: '基药', width: 150 }
+                         , { field: 'Unit', title: '单位', width: 90 }
+                         , { field: 'Specification', title: '规格', width: 100 }
+                         , { field: 'Formulation', title: '剂型', width: 160 }
+                         , { field: 'Manufacturer', title: '生产厂家', width: 300 }
+                         , { field: 'LimitPaymentScope', title: '限制使用范围', width: 300 }
+                         , { field: 'CommonWorkersOutpatient', title: '工伤门诊', width: 150  }
+                         , { field: 'CommonJobInjuredHospitalization', title: '工伤普通住院', width: 150  }
+                         , { field: 'JobInjuredRecoveryHospitalization', title: '工伤康复住院', width: 150}
+                         , { field: 'CommonPersonnelOutpatient', title: '普通人员门诊', width: 150}
+                         , { field: 'CommonPersonnelHospitalization', title: '普通人员住院', width: 150}
+                         , { field: 'CommonOutpatientMendel', title: '普通人员门特', width: 150 }
+                         , { field: 'LeaveDiethylOutpatient', title: '离休二等乙级门诊', width: 150 }
+                         , { field: 'LeaveDiethylHospitalization', title: '离休二等乙级住院', width: 150 }
+                         , { field: 'BirthHospitalization', title: '生育住院', width: 150 }
+                         , { field: 'ChildOutpatient', title: '少儿门诊', width: 150 }
+                         , { field: 'ChildHospitalization', title: '少儿住院', width: 150 }
+                         , { field: 'ChildOutpatientMendel', title: '少儿门特', width: 150 }
+                         , { field: 'CommonResidentOutpatient', title: '普通城乡门诊', width: 150 }
+                         , { field: 'CommonResidentHospitalization', title: '普通城乡住院', width: 150 }
+                         , { field: 'CommonResidentOutpatientMendel', title: '普通城乡门特', width: 150 }
+                         , { field: 'ResidentOutpatientOverallPlanning', title: '城乡门诊统筹', width: 150 }
+                         , { field: 'WorkersOutpatientOverallPlanning', title: '职工门诊统筹', width: 150 }
+                     ]]
+                     //,skin: 'line'
+                 });
+            }
+            //医保诊疗材料目录表格
+            function yiBaoDiagnosticContentsTable() {
+                //医保目录
+               
+                yiBaoDiagnosticParam["ProjectCode"] = $("#yiBaoDiagnosisProjectCode").val();
+                yiBaoDiagnosticParam["ProjectName"] = $("#yiBaoDiagnosisProjectName").val();
+                yiBaoDiagnosticParam["ProjectCodeType"] = $("#yiBaoDiagnosisProjectCodeType").val();
+                table.render({
+                    elem: '#LAY_yiBao_Diagnosis_list'
+                    , height: $(window).height() - 128
+                    , url: host + '/QueryMedicalInsuranceProject' //数据接口
+                    , where: yiBaoDiagnosticParam
+                    , parseData: function (res) { //res 即为原始返回的数据
+                        return {
+                            "code": res.Code, //解析接口状态
+                            "msg": res.Message, //解析提示文本
+                            "count": res.Data.count, //解析数据长度
+                            "data": res.Data.data //解析数据列表
+                        };
+                    }
+                    , page: true
+                    , cols: [[
+                        { type: 'numbers', fixed: 'left' }
+                        , { field: 'ProjectCode', title: '医保项目编码', width: 160 }
+                        , { field: 'ProjectName', title: '医保项目名称', width: 160 }
+                        , { field: 'LimitPaymentScope', title: '限制支付范围', width: 500 }
+                        
+                    ]]
+                    //,skin: 'line'
+                });
+            }
+            //对码目录表格
+            function pairCodeContentsTable() {
+                debugger;
+                pairCodeParam["DirectoryCode"] = $("#pairCode_DirectoryCode").val();
+                pairCodeParam["DirectoryName"] = $("#pairCode_DirectoryName").val();
+                pairCodeParam["DirectoryCategoryCode"] = $("#pairCode_DirectoryCategoryCode").val();
+                pairCodeParam["State"] = $("#pairCode_State").val();
                 table.render({
                     elem: '#LAY-pair-content-list'
                     , height: $(window).height() - 128
                     , url: host + '/DirectoryComparisonManagement' //数据接口
-                    , where: { UserId: $("#empid").val() }
+                    , where: pairCodeParam
                     , parseData: function (res) { //res 即为原始返回的数据
                         return {
                             "code": res.Code, //解析接口状态
@@ -338,6 +396,22 @@
                     ]]
                     //,skin: 'line'
                 });
+            }
+
+            $('#SearchBase').on('click', function() {
+                baseContentsTable();
+            });
+
+            $('#SearchDrugs').on('click', function () {
+                yiBaoDrugsContentsTable();
+            });
+            $('#SearchDiagnostic').on('click', function () {
+                yiBaoDiagnosticContentsTable();
+            });
+            $('#SearchPairCode').on('click', function () {
+                pairCodeContentsTable();
+            });
+            
             
            
             //监听工具条

@@ -113,6 +113,30 @@ namespace BenDing.Service.Providers
             var data = _hisSqlRepository.MedicalInsuranceDownloadIcd10(dt, userId);
             return  data;
         }
+
+        /// <summary>
+        /// 药品导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public Int64 DrugCatalogImportExcel(DataTable dt, string userId)
+        {
+            var data = _hisSqlRepository.DrugCatalogImportExcel(dt, userId);
+            return data;
+        }
+        /// <summary>
+        /// 诊疗项目导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public Int64 DiagnosisProjectImportExcel(DataTable dt, string userId)
+        {
+            var data = _hisSqlRepository.DiagnosisProjectImportExcel(dt, userId);
+            return data;
+        }
+     
         /// <summary>
         /// icd10对码
         /// </summary>

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
@@ -323,6 +324,216 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+        /// <summary>
+        /// 诊疗项目导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public Int64 DiagnosisProjectImportExcel(DataTable dt, string userId)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string sqlStr = $"update [dbo].[MedicalInsuranceProject] set IsDelete=1,UpdateTime=GETDATE(),UpdateUserId='{userId}'  where [ProjectType]=2 ";
+                sqlConnection.Execute(sqlStr);
+                sqlConnection.Close();
+            }
+
+            var drugCatalogData = new List<YiHaiMedicalInsuranceProjectDto>();
+            int totalNum = 0;
+            foreach (DataRow dr in dt.Rows)
+            {
+                var item = new YiHaiMedicalInsuranceProjectDto
+                {
+                    Id = Guid.NewGuid(),
+                    ProjectCode = dr["项目编码"].ToString(),
+                    ProjectName = CommonHelp.FilterSqlStr(dr["项目名称"].ToString()),
+                    ProjectLevel = dr["大类编码"].ToString(),
+                    //Unit = dr["计价单位"].ToString(),
+                    LimitPaymentScope = CommonHelp.FilterSqlStr(dr["项目内涵"].ToString()),
+                    Remark= CommonHelp.FilterSqlStr(dr["项目说明"].ToString()),
+                  
+                };
+                drugCatalogData.Add(item);
+                if (drugCatalogData.Count() >= 300)
+                {
+                    SaveDiagnosisProject(drugCatalogData, userId);
+                    totalNum += drugCatalogData.Count();
+                    drugCatalogData.Clear();
+                }
+            }
+            //执行剩余的数据
+            if (drugCatalogData.Any())
+            {
+                SaveDiagnosisProject(drugCatalogData, userId);
+                totalNum += drugCatalogData.Count();
+            }
+
+            return totalNum;
+        }
+        
+         private void SaveDiagnosisProject(List<YiHaiMedicalInsuranceProjectDto> param, string userId)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string insterCount = null;
+                try
+                {
+                    sqlConnection.Open();
+                    if (param.Any())
+                    {
+
+                        if (param.Any())
+                        {
+                            foreach (var item in param)
+                            {
+                                string insterSql = $@"
+                                       insert into [dbo].[MedicalInsuranceProject]
+                                        ([Id],[ProjectCode],[ProjectName],[ProjectLevel],
+                                        [Unit],[LimitPaymentScope],[Remark],[CreateTime],[CreateUserId],[ProjectType]
+                                        )
+                                  values('{Guid.NewGuid()}','{item.ProjectCode}','{item.ProjectName}','{item.ProjectLevel}',
+                                        '{item.Unit}','{item.LimitPaymentScope}','{item.Remark}',getDate(),'{userId}',2 );";
+                                insterCount += insterSql;
+                            }
+                            sqlConnection.Execute(insterCount);
+                            sqlConnection.Close();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(insterCount);
+                    throw new Exception(e.Message);
+                }
+
+
+
+            }
+        }
+        /// <summary>
+        /// 医保药品导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public Int64 DrugCatalogImportExcel(DataTable dt, string userId)
+        {
+            //using (var sqlConnection = new SqlConnection(_connectionString))
+            //{
+            //    sqlConnection.Open();
+            //    string sqlStr = $"update [dbo].[MedicalInsuranceProject] set IsDelete=1,UpdateTime=GETDATE(),UpdateUserId='{userId}'  where [ProjectType]=1 ";
+            //    sqlConnection.Execute(sqlStr);
+            //    sqlConnection.Close();
+            //}
+
+            var drugCatalogData = new List<YiHaiMedicalInsuranceProjectDto>();
+            int totalNum = 0;
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (!string.IsNullOrWhiteSpace(dr["药品本位码"].ToString()))
+                {
+                    var item = new YiHaiMedicalInsuranceProjectDto
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectCode = dr["药品本位码"].ToString(),
+                        ProjectName = CommonHelp.FilterSqlStr(dr["药品注册名称"].ToString()),
+                        ProjectLevel = dr["项目收费等级"].ToString(),
+                        PharmacologyType = dr["药理类别"].ToString(),
+                        GeneralCoding = dr["大类编码"].ToString(),
+                        Formulation = dr["剂型"].ToString(),
+                        Manufacturer = CommonHelp.FilterSqlStr(dr["生产厂家"].ToString()),
+                        QuasiFontSize = dr["批准文号"].ToString(),
+                        Specification = dr["药品注册规格"].ToString(),
+                        Unit = dr["第一规格单位"].ToString(),
+                        BaseDrug = dr["是否国家基本药物"].ToString(),
+                        LimitPaymentScope = CommonHelp.FilterSqlStr(dr["YP限制范围"].ToString()),
+                        CommonJobInjuredHospitalization = Convert.ToDecimal(dr["工伤普通住院"]),
+                        JobInjuredRecoveryHospitalization = Convert.ToDecimal(dr["工伤康复住院"]),
+                        CommonPersonnelHospitalization = Convert.ToDecimal(dr["普通人员住院"]),
+                        CommonPersonnelOutpatient = Convert.ToDecimal(dr["普通人员门诊"]),
+                        CommonWorkersOutpatient = Convert.ToDecimal(dr["工伤门诊"]),
+                        CommonOutpatientMendel = Convert.ToDecimal(dr["普通人员门特"]),
+                        LeaveDiethylOutpatient = Convert.ToDecimal(dr["离休二等乙级门诊"]),
+                        LeaveDiethylHospitalization = Convert.ToDecimal(dr["离休二等乙级住院"]),
+                        BirthHospitalization = Convert.ToDecimal(dr["生育住院"]),
+                        ChildOutpatient = Convert.ToDecimal(dr["少儿门诊"]),
+                        ChildHospitalization = Convert.ToDecimal(dr["少儿住院"]),
+                        ChildOutpatientMendel = Convert.ToDecimal(dr["少儿门特"]),
+                        CommonResidentOutpatient = Convert.ToDecimal(dr["普通城乡门诊"]),
+                        CommonResidentHospitalization = Convert.ToDecimal(dr["普通城乡住院"]),
+                        WorkersOutpatientOverallPlanning = Convert.ToDecimal(dr["城职门诊统筹"]),
+                        ResidentOutpatientOverallPlanning = Convert.ToDecimal(dr["城乡门诊统筹"]),
+                        CommonResidentOutpatientMendel = Convert.ToDecimal(dr["普通城乡门特"]),
+                    };
+                    drugCatalogData.Add(item);
+                   
+                }
+
+                if (drugCatalogData.Count() >= 300)
+                {
+                    SaveDrugCatalog(drugCatalogData, userId);
+                    totalNum += drugCatalogData.Count();
+                    drugCatalogData.Clear();
+                }
+            }
+            //执行剩余的数据
+            if (drugCatalogData.Any())
+            {
+                SaveDrugCatalog(drugCatalogData, userId);
+                totalNum += drugCatalogData.Count();
+            }
+
+            return totalNum;
+        }
+
+        private void SaveDrugCatalog(List<YiHaiMedicalInsuranceProjectDto> param, string userId)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string insterCount = null;
+                try
+                {
+                    sqlConnection.Open();
+                    if (param.Any())
+                    {
+
+                        if (param.Any())
+                        {
+                            foreach (var item in param)
+                            {
+                                string insterSql = $@"
+                                        insert into [dbo].[MedicalInsuranceProject]([id],[ProjectCode],[ProjectName],[ProjectLevel],[PharmacologyType],[Formulation],[GeneralCoding],
+                                         [Manufacturer],[QuasiFontSize],[Specification],[Unit],[UnitCode],[BaseDrug],[LimitPaymentScope],
+                                         [CommonJobInjuredHospitalization],[JobInjuredRecoveryHospitalization],[CommonPersonnelHospitalization],[CommonPersonnelOutpatient],
+                                         [CommonWorkersOutpatient],[CommonOutpatientMendel],[LeaveDiethylOutpatient],[LeaveDiethylHospitalization],[BirthHospitalization],
+                                         [ChildOutpatient],[ChildHospitalization],[ChildOutpatientMendel],[CommonResidentOutpatient],[CommonResidentHospitalization],
+                                         [CommonResidentOutpatientMendel],[WorkersOutpatientOverallPlanning],[ResidentOutpatientOverallPlanning],[CreateTime],[CreateUserId],[ProjectType])
+                                  values('{Guid.NewGuid()}','{item.ProjectCode}','{item.ProjectName}','{item.ProjectLevel}','{item.PharmacologyType}','{item.Formulation}','{item.GeneralCoding}',
+                                        '{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Unit}','{item.UnitCode}','{item.BaseDrug}','{item.LimitPaymentScope}',
+                                        {item.CommonJobInjuredHospitalization},{item.JobInjuredRecoveryHospitalization},{item.CommonPersonnelHospitalization},{item.CommonPersonnelOutpatient},
+                                        {item.CommonWorkersOutpatient},{item.CommonOutpatientMendel},{item.LeaveDiethylOutpatient},{item.LeaveDiethylHospitalization},{item.BirthHospitalization},
+                                        {item.ChildOutpatient},{item.ChildHospitalization},{item.ChildOutpatientMendel},{item.CommonResidentOutpatient},{item.CommonResidentHospitalization},
+                                        {item.CommonResidentOutpatientMendel},{item.WorkersOutpatientOverallPlanning},{item.ResidentOutpatientOverallPlanning}, getDate(),'{userId}',1 );";
+                                insterCount += insterSql;
+                            }
+                            sqlConnection.Execute(insterCount);
+                            sqlConnection.Close();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(insterCount);
+                    throw new Exception(e.Message);
+                }
+
+
+
+            }
+        }
+
         /// <summary>
         /// ICD10获取最新时间
         /// </summary>

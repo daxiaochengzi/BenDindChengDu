@@ -62,6 +62,28 @@ namespace BenDing.Domain.Xml
             }
             return encode;
         }
+        /// <summary>
+        /// sql过滤不安全字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string FilterSqlStr(string str)
+        {
+            if (!string.IsNullOrWhiteSpace(str))
+            {
+                str = str.Replace("'", "");
+                str = str.Replace(" ", "");
+                str = str.Replace("\"", "");
+                str = str.Replace("&", "&amp");
+                str = str.Replace("<", "&lt");
+                str = str.Replace(">", "&gt");
+                str = str.Replace("delete", "");
+                str = str.Replace("update", "");
+                str = str.Replace("insert", "");
+            }
+
+            return str;
+        }
         ///解码
         public static string DecodeBase64(string code_type, string code)
         {

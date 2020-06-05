@@ -20,11 +20,8 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 项目编码类别
         /// </summary>
-        public string ProjectCodeType { get; set; }
+        public int ProjectCodeType { get; set; }
 
-        /// <summary>
-        /// 拼音助记码
-        /// </summary>
-        public string MnemonicCode { get; set; }
+       
     }
 }

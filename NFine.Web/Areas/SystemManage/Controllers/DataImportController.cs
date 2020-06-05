@@ -72,6 +72,118 @@ namespace NFine.Web.Areas.SystemManage.Controllers
             return Content(content);
 
         }
+
+        public ActionResult DrugCatalogExcel()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 药品目录导入
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ImportDrugCatalogExcel() 
+        {
+            var loginInfo = OperatorProvider.Provider.GetCurrent();
+            var user = userApp.GetForm(loginInfo.UserId);
+            if (user.F_IsHisAccount == false) throw new Exception("非基层认证人员不能下载icd10");
+            string name = Request.Form["sheetName"];
+            HttpPostedFileBase file = Request.Files["file"];
+            string content = "";
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                content = "<script>alert('表单元名称不能为空!!!')</script>";
+            }
+            else
+            {
+                if (file.ContentLength > 0)
+                {
+                    var isxls = System.IO.Path.GetExtension(file.FileName)?.ToString().ToLower();
+                    if (isxls != ".xls" && isxls != ".xlsx")
+                    {
+                        Content("请上传Excel文件");
+                    }
+                    var fileName = file.FileName;//获取文件夹名称
+                    var path = Server.MapPath("~/FileExcel/" + fileName);
+                    file.SaveAs(path);
+                    var dataExcel = ExcelHelper.ExcelToDataTable(path, name, true);
+                    if (dataExcel == null)
+                    {
+                        content = "<script>alert('数据表格为空')</script>";
+                    }
+
+                    if (dataExcel.Columns.Count == 0)
+                    {
+                        content = "<script>alert('导入的数据不能为空')</script>";
+                    }
+                    else
+                    {
+                        var count = _webServiceBasicService.DrugCatalogImportExcel(dataExcel, user.F_HisUserId);
+                        content = "<script>alert('+" + count + "数据上传成功!!!')</script>";
+                    }
+
+
+                }
+            }
+            return Content(content);
+
+        }
+        /// <summary>
+        /// 诊疗项目
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DiagnosisProjectExcel()
+        {
+            return View();
+
+        }
+        /// <summary>
+        /// 诊疗项目导入
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ImportDiagnosisProjectExcel()
+        {
+            var loginInfo = OperatorProvider.Provider.GetCurrent();
+            var user = userApp.GetForm(loginInfo.UserId);
+            if (user.F_IsHisAccount == false) throw new Exception("非基层认证人员不能下载icd10");
+            string name = Request.Form["sheetName"];
+            HttpPostedFileBase file = Request.Files["file"];
+            string content = "";
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                content = "<script>alert('表单元名称不能为空!!!')</script>";
+            }
+            else
+            {
+                if (file.ContentLength > 0)
+                {
+                    var isxls = System.IO.Path.GetExtension(file.FileName)?.ToString().ToLower();
+                    if (isxls != ".xls" && isxls != ".xlsx")
+                    {
+                        Content("请上传Excel文件");
+                    }
+                    var fileName = file.FileName;//获取文件夹名称
+                    var path = Server.MapPath("~/FileExcel/" + fileName);
+                    file.SaveAs(path);
+                    var dataExcel = ExcelHelper.ExcelToDataTable(path, name, true);
+                    if (dataExcel.Columns.Count == 0)
+                    {
+                        content = "<script>alert('导入的数据不能为空')</script>";
+                    }
+                    else
+                    {
+                        var count = _webServiceBasicService.DiagnosisProjectImportExcel(dataExcel, user.F_HisUserId);
+                        content = "<script>alert('+" + count + "数据上传成功!!!')</script>";
+                    }
+
+
+                }
+            }
+            return Content(content);
+
+        }
+
         [HttpPost]
         public ActionResult BaseDownload()
         {

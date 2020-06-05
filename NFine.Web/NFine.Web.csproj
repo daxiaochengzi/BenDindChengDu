@@ -814,6 +814,8 @@
     <Content Include="Areas\SystemManage\Views\DepartmentPairCode\Form.cshtml" />
     <Content Include="Areas\SystemManage\Views\DepartmentPairCode\Index.cshtml" />
     <Content Include="Areas\SystemManage\Views\SignIn\Index.cshtml" />
+    <Content Include="Areas\SystemManage\Views\DataImport\DrugCatalogExcel.cshtml" />
+    <Content Include="Areas\SystemManage\Views\DataImport\DiagnosisProjectExcel.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Insurance\Card.cshtml" />

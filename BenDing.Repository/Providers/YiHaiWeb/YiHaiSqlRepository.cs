@@ -174,7 +174,6 @@ namespace BenDing.Repository.Providers.YiHaiWeb
         /// <summary>
         /// 更新
         /// </summary>
-
         public void HospitalInfoUploadUpdate(HospitalInfoUploadUpdateParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
