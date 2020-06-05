@@ -53,5 +53,12 @@ namespace BenDing.Repository.Interfaces.YiHaiWeb
         /// <param name="param"></param>
          void UpdateOutpatientSettlement(UpdateOutpatientSettlementParam param);
 
+      /// <summary>
+      /// 查询基层取消结算
+      /// </summary>
+      /// <param name="param"></param>
+      /// <returns></returns>
+      Dictionary<int, List<BaseRefundDto>> QueryBaseRefund(BaseRefundUiParam param);
+
   }
 }

@@ -93,6 +93,7 @@
     <Compile Include="Models\Dto\YiHai\Base\YiHaiResultData.cs" />
     <Compile Include="Models\Dto\YiHai\JsonEntity\MedicalInsuranceSignInJsonDto.cs" />
     <Compile Include="Models\Dto\YiHai\JsonEntity\OutpatientSettlementOutputJsonDto.cs" />
+    <Compile Include="Models\Dto\YiHai\OutpatientDepartment\BaseRefundDto.cs" />
     <Compile Include="Models\Dto\YiHai\OutpatientDepartment\QueryOutpatientSettlementCost.cs" />
     <Compile Include="Models\Dto\YiHai\OutpatientDepartment\SettlementProcessDto.cs" />
     <Compile Include="Models\Dto\YiHai\OutpatientDepartment\YiHaiMedicalInsuranceProjectDto.cs" />
@@ -418,6 +419,7 @@
     <Compile Include="Models\Params\Workers\WorkerHospitalizationSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerSettlementCancelParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerStrokeCardParam.cs" />
+    <Compile Include="Models\Params\YinHai\OutpatientDepartment\BaseRefundUiParam.cs" />
     <Compile Include="Models\Params\YinHai\Ui\GetCancelOutpatientSettlementUiParam.cs" />
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\GetOutpatientSettlementPrintParam.cs" />
     <Compile Include="Models\Params\YinHai\OutpatientDepartment\HospitalInfoUploadUpdateParam.cs" />

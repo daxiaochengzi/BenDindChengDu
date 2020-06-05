@@ -126,7 +126,6 @@
                             <label class="layui-form-label-nw">目录类别</label>
                             <div class="layui-input-inline">
                                 <select id="pairCode_DirectoryCategoryCode" name="DirectoryCategoryCode">
-                                    <option value="">请选择类别</option>
                                     <option value="1">药品</option>
                                     <option value="2">诊疗</option>
                                     <option value="3">耗材</option>
@@ -354,7 +353,7 @@
             }
             //对码目录表格
             function pairCodeContentsTable() {
-                debugger;
+               
                 pairCodeParam["DirectoryCode"] = $("#pairCode_DirectoryCode").val();
                 pairCodeParam["DirectoryName"] = $("#pairCode_DirectoryName").val();
                 pairCodeParam["DirectoryCategoryCode"] = $("#pairCode_DirectoryCategoryCode").val();
@@ -383,14 +382,10 @@
                         , { field: 'Unit', title: '单位', width: 90 }
                         , { field: 'Specification', title: '规格', width: 100 }
                         , { field: 'Formulation', title: '剂型', width: 160 }
-                        , { field: 'ManufacturerName', title: '生产厂家', width: 300, sort: true }
                         , { field: 'ProjectCode', title: '医保项目编码', width: 160 }
                         , { field: 'ProjectName', title: '医保项目名称', width: 160 }
-                        , { field: 'LimitPaymentScope', title: '限制支付范围', width: 100 }
+                        , { field: 'ManufacturerName', title: '生产厂家', width: 300, sort: true }
                         , { field: 'QuasiFontSize', title: '药品准字号', width: 100 }
-                        , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
-                        , { field: 'ProjectLevel', title: '医保报销比例', width: 160 }
-                        , { field: 'Remark', title: '医保备注', width: 100 }
                         , { field: 'PairCodeUser', title: '对码操作人员', width: 100 }
                         , { field: 'PairCodeTime', title: '对码时间', width: 160 }
                     ]]
@@ -417,9 +412,10 @@
             //监听工具条
             table.on('tool(LAY-pair-content-list)', function (obj) {
                 var data = obj.data;
+               
                 var directoryName = data.DirectoryName;
                 var directoryCode = data.DirectoryCode;
-                var directoryCategoryCode = $("#DirectoryCategoryCode").val();
+                var directoryCategoryCode = $("#pairCode_DirectoryCategoryCode").val();
                 var params = "?UserId=" + $("#empid").val() + "&ProjectName=" + directoryName
                     + "&ProjectCode=" + directoryCode + "&ProjectCodeType=" + directoryCategoryCode;
                 if (obj.event === 'pairCode') {
@@ -437,12 +433,7 @@
                         end: function () {//无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
                             //layer.open关闭刷新
                             //location.reload();
-                            queryData = data;
-                            var field = data.field;
-                            //执行重载
-                            table.reload('LAY-pair-content-list', {
-                                where: field
-                            });
+                            pairCodeContentsTable();
                         }
                     });
                   
@@ -464,14 +455,14 @@
                             maxmin: true,
                             content: hostPage + '/MedicalDirectoryPairCode' + params,
                             end: function () {//无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
-                                //layer.open关闭刷新
-                                //location.reload();
-                                queryData = data;
-                                var field = data.field;
-                                //执行重载
-                                table.reload('LAY-pair-content-list', {
-                                    where: field
-                                });
+                                
+                                //queryData = data;
+                                //var field = data.field;
+                                ////执行重载
+                                //table.reload('LAY-pair-content-list', {
+                                //    where: field
+                                //});
+                                pairCodeContentsTable();
                             }
                         });
                         layer.close(ind);

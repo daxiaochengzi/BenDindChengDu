@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+<script>
+    $(function () {
+        gridList();
+    });
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/SystemManage/BaseRefund/GetGridJson",
+            height: $(window).height() - 128,
+            colModel: [
+                { label: '主键', name: 'Id', hidden: true },
+                { label: '就诊编号', name: 'VisitNo', width: 80, align: 'left' },
+                { label: '就诊步骤', name: 'ProcessStep', width: 80, align: 'left' },
+                { label: '病人姓名', name: 'PatientName', width: 80, align: 'left' },
+                { label: '身份证号', name: 'IdCardNo', width: 80, align: 'left' },
+                { label: '门诊号', name: 'OutpatientNo', width: 80, align: 'left' },
+                { label: '住院号', name: 'InpatientNo', width: 80, align: 'left' },
+                { label: '操作人员', name: 'OperationName', width: 80, align: 'left' },
+                { label: '操作时间', name: 'OperationTime', width: 80, align: 'left' }
+            ],
+            pager: "#gridPager",
+            sortname: 'CreateTime desc',
+            viewrecords: true
+        });
+        $("#btn_search").click(function () {
+            $gridList.jqGrid('setGridParam', {
+                postData: {
+                    startTime: $("#txt_startTime").val() ,
+                    endTime: $("#txt_endTime").val()
+                },
+            }).trigger('reloadGrid');
+        });
+    }
+    function btn_edit() {
+        var keyValue = $("#gridList").jqGridRowValue().Id;
+        $.modalOpen({
+            id: "Form",
+            title: "医保对码",
+            url: "/SystemManage/DepartmentPairCode/Form?keyValue=" + keyValue,
+            width: "700px",
+            height: "510px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+
+
+    }
+
+    //function btn_delete() {
+    //    $.deleteForm({
+    //        url: "/SystemManage/HospitalInfo/DeleteForm",
+    //        param: { keyValue: $("#gridList").jqGridRowValue().Id },
+    //        success: function () {
+    //            $.currentWindow().$("#gridList").trigger("reloadGrid");
+    //        }
+    //    });
+    //}
+
+
+</script>
+
+<div class="topPanel">
+    <div class="toolbar">
+        <div class="btn-group">
+            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+        </div>
+        @*<div class="btn-group">
+                <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>更新信息</a>
+            </div>*@
+        <div class="operate">
+            <ul class="nav nav-pills">
+                <li class="first">已选中<span>1</span>项</li>
+                <li><a id="NF-edit" authorize="yes" onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>取消基层结算</a></li>
+
+            </ul>
+            <a href="javascript:;" class="close"></a>
+        </div>
+        <script>$('.toolbar').authorizeButton()</script>
+
+    </div>
+    <div class="search">
+        <table>
+            <tr>
+                <td>
+                    <div class="input-group">
+                        开始时间
+                    </div>
+
+                </td>
+                <td>
+                    <div class="input-group" style="padding-left: 10px">
+                        <input id="txt_startTime" type="text" class="form-control" style="width: 200px;">
+                    </div>
+
+                </td>
+                <td>
+                    <div class="input-group"  style="padding-left: 10px">
+                        结束时间
+                    </div>
+
+                </td>
+                <td>
+                    <div class="input-group" style="padding-left: 10px">
+                        <input id="txt_endTime" type="text" class="form-control" style="width: 200px;">
+                    </div>
+
+                </td>
+
+                <td>
+                    <div class="input-group">
+                        
+                        <span class="input-group-btn" style="padding-left: 20px">
+                            <button type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="gridPanel">
+    <table id="gridList"></table>
+    <div id="gridPager"></div>
+</div>

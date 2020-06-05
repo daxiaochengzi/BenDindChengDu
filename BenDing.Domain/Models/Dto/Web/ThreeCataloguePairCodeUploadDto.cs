@@ -148,10 +148,14 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
 
         public  string RestrictionSign { get; set; }
-       /// <summary>
-       /// 备注
-       /// </summary>
-        public  string Remark { get; set; }
+        /// <summary>
+        /// 生产地址
+        /// </summary>
+        public string Manufacturer { get; set; }
+    /// <summary>
+    /// 备注
+    /// </summary>
+    public  string Remark { get; set; }
         /// <summary>
         /// 目录类型
         /// </summary>

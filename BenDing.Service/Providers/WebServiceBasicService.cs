@@ -763,19 +763,19 @@ namespace BenDing.Service.Providers
                 var sendList = rowDataListAll.Take(limit).ToList();
 
                 if (data.Any())
-                {
+                {//1：药品，3：耗材，4：诊疗
                     var uploadDataRow = sendList.Select(c => new ThreeCataloguePairCodeUploadRowDto()
                     {
                         //ProjectId = c.Id.ToString("N"),
                         HisDirectoryCode = c.DirectoryCode,
-                        Manufacturer = "",
+                        Manufacturer = c.Manufacturer,
                         ProjectName = c.ProjectName,
                         ProjectCode = c.ProjectCode,
-                        ProjectCodeType = c.DirectoryCategoryCode,
-                        ProjectCodeTypeDetail = ((ProjectCodeType)Convert.ToInt32(c.ProjectCodeType)).ToString(),
+                        ProjectCodeType = c.DirectoryCategoryCode=="2"?"4" : c.DirectoryCategoryCode,
+                        ProjectCodeTypeDetail = c.ProjectCodeType,
                         Remark = c.Remark,
-                        ProjectLevel = ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString(),
-                        RestrictionSign = GetStrData(c.ProjectCodeType, c.RestrictionSign)
+                        ProjectLevel = c.ProjectLevel,
+                        RestrictionSign =""
 
                     }).ToList();
                     var uploadData = new ThreeCataloguePairCodeUploadDto()
@@ -797,19 +797,8 @@ namespace BenDing.Service.Providers
 
             }
 
-          
 
-            //限制用药
-            string GetStrData(string projectCodeType, string restrictionSign)
-            {
-                string str = "0";
-                if (projectCodeType != "92")
-                {
-                    str = restrictionSign == "0" ? "" : "1";
-                }
 
-                return str;
-            }
 
             return resultData;
         }

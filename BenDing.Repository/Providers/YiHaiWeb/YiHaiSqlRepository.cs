@@ -329,6 +329,66 @@ namespace BenDing.Repository.Providers.YiHaiWeb
 
             }
         }
+        /// <summary>
+        /// 查询基层取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public Dictionary<int, List<BaseRefundDto>> QueryBaseRefund(BaseRefundUiParam param)
+        {
+            List<BaseRefundDto> dataList;
+            var resultData = new Dictionary<int, List<BaseRefundDto>>();
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string querySql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    querySql = $@"
+                            select [Id],[OutpatientNumber] as OutpatientNo,[PatientName],[IdCardNo],
+                            [VisitNo],[ProcessStep],[CreateUserId] as OperationName,[CreateTime] as OperationTime 
+                            from [dbo].[Outpatient] where IsDelete=0 and OrganizationCode='{param.OrganizationCode}'";
+                    string countSql = $@"select count(*) from [dbo].[Outpatient] where IsDelete=0  and OrganizationCode='{param.OrganizationCode}'";
+                    string whereSql = "";
+                    if (!string.IsNullOrWhiteSpace(param.StartTime))
+                    {
+                        whereSql += $" and UpdateTime >'{param.StartTime}'";
+                    }
+                    if (!string.IsNullOrWhiteSpace(param.EndTime))
+                    {
+                        whereSql += $" and UpdateTime <'{param.EndTime}'";
+                    }
+
+                    if (param.Limit != 0 && param.Page > 0)
+                    {
+                        var skipCount = param.Limit * (param.Page - 1);
+                        querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
+                    }
+                    string executeSql = countSql + whereSql + ";" + querySql;
+
+                    var result = sqlConnection.QueryMultiple(executeSql);
+
+                    int totalPageCount = result.Read<int>().FirstOrDefault();
+                    dataList = (from t in result.Read<BaseRefundDto>()
+                                select t).ToList();
+
+                    resultData.Add(totalPageCount, dataList);
+                    sqlConnection.Close();
+                    return resultData;
+
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(querySql);
+                    throw new Exception(e.Message);
+                }
+
+
+            }
+
+
+
+        }
     }
 
 }

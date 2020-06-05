@@ -155,6 +155,7 @@ namespace NFine.Web.Controllers
         /// <returns></returns>
         public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
         {
+        
             //参数可查询医保中心目录
             ViewBag.DirectoryName = param.ProjectName;
             ViewBag.DirectoryCode = param.ProjectCode;

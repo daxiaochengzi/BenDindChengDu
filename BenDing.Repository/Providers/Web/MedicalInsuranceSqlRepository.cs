@@ -454,10 +454,10 @@ namespace BenDing.Repository.Providers.Web
                     var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
                     if (param.State == 1)
                     {
-                        whereSql = $@" where not exists(select b.FixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
+                        whereSql = $@" where a.IsDelete=0 and  not exists(select b.FixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
                                 where b.OrganizationCode='{param.OrganizationCode}' and b.FixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
                         querySql = @"select  a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
-                                a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding
+                                a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.FixedEncoding
                                  from [dbo].[HospitalThreeCatalogue]  as a ";
                         countSql = @"select COUNT(*) from[dbo].[HospitalThreeCatalogue] as a ";
                     }
@@ -465,8 +465,8 @@ namespace BenDing.Repository.Providers.Web
                     {
                         querySql =
                             $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
-                             a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
-                             c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
+                             a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],c.Manufacturer as ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
+                             c.ProjectCode,c.ProjectName,c.QuasiFontSize,b.CreateTime as PairCodeTime,c.ProjectLevel
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[FixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
@@ -475,23 +475,23 @@ namespace BenDing.Repository.Providers.Web
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[FixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
-                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
+                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0  and a.IsDelete=0";
                     }
                     else if (param.State == 0)
                     {
                         querySql =
                             $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
-                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
-                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
+                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],c.Manufacturer as ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
+                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,b.CreateTime as PairCodeTime,c.ProjectLevel
                              from [dbo].[HospitalThreeCatalogue]  as a  left join (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[FixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
-                             where a.IsDelete='0' ";
+                             where a.IsDelete=0 ";
                         countSql = $@"select COUNT(*)
                               from [dbo].[HospitalThreeCatalogue]  as a  left join  (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[FixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
-                             where a.IsDelete='0' ";
+                             where a.IsDelete=0";
                     }
 
                     if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
@@ -535,9 +535,6 @@ namespace BenDing.Repository.Providers.Web
                                         ProjectName = t.ProjectName,
                                         ProjectCode = t.ProjectCode,
                                         ProjectLevel = t.ProjectLevel,
-                                        ProjectCodeType = t.ProjectCodeType != null
-                                            ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString()
-                                            : t.ProjectCodeType,
                                         QuasiFontSize = t.QuasiFontSize,
                                         Unit = t.Unit,
                                         Specification = t.Specification,
@@ -623,19 +620,19 @@ namespace BenDing.Repository.Providers.Web
                     {
                         var projectCodeList = CommonHelp.ListToStr(param.ProjectCodeList);
 
-                        querySql = $@"select  a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
-                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryCategoryCode]
+                        querySql = $@"select  a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectLevel],
+                                    [Remark],b.DirectoryCode,[DirectoryCategoryCode],[Manufacturer]
                                     from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
                                     on a.ProjectCode=b.ProjectCode where b.UploadState=0 and a.ProjectCode in({projectCodeList})
                                     and a.IsDelete=0 and b.IsDelete=0 and OrganizationCode='{param.User.OrganizationCode}'";
                     }
                     else
                     {
-                        querySql = $@"select a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
-                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryCategoryCode]
+                        querySql = $@"select a.[Id],a.[ProjectCode],a.[ProjectName],ProjectLevel,
+                                    b.DirectoryCode,a.ProjectType as  [DirectoryCategoryCode] ,[Manufacturer]
                                     from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
                                     on a.ProjectCode=b.ProjectCode where b.UploadState=0 
-                                    and a.IsDelete=0 and b.IsDelete=0 and OrganizationCode='{param.User.OrganizationCode}'";
+                                    and a.IsDelete=0 and b.IsDelete=0 and b.OrganizationCode='{param.User.OrganizationCode}'";
                     }
                     var data = sqlConnection.Query<QueryThreeCataloguePairCodeUploadDto>(querySql).ToList();
                     sqlConnection.Close();
