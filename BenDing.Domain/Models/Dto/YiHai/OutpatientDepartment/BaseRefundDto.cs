@@ -46,5 +46,9 @@ namespace BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment
         /// 操作时间
         /// </summary>
         public DateTime OperationTime { get; set; }
+        /// <summary>
+        /// 业务id
+        /// </summary>
+        public  string BusinessId { get; set; }
     }
 }

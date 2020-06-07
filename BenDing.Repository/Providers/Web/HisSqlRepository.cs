@@ -533,6 +533,55 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+        /// <summary>
+        /// 材料导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        public int ImportMaterialScienceExcel(DataTable dt,  string userId)
+        {
+            int insterCount = 0;
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string insterSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                 
+
+                    string sqlStr = $"update [dbo].[MedicalInsuranceProject] set IsDelete=1,UpdateTime=GETDATE(),UpdateUserId='{userId}'  where [ProjectType]=3";
+                    sqlConnection.Execute(sqlStr);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (!string.IsNullOrWhiteSpace(dr["材料项目编码"].ToString()))
+                        {
+
+                            insterSql += $@"
+                                   insert into [dbo].[MedicalInsuranceProject]
+                                    ([Id],[ProjectCode],[ProjectName],
+                                    [CreateTime],[CreateUserId],[ProjectType]
+                                    )
+                                   values('{Guid.NewGuid()}','{dr["材料项目编码"]}','{dr["项目名称"]}',
+                                    getDate(),'{userId}',3 );";
+                        }
+                    }
+                    insterCount = sqlConnection.Execute(insterSql);
+                    sqlConnection.Close();
+
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(insterSql);
+                    throw new Exception(e.Message);
+                }
+
+
+
+            }
+
+            return insterCount;
+        }
 
         /// <summary>
         /// ICD10获取最新时间

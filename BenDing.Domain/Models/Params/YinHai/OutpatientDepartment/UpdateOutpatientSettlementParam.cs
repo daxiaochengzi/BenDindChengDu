@@ -25,5 +25,9 @@ namespace BenDing.Domain.Models.Params.YinHai.OutpatientDepartment
         /// 个人编号
         /// </summary>
         public  string PersonalCode { get; set; }
+        /// <summary>
+        /// 用户id
+        /// </summary>
+        public  string UserId { get; set; }
     } 
 }

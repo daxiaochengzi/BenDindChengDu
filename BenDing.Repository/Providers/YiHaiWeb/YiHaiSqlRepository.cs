@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.YiHai.Web;
+using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.YinHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.YinHai.Web;
 using BenDing.Domain.Xml;
+using BenDing.Repository.Interfaces.Web;
 using BenDing.Repository.Interfaces.YiHaiWeb;
 using Dapper;
 using NFine.Code;
@@ -22,10 +24,14 @@ namespace BenDing.Repository.Providers.YiHaiWeb
     public class YiHaiSqlRepository : IYiHaiSqlRepository
     {
         private readonly string _connectionString;
+        private readonly ISystemManageRepository _iSystemManageRepository;
         private readonly Log _log;
-        public YiHaiSqlRepository()
+        public YiHaiSqlRepository(
+            ISystemManageRepository iSystemManageRepository
+            )
         {
-            _log = LogFactory.GetLogger("ini".GetType().ToString());
+               _iSystemManageRepository = iSystemManageRepository;
+               _log = LogFactory.GetLogger("ini".GetType().ToString());
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();
             _connectionString = !string.IsNullOrWhiteSpace(conStr) ? conStr : throw new ArgumentNullException(nameof(conStr));
 
@@ -316,6 +322,7 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                     if (!string.IsNullOrWhiteSpace(strSet))
                     {
                         strSql = $@"update [dbo].[Outpatient] set {strSet.Substring(0, strSet.Length - 1)}
+                                ,UpdateTime=getDate(),UpdateUserId='{param.UserId}'
                                  where BusinessId='{param.BusinessId}' and IsDelete=0";
                         sqlConnection.Execute(strSql);
                     }
@@ -345,10 +352,10 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                 {
                     sqlConnection.Open();
                     querySql = $@"
-                            select [Id],[OutpatientNumber] as OutpatientNo,[PatientName],[IdCardNo],
-                            [VisitNo],[ProcessStep],[CreateUserId] as OperationName,[CreateTime] as OperationTime 
-                            from [dbo].[Outpatient] where IsDelete=0 and OrganizationCode='{param.OrganizationCode}'";
-                    string countSql = $@"select count(*) from [dbo].[Outpatient] where IsDelete=0  and OrganizationCode='{param.OrganizationCode}'";
+                            select [Id],[OutpatientNumber] as OutpatientNo,[PatientName],[IdCardNo],[BusinessId],
+                            [VisitNo],[ProcessStep],[UpdateUserId] as OperationName,[UpdateTime] as OperationTime 
+                            from [dbo].[Outpatient] where IsDelete=0 and PayType is not null and OrganizationCode='{param.OrganizationCode}'";
+                    string countSql = $@"select count(*) from [dbo].[Outpatient] where IsDelete=0  and PayType is not null and OrganizationCode='{param.OrganizationCode}'";
                     string whereSql = "";
                     if (!string.IsNullOrWhiteSpace(param.StartTime))
                     {
@@ -369,8 +376,28 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                     var result = sqlConnection.QueryMultiple(executeSql);
 
                     int totalPageCount = result.Read<int>().FirstOrDefault();
+                    //所有操作人员
+                    var allOperator =  _iSystemManageRepository.QueryHospitalOperatorAllInfo(param.OrganizationCode);
                     dataList = (from t in result.Read<BaseRefundDto>()
-                                select t).ToList();
+                        select new BaseRefundDto
+                        {
+                            Id = t.Id,
+                            InpatientNo = t.InpatientNo,
+                            OutpatientNo = t.OutpatientNo,
+                            PatientName = t.PatientName,
+                            VisitNo = t.VisitNo,
+                            IdCardNo = t.IdCardNo,
+                            OperationName = allOperator != null
+                                ? allOperator.Where(c => c.F_HisUserId == t.OperationName).Select(d => d.F_RealName)
+                                    .FirstOrDefault()
+                                : t.OperationName,
+                            ProcessStep =
+                                CommonHelp.ConvertEnumToString<OutpatientSettlementStep>(Convert.ToInt32(t.ProcessStep)),
+                            OperationTime = t.OperationTime,
+                            BusinessId = t.BusinessId
+                        }).ToList();
+
+                          
 
                     resultData.Add(totalPageCount, dataList);
                     sqlConnection.Close();

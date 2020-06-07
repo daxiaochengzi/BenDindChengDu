@@ -31,6 +31,16 @@ namespace BenDing.Domain.Xml
             return resultData;
         }
         /// <summary>
+        /// 枚举 int 转 枚举名称
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="itemValue"></param>
+        /// <returns></returns>
+        public static string ConvertEnumToString<T>(int itemValue)
+        {
+            return Enum.Parse(typeof(T), itemValue.ToString()).ToString();
+        }
+        /// <summary>
         /// 根据出生日期获取年龄
         /// </summary>
         /// <param name="birthdate"></param>

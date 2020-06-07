@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
+using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.SystemManage;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
@@ -71,6 +72,22 @@ namespace BenDing.Repository.Providers.Web
                     throw new Exception(e.Message);
                 }
                
+            }
+        }
+        /// <summary>
+        /// 获取所有的操作人员
+        /// </summary>
+        /// <returns></returns>
+        public List<QueryHospitalOperatorAll> QueryHospitalOperatorAll()
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                // string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
+                string querySql = @"select F_RealName as HisUserName,F_HisUserId as HisUserId from [dbo].[Sys_User] where F_IsHisAccount=1";
+                var data = sqlConnection.Query<QueryHospitalOperatorAll>(querySql).ToList();
+                sqlConnection.Close();
+                return data;
             }
         }
         /// <summary>
@@ -175,22 +192,7 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             }
         }
-        /// <summary>
-        /// 获取所有的操作人员
-        /// </summary>
-        /// <returns></returns>
-        public List<QueryHospitalOperatorAll> QueryHospitalOperatorAll( )
-        {
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
-                // string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
-                string querySql = @"select F_RealName as HisUserName,F_HisUserId as HisUserId from [dbo].[Sys_User] where F_IsHisAccount=1";
-                var data = sqlConnection.Query<QueryHospitalOperatorAll>(querySql).ToList();
-                sqlConnection.Close();
-                return data;
-            }
-        }
+       
         /// <summary>
         /// 获取根据区域所有的操作人员
         /// </summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntity;
+using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.YiHai.Base;
@@ -755,6 +756,29 @@ namespace BenDing.Service.Providers.YiHaiWeb
 
             return resultData;
         }
+       
+        /// <summary>
+        /// 不确定交易查询
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<int, List<QueryUncertainTransactionDto>> QueryUncertainTransaction()
+        {
+
+
+            var resultData = new Dictionary<int, List<QueryUncertainTransactionDto>>();
+            var dataList = new List<QueryUncertainTransactionDto>()
+            {
+                new QueryUncertainTransactionDto()
+                {
+                    VisitNo = "00002005289161163",
+                    SerialNumber = "11C0000SJ37F6E2F2",
+                    SettlementNo = "0000S293400211",
+                   ReimbursementType = "0203"
+                }
+            };
+            resultData.Add(1, dataList);
+            return resultData;
+        }
 
         /// <summary>
         /// 确认步骤
@@ -785,7 +809,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 {
                     BusinessId = param.BusinessId,
                     ProcessStep = (int)param.SettlementStep,
-                    
+                    UserId = param.UserId
                 });
             //日志写入
             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
@@ -927,6 +951,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
            
             return resultData;
         }
+
+
         /// <summary>
         /// 获取医院信息上传参数
         /// </summary>
