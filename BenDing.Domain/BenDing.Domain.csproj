@@ -153,6 +153,17 @@
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeOutPutXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\MedicalInsuranceSignInOutputXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\QueryJobInjuryApplyControlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\CancelJobInjuryApplyControlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\QueryJobInjuryApplyType2OutputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\QueryJobInjuryApplyOutputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\UpdateJobInjuryApplyControlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\CancelJobInjuryApplyInputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\UpdateJobInjuryApplyInputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\JobInjuryApplyInputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\CancelJobInjuryApplyOutputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\UpdateJobInjuryApplyOutputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\JobInjuryApplyOutputDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlementPrint\OutpatientSettlementPrintControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlement\OutpatientSettlementControlXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OutpatientSettlement\OutpatientSettlementDataXmlDto.cs" />
