@@ -549,7 +549,7 @@ namespace BenDing.Repository.Providers.Web
                     sqlConnection.Open();
                  
 
-                    string sqlStr = $"update [dbo].[MedicalInsuranceProject] set IsDelete=1,UpdateTime=GETDATE(),UpdateUserId='{userId}'  where [ProjectType]=3";
+                    string sqlStr = $"update [dbo].[MedicalInsuranceProject] set IsDelete=1,UpdateTime=GETDATE(),UpdateUserId='{userId}'  where [ProjectType]=3 and IsDelete=0";
                     sqlConnection.Execute(sqlStr);
 
                     foreach (DataRow dr in dt.Rows)
@@ -560,10 +560,10 @@ namespace BenDing.Repository.Providers.Web
                             insterSql += $@"
                                    insert into [dbo].[MedicalInsuranceProject]
                                     ([Id],[ProjectCode],[ProjectName],
-                                    [CreateTime],[CreateUserId],[ProjectType]
+                                    [CreateTime],[CreateUserId],[ProjectType],[IsDelete]
                                     )
                                    values('{Guid.NewGuid()}','{dr["材料项目编码"]}','{dr["项目名称"]}',
-                                    getDate(),'{userId}',3 );";
+                                    getDate(),'{userId}',3,0 );";
                         }
                     }
                     insterCount = sqlConnection.Execute(insterSql);

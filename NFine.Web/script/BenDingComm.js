@@ -50,8 +50,8 @@ function DetectActiveX() {
 function SignInCheck() {
     var operatorId = iniJs("#empid").val();
    
-    //var activeX = document.getElementById("CSharpActiveX");
-    //门诊结算
+    
+   
     var activeData = iniActiveX.YiHaiOutpatientMethods("GetSignInUserId", "GetSignInUserId"
         , "GetSignInUserId", operatorId);
    
@@ -66,10 +66,7 @@ function SignInCheck() {
         {
             getMedicalInsuranceSignInParam();
         }
-        //msgError(activeJsonData.Message);
-    } else {
-        //queryParam["ResultJson"] = activeJsonData.Data;
-        //medicalInsuranceSignIn(queryParam);
+       
     }
     //签到执行
     function getMedicalInsuranceSignInParam() {
@@ -117,7 +114,7 @@ function SignInCheck() {
     
     
 }
-//签到数据存储
+//签到
 function medicalInsuranceSignIn(signInParam) {
     iniJs.ajax({
         type: 'post',

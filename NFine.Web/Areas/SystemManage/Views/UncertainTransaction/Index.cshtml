@@ -2,8 +2,10 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Index.cshtml";
 }
+<script src="~/script/BenDingYiHaiComm.js"></script>
 <script>
     $(function () {
+        DetectActiveX();
         gridList();
     });
     function gridList() {
@@ -12,7 +14,7 @@
             url: "/SystemManage/UncertainTransaction/GetGridJson",
             height: $(window).height() - 128,
             colModel: [
-               
+
                 { label: '交易流水号', name: 'SerialNumber', width: 121, align: 'left' },
                 { label: '就诊编号', name: 'VisitNo', width: 121, align: 'left' },
                 { label: '结算编号', name: 'SettlementNo', width: 121, align: 'left' },
@@ -24,25 +26,67 @@
             viewrecords: true
         });
         $("#btn_search").click(function () {
-            $gridList.jqGrid('setGridParam', {
-                postData: { keyword: $("#txt_keyword").val() },
-            }).trigger('reloadGrid');
+            var userId = $("#empid").val();
+            if (userId === null || userId === "") {
+                $.modalAlert("非基层用户不能查询", "error");
+                return;
+            }
+            var transactionType = $("#TransactionType").val();
+           //查询不能确定交易
+            var activeData = yiHaiActiveX.YiHaiOutpatientMethods(transactionType, transactionType
+                , "Getuncertaintytrade", $("#empid").val());
+            var activeJsonData = JSON.parse(activeData);
+            if (activeJsonData.Success === false) {
+                $.modalAlert(activeJsonData.Message, "error");
+
+            } else {
+                $gridList.jqGrid('setGridParam', {
+                    postData: {
+                        keyword: $("#txt_keyword").val(),
+                        resultJson: activeJsonData.Data
+                    }
+                }).trigger('reloadGrid');
+
+            }
+
+
+          
         });
     }
-   
+
+    function btn_cancel_Transaction() {
+        
+        //获取交易流水号
+        var serialNumber = $("#gridList").jqGridRowValue().SerialNumber;
+        var activeData = yiHaiActiveX.YiHaiOutpatientMethods(serialNumber, serialNumber
+            , "CancelDeal", $("#empid").val());
+        var activeJsonData = JSON.parse(activeData);
+        if (activeJsonData.Success === false) {
+            $.modalAlert(activeJsonData.Message, "error");
+
+        } else {
+            $.reload();
+            $.modalAlert("取消交易成功!!!", "success");
+
+
+        }
+
+    }
 
 
 </script>
 
 <div class="topPanel">
     <div class="toolbar">
-        <div class="btn-group">
-            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+        
+        <div class="operate">
+            <ul class="nav nav-pills">
+                <li class="first">已选中<span>1</span>项</li>
+                <li><a id="NF-edit" onclick="btn_cancel_Transaction()"><i class="fa fa-pencil-square-o"></i>取消交易处理</a></li>
+
+            </ul>
+            <a href="javascript:;" class="close"></a>
         </div>
-        @*<div class="btn-group">
-                <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>更新信息</a>
-            </div>*@
-       
         <script>$('.toolbar').authorizeButton()</script>
 
     </div>
@@ -50,8 +94,33 @@
         <table>
             <tr>
                 <td>
+                    <div class="input-group" >
+                        交易类型
+                    </div>
+
+                </td>
+                <td>
+                    <div class="input-group" style="padding-left: 10px">
+                        <select id="TransactionType" name="TransactionType" class="form-control">
+                          
+                            <option value="11">门诊结算</option>
+                            <option value="12">门诊结算回退</option>
+                            <option value="14A">门诊特殊病、工伤门诊新申请</option>
+                            <option value="14B">门诊特殊病、工伤门诊变更申请</option>
+                            <option value="15">门诊特殊病、工伤门诊申请回退</option>
+                            <option value="16">门诊特殊病、工伤门诊申请查询</option>
+                            <option value="17">门诊特殊病、工伤门诊就诊登记</option>
+                            <option value="17A">门诊特殊病、工伤门诊就诊登记回退</option>
+                            <option value="18">门诊特殊病、工伤门诊新申请</option>
+                            <option value="20">门诊特殊病、工伤门诊结算</option>
+                            <option value="20A">门诊特殊病、工伤门诊结算回退</option>
+                        </select>
+                    </div>
+
+                </td>
+                <td>
                     <div class="input-group" style="padding-left: 20px">
-                        <input id="txt_keyword" type="text" class="form-control" placeholder="请输入流水号" style="width: 200px;">
+                       
                         <span class="input-group-btn">
                             <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
                         </span>
@@ -62,6 +131,7 @@
     </div>
 </div>
 <div class="gridPanel">
+    @{Html.RenderPartial("_CSharpYiHaiActiveX");}
     <table id="gridList"></table>
     <div id="gridPager"></div>
 </div>

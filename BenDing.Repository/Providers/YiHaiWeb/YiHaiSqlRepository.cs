@@ -372,9 +372,7 @@ namespace BenDing.Repository.Providers.YiHaiWeb
                         querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
                     }
                     string executeSql = countSql + whereSql + ";" + querySql;
-
                     var result = sqlConnection.QueryMultiple(executeSql);
-
                     int totalPageCount = result.Read<int>().FirstOrDefault();
                     //所有操作人员
                     var allOperator =  _iSystemManageRepository.QueryHospitalOperatorAllInfo(param.OrganizationCode);

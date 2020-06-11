@@ -34,6 +34,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
             {
                 Id = loginInfo.UserId
             });
+         
             ViewBag.empid = userBase.HisUserId;
             return View();
         }
