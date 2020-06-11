@@ -28,14 +28,12 @@ namespace NFine.Web.Controllers
             IYiHaiOutpatientDepartmentService iHaiOutpatientDepartmentService,
             ISystemManageRepository iSystemManageRepository,
             IWebServiceBasicService iWebServiceBasicService
-
         )
         {
             _webServiceBasicService = iWebServiceBasicService;
             _systemManageRepository = iSystemManageRepository;
             _yiHaiOutpatientDepartmentService = iHaiOutpatientDepartmentService;
         }
-
         #region comm
 
         /// <summary>
@@ -57,7 +55,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData MedicalInsuranceSignInQuery([FromBody] UiInIParam param)
+        public ApiJsonResultData GetMedicalInsuranceSignInParam([FromBody] UiInIParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
@@ -102,7 +100,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetHospitalInfoUploadParam([FromBody] UploadHospitalInfoUiParam param)
+        public ApiJsonResultData GetHospitalInfoUploadParam([FromBody]UploadHospitalInfoUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
@@ -127,7 +125,6 @@ namespace NFine.Web.Controllers
         }
 
         #endregion
-
         #region 门诊
 
         /// <summary>
@@ -297,7 +294,6 @@ namespace NFine.Web.Controllers
         }
 
         #endregion
-
         #region 公共信息
 
         /// <summary>

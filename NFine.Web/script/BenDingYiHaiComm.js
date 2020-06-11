@@ -23,7 +23,7 @@ function YiHaiSignInCheck() {
     }
     $.ajax({
         type: 'post',
-        url: YiHaiAPI + '/MedicalInsuranceSignInQuery',
+        url: YiHaiAPI + '/GetMedicalInsuranceSignInParam',
         data: queryParam,
         dataType: "json",
         async: false,

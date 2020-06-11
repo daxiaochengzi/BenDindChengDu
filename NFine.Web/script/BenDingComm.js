@@ -1,4 +1,4 @@
-﻿
+﻿var iniActiveX=null;
 var baseInfo = {
     HospitalInfo: {
         "Account": null,//账户
@@ -26,16 +26,18 @@ var baseInfo = {
 function DetectActiveX() {
     try {
        
-        var activeX = document.getElementById("CSharpActiveX");
-        var versionNumber = activeX.name;
-        var activeVersionNumber = activeX.GetVersionNumber();
+        if (iniActiveX === null) {
+            iniActiveX= document.getElementById("CSharpActiveX");
+        }
+        var versionNumber = iniActiveX.name;
+        var activeVersionNumber = iniActiveX.GetVersionNumber();
         if (parseInt(versionNumber) > parseInt(activeVersionNumber)) {
             msgError("当前插件版本过低,请下载新的版本!!!");
         }//签到检查
-        //else {
-
-        //    SignInCheck();
-        //}
+        else {
+            
+            SignInCheck();
+        }
 
     }
     catch (e) {
@@ -46,47 +48,78 @@ function DetectActiveX() {
 }
 //签到检查
 function SignInCheck() {
-    var queryParam = {
-        "UserId": iniJs("#empid").val() /*授权操作人的ID*/
-    }
-    $.ajax({
-        type: 'post',
-        url: hostNew + '/MedicalInsuranceSignInQuery',
-        data: queryParam,
-        dataType: "json",
-        async: false,
-        success: function (data) {
-
-            if (data.Success === false) {
-                var errData = data.Message;
-                msgError(errData);
-                //样式类名:墨绿深蓝风
-            } else {
-                var dataValue = data.Data;
-                if (dataValue.TransactionInputXml !== null)
-                {
-                    var activeX = document.getElementById("CSharpActiveX");
-                    //门诊结算
-                    var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
-                        , "MedicalInsuranceSignIn", iniJs("#empid").val());
-                    var activeJsonData = JSON.parse(activeData);
-                    if (activeJsonData.Success === false) {
-                        msgError(activeJsonData.Message);
-                    } else {
-                        queryParam["ResultJson"] = activeJsonData.Data;
-                        medicalInsuranceSignIn(queryParam);
-                    }
-                }
-                
-
+    var operatorId = iniJs("#empid").val();
+   
+    //var activeX = document.getElementById("CSharpActiveX");
+    //门诊结算
+    var activeData = iniActiveX.YiHaiOutpatientMethods("GetSignInUserId", "GetSignInUserId"
+        , "GetSignInUserId", operatorId);
+   
+    var activeJsonData = JSON.parse(activeData);
+    if (activeJsonData.Success === true) {
+        if (activeJsonData.Data !== "" || activeJsonData.Data !== null) {
+            //非同一操作员重新初始化
+            if (activeJsonData.Data !== operatorId) {
+                getMedicalInsuranceSignInParam();
             }
+        } else
+        {
+            getMedicalInsuranceSignInParam();
+        }
+        //msgError(activeJsonData.Message);
+    } else {
+        //queryParam["ResultJson"] = activeJsonData.Data;
+        //medicalInsuranceSignIn(queryParam);
+    }
+    //签到执行
+    function getMedicalInsuranceSignInParam() {
+        var queryParam = {
+            "UserId": iniJs("#empid").val() /*授权操作人的ID*/
         }
 
-    });
-}
+        iniJs.ajax({
+            type: 'post',
+            url: hostNew + '/GetMedicalInsuranceSignInParam',
+            data: queryParam,
+            dataType: "json",
+            async: false,
+            success: function (data) {
 
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    msgError(errData);
+                    //样式类名:墨绿深蓝风
+                } else {
+                   
+                    var dataValue = data.Data;
+                    if (dataValue.TransactionInputXml !== null) {
+                        debugger;
+                        var activeData = iniActiveX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                            , "MedicalInsuranceSignIn", iniJs("#empid").val());
+                        var activeJsonData = JSON.parse(activeData);
+                        if (activeJsonData.Success === false) {
+                            $.modalAlert(activeJsonData.Message, "error");
+
+                        } else {
+                            //取消签到数据存入数据库
+                            //queryParam["ResultJson"] = activeJsonData.Data;
+                            //YiHaiMedicalInsuranceSignIn(queryParam);
+                        }
+                    }
+
+
+                }
+            }
+
+        });
+    }
+
+    
+    
+}
+//签到数据存储
 function medicalInsuranceSignIn(signInParam) {
-    $.ajax({
+    iniJs.ajax({
         type: 'post',
         url: hostNew + '/MedicalInsuranceSignIn',
         data: signInParam,
@@ -98,7 +131,7 @@ function medicalInsuranceSignIn(signInParam) {
                 var errData = data.Message;
                 msgError(errData);
                 //样式类名:墨绿深蓝风
-            }
+            } 
         }
 
     });

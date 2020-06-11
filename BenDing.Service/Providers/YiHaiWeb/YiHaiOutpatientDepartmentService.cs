@@ -81,25 +81,26 @@ namespace BenDing.Service.Providers.YiHaiWeb
         {
             var resultData = new GetYiHaiBaseParm();
             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-            var medicalInsuranceSignList = _yiHaiSqlRepository.QueryMedicalInsuranceSignIn(new QueryMedicalInsuranceSignInParam()
+            //var medicalInsuranceSignList = _yiHaiSqlRepository.QueryMedicalInsuranceSignIn(new QueryMedicalInsuranceSignInParam()
+            //{
+            //    SignInState = 1,
+            //    User = userBase
+            //});
+            ////如果签到不存在自动签到
+            //if (medicalInsuranceSignList.Count == 0)
+            //{
+
+            //}
+            var hospitalOrganization =
+                _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
             {
-                SignInState = 1,
-                User = userBase
+                OperationName = userBase.UserName
             });
-            //如果签到不存在自动签到
-            if (medicalInsuranceSignList.Count == 0)
+            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInDataXmlDto()
             {
-                var hospitalOrganization =
-                    _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
-                {
-                    OperationName = userBase.UserName
-                });
-                resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
-                {
-                    OperationName = hospitalOrganization.MedicalInsuranceHandleNo
-                });
-            }
+                MedicalInsuranceOrganization = hospitalOrganization.MedicalInsuranceHandleNo
+            });
 
             return resultData;
 
