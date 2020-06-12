@@ -46,12 +46,14 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         [HandlerAjaxOnly]
         public ActionResult GetGridJson(Pagination pagination,string resultJson)
         {
-         
+            
             var dataList = new List<QueryUncertainTransactionDto>();
             if (!string.IsNullOrWhiteSpace(resultJson))
             {
                 var resultDto = JsonConvert.DeserializeObject<DealModelDto>(resultJson);
                 var outputData = XmlHelp.DeSerializer<QueryUncertainTransactionOutputXmlDto>(resultDto.TransactionOutputXml);
+
+             
                 var outputDataList = outputData.Row;
                 foreach (var item in outputDataList)
                 {

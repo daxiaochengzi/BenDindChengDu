@@ -50,8 +50,6 @@ function DetectActiveX() {
 function SignInCheck() {
     var operatorId = iniJs("#empid").val();
    
-    
-   
     var activeData = iniActiveX.YiHaiOutpatientMethods("GetSignInUserId", "GetSignInUserId"
         , "GetSignInUserId", operatorId);
    
@@ -60,66 +58,25 @@ function SignInCheck() {
         if (activeJsonData.Data !== "" || activeJsonData.Data !== null) {
             //非同一操作员重新初始化
             if (activeJsonData.Data !== operatorId) {
-                getMedicalInsuranceSignInParam();
+                medicalInsuranceSignIn();
             }
         } else
         {
-            getMedicalInsuranceSignInParam();
+            medicalInsuranceSignIn();
         }
        
     }
-    //签到执行
-    function getMedicalInsuranceSignInParam() {
-        var queryParam = {
-            "UserId": iniJs("#empid").val() /*授权操作人的ID*/
-        }
-
-        iniJs.ajax({
-            type: 'post',
-            url: hostNew + '/GetMedicalInsuranceSignInParam',
-            data: queryParam,
-            dataType: "json",
-            async: false,
-            success: function (data) {
-
-                if (data.Success === false) {
-                    var errData = data.Message;
-                    msgError(errData);
-                    //样式类名:墨绿深蓝风
-                } else {
-                   
-                    var dataValue = data.Data;
-                    if (dataValue.TransactionInputXml !== null) {
-                        debugger;
-                        var activeData = iniActiveX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
-                            , "MedicalInsuranceSignIn", iniJs("#empid").val());
-                        var activeJsonData = JSON.parse(activeData);
-                        if (activeJsonData.Success === false) {
-                            $.modalAlert(activeJsonData.Message, "error");
-
-                        } else {
-                            //取消签到数据存入数据库
-                            //queryParam["ResultJson"] = activeJsonData.Data;
-                            //YiHaiMedicalInsuranceSignIn(queryParam);
-                        }
-                    }
-
-
-                }
-            }
-
-        });
+}
+//医保签到
+function medicalInsuranceSignIn() {
+    var queryParam = {
+        "UserId": iniJs("#empid").val() /*授权操作人的ID*/
     }
 
-    
-    
-}
-//签到
-function medicalInsuranceSignIn(signInParam) {
     iniJs.ajax({
         type: 'post',
-        url: hostNew + '/MedicalInsuranceSignIn',
-        data: signInParam,
+        url: hostNew + '/GetMedicalInsuranceSignInParam',
+        data: queryParam,
         dataType: "json",
         async: false,
         success: function (data) {
@@ -128,50 +85,52 @@ function medicalInsuranceSignIn(signInParam) {
                 var errData = data.Message;
                 msgError(errData);
                 //样式类名:墨绿深蓝风
-            } 
+            } else {
+
+                var dataValue = data.Data;
+                if (dataValue.TransactionInputXml !== null) {
+                   
+                    var activeData = iniActiveX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                        , "MedicalInsuranceSignIn", iniJs("#empid").val());
+                    var activeJsonData = JSON.parse(activeData);
+                    if (activeJsonData.Success === false) {
+                        msgError(activeJsonData.Message);
+                     
+
+                    } else {
+                        //取消签到数据存入数据库
+                        //queryParam["ResultJson"] = activeJsonData.Data;
+                        //YiHaiMedicalInsuranceSignIn(queryParam);
+                    }
+                }
+
+
+            }
         }
 
     });
 }
-//function queryData(getInpatientInfoBack) {
-//   layer.open({
-//        type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
-//        area: ['500px', '220px'],
-//        shift: 2, //可选动画类型0-6
-//        scrollbar: false,
-//        title: false,
-//        moveType: 1,//拖拽模式，0或者1
-//        content: "Card?IdCardNo=" + baseInfo.HospitalInfo.IdentityMark,
-//        btn: ['确定', '取消']
-//        , yes: function (index) {
 
-//            var res = window["layui-layer-iframe" + index];
-//            var cardData = res.getMyData();
-//            if (cardData.AfferentSign === "3") {
-//                if (cardData.CardPwd === "" || cardData.CardPwd === null) {
-//                    msgError("请输入卡密码!!!");
-//                } else {
-//                    baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
-//                    baseInfo.HospitalInfo.CardPwd = cardData.CardPwd;
-//                    getReadCardInpatientInfo(getInpatientInfoBack);
+////签到
+//function medicalInsuranceSignIn(signInParam) {
+//    iniJs.ajax({
+//        type: 'post',
+//        url: hostNew + '/MedicalInsuranceSignIn',
+//        data: signInParam,
+//        dataType: "json",
+//        async: false,
+//        success: function (data) {
 
-//                    layer.close(index);
-//                }
-
-//            } else {
-//                baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
-//                baseInfo.HospitalInfo.IdentityMark = cardData.IdentityMark;
-//                getInpatientInfo(getInpatientInfoBack);
-//                layer.close(index);
-//            }
-
-
-//        }, btn2: function (index) {
-//            layer.close(index);
+//            if (data.Success === false) {
+//                var errData = data.Message;
+//                msgError(errData);
+//                //样式类名:墨绿深蓝风
+//            } 
 //        }
 
 //    });
 //}
+
 //按钮状态
 function buttonStatus(buttonId, status) {
     //取消禁用
@@ -184,7 +143,16 @@ function buttonStatus(buttonId, status) {
         iniJs("#" + buttonId).attr("disabled", 'disabled');
     }
 }
-
+//医保取消交易
+function medicalInsuranceCancelTransaction(serialNumber) {
+    var activeData = iniActiveX.YiHaiOutpatientMethods(serialNumber, serialNumber
+        , "CancelDeal", iniJs("#empid").val());
+    var activeJsonData = JSON.parse(activeData);
+    if (activeJsonData.Success === false) {
+        msgError(activeJsonData.Message);
+        
+    }
+}
 //获取结算返回值
 function settlementData(data) {
    
@@ -204,38 +172,6 @@ function settlementData(data) {
         iniJs("#SettleData").empty();
         iniJs("#SettleData").append(html);
     }
-
-}
-
-function getHospitalInfo(getHospitalInfoParam) {
-   
-    var params = {
-        "TransKey": iniJs("#transkey").val() /*医保交易码*/,
-        "BusinessId": iniJs("#bid").val() /*当前住院记录的业务ID*/,
-        "UserId": iniJs("#empid").val() /*授权操作人的ID*/
-    }
-    iniJs.ajax({
-        type: 'get',
-        url: hostNew + '/GetHospitalInfo',
-        data: params,
-        dataType: "json",
-        async: false,
-        success: function (data) {
-            if (data.Success === false) {
-                var errData = data.Message;
-                msgError(errData);
-            } else {
-               
-
-                baseInfo.HospitalInfo["Account"] = data.Data.MedicalInsuranceAccount;
-                baseInfo.HospitalInfo["Pwd"] = data.Data.MedicalInsurancePwd;
-                baseInfo.HospitalInfo["OperatorId"] = iniJs("#empid").val();
-                getHospitalInfoParam();
-            
-            }
-        }
-
-    });
 
 }
 //获取患者基本信息

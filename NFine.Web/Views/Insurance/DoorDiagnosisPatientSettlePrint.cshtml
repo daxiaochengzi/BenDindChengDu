@@ -250,7 +250,8 @@
                   
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        msgError(errData);
+                      
                     } else {
                         var dataValue = data.Data;
                         if (dataValue.TransactionInputXml !== null) {
@@ -260,13 +261,14 @@
                                 , "CancelOutpatientSettlement", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                               
+                                msgError(activeJsonData.Message);
 
                             } else {
                                 var  cancelParam = params;
                                 cancelParam["ResultJson"] = activeJsonData.Data;
                                 //取消结算回写
-                                cancelOutpatientSettlement(cancelParam);
+                                cancelOutpatientSettlement(cancelParam, activeJsonData.OtherInfo);
                             }
 
 
@@ -279,7 +281,7 @@
             });
         }
         //取消结算方法
-        function cancelOutpatientSettlement(cancelParam) {
+        function cancelOutpatientSettlement(cancelParam, serialNumber) {
             var confirmProcessParam = params;
          
             $.ajax({
@@ -290,8 +292,11 @@
                 async: false,
                 success: function (data) {
                     if (data.Success === false) {
+                     
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        //取消交易
+                        medicalInsuranceCancelTransaction(serialNumber);
+                        msgError(errData);
                     } else {
                         var dataValue = data.Data;
                         if (dataValue !== null) {
@@ -302,7 +307,8 @@
                                 , "ConfirmDeal", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                                msgError(activeJsonData.Message);
+                              
 
                             } else {
                                

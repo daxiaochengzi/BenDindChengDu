@@ -233,9 +233,6 @@
         params["timestamp"] = (new Date()).valueOf();
         //获取医院基本信息回调方法
         window.getHospitalInfoBack = function () { };
-
-        getHospitalInfo(getHospitalInfoBack);
-
         //初始化病人基本信息
         function iniInpatientInfo() {
             $("#InsuranceBalance").val(baseInfo.Inpatient.AccountBalance);
@@ -281,13 +278,14 @@
                                 , "OutpatientRegister", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                                msgError(activeJsonData.Message);
+                              
 
                             } else {
                                 var registerParam = params;
                                 registerParam["ResultJson"] = activeJsonData.Data;
                                 //挂号回写
-                                outpatientRegister(registerParam);
+                                outpatientRegister(registerParam, activeJsonData.OtherInfo);
                             }
 
                         }
@@ -336,19 +334,22 @@
 
         }
         //门诊挂号
-        function outpatientRegister() {
+        function outpatientRegister(registerParam,serialNumber) {
             var confirmParam = params;
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientRegister',
-                data: params,
+                data: registerParam,
                 dataType: "json",
                 async: false,
                 success: function (data) {
 
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        //医保取消交易
+                        medicalInsuranceCancelTransaction(serialNumber);
+                        msgError(errData);
+                       
                         //样式类名:墨绿深蓝风
                     } else {
                       
@@ -360,8 +361,8 @@
                                 , "ConfirmDeal", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
-
+                                msgError(activeJsonData.Message);
+  
                             } else {
                                
                                 confirmParam["ResultJson"] = activeJsonData.Data;
@@ -407,7 +408,7 @@
                             } else {
                                 var uploadParam = params;
                                 uploadParam["ResultJson"] = activeJsonData.Data;
-                                outpatientDetailUpload(uploadParam);
+                                outpatientDetailUpload(uploadParam, activeJsonData.OtherInfo);
 
                             }
 
@@ -418,7 +419,7 @@
             });
         }
         //门诊病人费用明细上传
-        function outpatientDetailUpload(uploadParam) {
+        function outpatientDetailUpload(uploadParam,serialNumber) {
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientDetailUpload',
@@ -429,6 +430,8 @@
 
                     if (data.Success === false) {
                         var errData = data.Message;
+                        //医保取消交易
+                        medicalInsuranceCancelTransaction(serialNumber);
                         msgError(errData);
 
                     } else {
@@ -475,7 +478,7 @@
                         } else {
                             var costInputParams = params;
                             costInputParams["ResultJson"] = activeJsonData.Data;
-                            outpatientDepartmentCostInput(costInputParams);
+                            outpatientDepartmentCostInput(costInputParams, activeJsonData.OtherInfo);
                         }
 
                     }
@@ -522,7 +525,7 @@
             });
         }
         //普通门诊结算
-        function outpatientDepartmentCostInput(costInputParams) {
+        function outpatientDepartmentCostInput(costInputParams,serialNumber) {
            
             var confirmProcessParam = params;
             $.ajax({
@@ -535,6 +538,7 @@
                    
                     if (data.Success === false) {
                         var errData = data.Message;
+                        medicalInsuranceCancelTransaction(serialNumber);
                         msgError(errData);
 
                     } else {
