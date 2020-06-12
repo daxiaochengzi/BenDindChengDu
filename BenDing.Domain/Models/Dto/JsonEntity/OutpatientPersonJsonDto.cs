@@ -83,8 +83,26 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "结算编号")]
         public  string SettlementNo { get; set; }
-       
-        
+        /// <summary>
+        /// 职业
+        /// </summary>
+        [JsonProperty(PropertyName = "职业")]
+        public string Job { get; set; }
+        /// <summary>
+        /// 现病史
+        /// </summary>
+        [JsonProperty(PropertyName = "现病史")]
+        public string AntecedentHistory { get; set; }
+
+        /// <summary>
+        /// 主诉
+        /// </summary>
+        [JsonProperty(PropertyName = "主诉")]
+        public string MainDiagnosis { get; set; }
+
+
+
+
     }
 
   

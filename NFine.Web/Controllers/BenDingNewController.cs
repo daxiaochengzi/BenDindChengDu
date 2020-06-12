@@ -492,7 +492,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-
         /// <summary>
         /// 获取医保入院登记修改参数
         /// </summary>
@@ -1276,7 +1275,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-        //
         /// <summary>
         /// 医保删除处方数据
         /// </summary>

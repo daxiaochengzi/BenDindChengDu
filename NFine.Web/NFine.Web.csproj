@@ -183,6 +183,7 @@
     <Compile Include="Areas\SystemManage\Controllers\RoleAuthorizeController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\RoleController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\SignInController.cs" />
+    <Compile Include="Areas\SystemManage\Controllers\UncertainTransactionController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\UserController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\ItemsTypeController.cs" />
     <Compile Include="Areas\SystemManage\SystemManageAreaRegistration.cs" />
@@ -818,6 +819,8 @@
     <Content Include="Areas\SystemManage\Views\DataImport\DrugCatalogExcel.cshtml" />
     <Content Include="Areas\SystemManage\Views\DataImport\DiagnosisProjectExcel.cshtml" />
     <Content Include="Areas\SystemManage\Views\BaseRefund\Index.cshtml" />
+    <Content Include="Areas\SystemManage\Views\DataImport\MaterialScienceExcel.cshtml" />
+    <Content Include="Areas\SystemManage\Views\UncertainTransaction\Index.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Insurance\Card.cshtml" />

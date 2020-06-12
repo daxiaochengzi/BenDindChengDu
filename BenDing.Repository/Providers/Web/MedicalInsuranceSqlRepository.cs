@@ -222,8 +222,6 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                  
-                
                     string querySql = $@"
                              SELECT *  FROM [dbo].[MedicalInsuranceProject] 
                              where  IsDelete=0 and ProjectType={param.ProjectCodeType}";

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntity;
+using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.YiHai.Base;
@@ -80,25 +81,26 @@ namespace BenDing.Service.Providers.YiHaiWeb
         {
             var resultData = new GetYiHaiBaseParm();
             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-            var medicalInsuranceSignList = _yiHaiSqlRepository.QueryMedicalInsuranceSignIn(new QueryMedicalInsuranceSignInParam()
+            //var medicalInsuranceSignList = _yiHaiSqlRepository.QueryMedicalInsuranceSignIn(new QueryMedicalInsuranceSignInParam()
+            //{
+            //    SignInState = 1,
+            //    User = userBase
+            //});
+            ////如果签到不存在自动签到
+            //if (medicalInsuranceSignList.Count == 0)
+            //{
+
+            //}
+            var hospitalOrganization =
+                _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+            resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
             {
-                SignInState = 1,
-                User = userBase
+                OperationName = userBase.UserName
             });
-            //如果签到不存在自动签到
-            if (medicalInsuranceSignList.Count == 0)
+            resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInDataXmlDto()
             {
-                var hospitalOrganization =
-                    _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                resultData.TransactionControlXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
-                {
-                    OperationName = userBase.UserName
-                });
-                resultData.TransactionInputXml = XmlSerializeHelper.YinHaiXmlSerialize(new SignInControlXmlDto()
-                {
-                    OperationName = hospitalOrganization.MedicalInsuranceHandleNo
-                });
-            }
+                MedicalInsuranceOrganization = hospitalOrganization.MedicalInsuranceHandleNo
+            });
 
             return resultData;
 
@@ -358,6 +360,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
             //获取初始门诊费用明细
             var iniCostDetail = dataValue.DetailInfo;
             var outpatientBase = dataValue.OutpatientPersonBase;
+            if (string.IsNullOrWhiteSpace(outpatientBase.MainDiagnosis)) throw new Exception("当前病人没有主诉，不能进行医保报账!!!");
+            if (string.IsNullOrWhiteSpace(outpatientBase.AntecedentHistory)) throw new Exception("当前病人没有现病史，不能进行医保报账!!!");
 
             //获取未对码的项目
             var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode))
@@ -579,13 +583,25 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// 门诊结算
         /// </summary>
         /// <param name="param"></param>
-        public ConfirmInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param)
+        public OutpatientSettlementInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param)
         {
-            var resultData = new ConfirmInfoDto();
+            var resultData = new OutpatientSettlementInfoDto();
             var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
             baseUser.TransKey = param.TransKey;
             var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
             var outputData = XmlHelp.DeSerializer<OutpatientSettlementOutputXmlDto>(resultDto.TransactionOutputXml);
+            //--
+
+            var outputJson = AutoMapper.Mapper.Map<OutpatientSettlementOutputJsonDto>(outputData);
+            if (outputData.AccountInfo.Any() && outputData.AccountInfo.Count > 0)
+            {
+                var accountInfoData = outputData.AccountInfo.FirstOrDefault();
+                outputJson.AccountType = accountInfoData.AccountType;
+                outputJson.Balance = accountInfoData.Balance;
+            }
+
+            resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(outputJson));
+
             //获取门诊病人信息
             var outpatientInfo = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam()
             {
@@ -640,8 +656,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 BusinessId = param.BusinessId,
                 BackParam = strXmlBackParam
             };
-            //存基层
-            _webServiceBasicRepository.SaveXmlData(saveXml);
+            ////存基层
+            //_webServiceBasicRepository.SaveXmlData(saveXml);
             //更新门诊病人状态
             _yiHaiSqlRepository.UpdateOutpatientSettlement(
                 new UpdateOutpatientSettlementParam
@@ -729,8 +745,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
             if (outpatientInfo.ProcessStep!=(int) OutpatientSettlementStep.ConfirmSettlement) throw new Exception("当前病人没有确认结算信息不能,取消结算!!!");
             var resultData = new QueryOutpatientSettlementCost()
             {    BusinessId = param.BusinessId,
-                DepartmentName = outpatientInfo.DepartmentName,
-                DiagnosticDoctor = outpatientInfo.DiagnosticDoctor,
+                 DepartmentName = outpatientInfo.DepartmentName,
+                 DiagnosticDoctor = outpatientInfo.DiagnosticDoctor,
                 IdCardNo = outpatientInfo.IdCardNo,
                 InvoiceNo = outpatientInfo.InvoiceNo,
                 Operator = outpatientInfo.Operator,
@@ -753,6 +769,29 @@ namespace BenDing.Service.Providers.YiHaiWeb
             resultData.PayMsg=CommonHelp.GetPayMsg(JsonConvert.SerializeObject(outputJson));
 
 
+            return resultData;
+        }
+       
+        /// <summary>
+        /// 不确定交易查询
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<int, List<QueryUncertainTransactionDto>> QueryUncertainTransaction()
+        {
+
+
+            var resultData = new Dictionary<int, List<QueryUncertainTransactionDto>>();
+            var dataList = new List<QueryUncertainTransactionDto>()
+            {
+                new QueryUncertainTransactionDto()
+                {
+                    VisitNo = "00002005289161163",
+                    SerialNumber = "11C0000SJ37F6E2F2",
+                    SettlementNo = "0000S293400211",
+                   ReimbursementType = "0203"
+                }
+            };
+            resultData.Add(1, dataList);
             return resultData;
         }
 
@@ -785,7 +824,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 {
                     BusinessId = param.BusinessId,
                     ProcessStep = (int)param.SettlementStep,
-                    
+                    UserId = param.UserId
                 });
             //日志写入
             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
@@ -927,6 +966,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
            
             return resultData;
         }
+
+
         /// <summary>
         /// 获取医院信息上传参数
         /// </summary>
@@ -1190,7 +1231,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             {
                 Age = CommonHelp.GetAgeByBirthdate(Convert.ToDateTime(patientInfo.Birthday)),
                 Birthday = patientInfo.Birthday,
-                AntecedentHistory = mainDiagnosis.DiseaseName,
+                AntecedentHistory = outpatientBase.AntecedentHistory,
                 DepartmentAreaCode = hospitalGeneralCatalog.MedicalInsuranceCode,
                 DiagnosisStartTime = visitDate,
                 DiagnosisTime = visitDate,
@@ -1200,8 +1241,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 IsConsultation = 1,
                 IsRepeatedDiagnosis = 0,
                 IsTrauma = 0,
-                Job = "工人",
-                MainDiagnosis = mainDiagnosis.DiseaseName,
+                Job =string.IsNullOrWhiteSpace(outpatientBase.Job)?"工人": outpatientBase.Job,
+                MainDiagnosis = outpatientBase.MainDiagnosis,
                 OperatorName = outpatientBase.Operator,
                 WestMedicineFirstDiagnosis = isWestMedicineDiagnosis == true? mainDiagnosis.ProjectCode:null,
                 PhysiqueInspect = "T36.5℃",
@@ -1397,11 +1438,11 @@ namespace BenDing.Service.Providers.YiHaiWeb
         private OutpatientSettlementDataXmlDto OutpatientDepartmentDataXml(
             OutpatientDepartmentDataXmlParam param)
         {
-            var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
-            {
-                DirectoryCodeList = param.CostDetail.Select(c => c.DirectoryCode).ToList(),
-                OrganizationCode = param.OrganizationCode
-            });
+            //var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
+            //{
+            //    DirectoryCodeList = param.CostDetail.Select(c => c.DirectoryCode).ToList(),
+            //    OrganizationCode = param.OrganizationCode
+            //});
             var resultData = new OutpatientSettlementDataXmlDto();
             //居民
             if (param.IsWorkers == false)
@@ -1418,8 +1459,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 var ordersDetailData = new List<OutpatientDepartmentDataXmlDetailDto>();
                 foreach (var item in param.CostDetail)
                 {
-                    var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == item.DirectoryCode)
-                        .Select(d => d.FixedEncodingId).FirstOrDefault();
+                    //var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == item.DirectoryCode)
+                    //    .Select(d => d.FixedEncodingId).FirstOrDefault();
                     var costDetailItem = new OutpatientDepartmentDataXmlRowDto()
                     {
                         DetailId = CommonHelp.GuidToStr(item.DetailId),
@@ -1447,7 +1488,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                         ExternalInspectHospitalNo = null,
                         DoctorCode = null,
                         EquipmentCode = null,
-                        HospitalPairingCode = hospitalCodeNo,
+                        //HospitalPairingCode = hospitalCodeNo,
                         DirectoryCode = CommonHelp.GuidToStr(item.DirectoryCode)
 
                     };
@@ -1455,8 +1496,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 }
                 foreach (var items in param.CostDetail)
                 {
-                    var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == items.DirectoryCode)
-                        .Select(d => d.FixedEncodingId).FirstOrDefault();
+                    //var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == items.DirectoryCode)
+                    //    .Select(d => d.FixedEncodingId).FirstOrDefault();
                     var ordersDetailItem = new OutpatientDepartmentDataXmlDetailDto()
                     {
                         OrdersSortNo = param.OutpatientBase.InvoiceNo,
@@ -1465,7 +1506,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                         DoctorCode =CommonHelp.GuidToStr(items.BillDoctorId) ,
                         OrdersDepartmentCode = items.BillDepartmentId,
                         OrdersDepartmentName = param.DepartmentName,
-                        HospitalCodeNo = hospitalCodeNo,
+                        //HospitalCodeNo = hospitalCodeNo,
                         OrdersType = null,
                         OrdersClassify = null,
                         DoseUnit ="",

@@ -52,6 +52,21 @@
 
 
     }
+
+    function importMaterialScienceExcel() {
+        $.modalOpen({
+            id: "Form",
+            title: "材料导入",
+            url: "/SystemManage/DataImport/MaterialScienceExcel",
+            width: "450px",
+            height: "340px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+
+
+    }
 </script>
 
 
@@ -63,13 +78,13 @@
                 <tr>
                     <th class="formTitle"></th>
                     <td class="formValue">
-                        <a id="NF-adds" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_MedicalInsurance_download()"><i class="fa fa-plus"></i>医保ICD10导入</a>
+                        <a  authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_MedicalInsurance_download()"><i class="fa fa-plus"></i>医保ICD10导入</a>
                     </td>
                 </tr>
                 <tr>
                     <th class="formTitle"></th>
                     <td class="formValue">
-                        <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_Base_download()"><i class="fa fa-plus"></i>基层下载更新</a>
+                        <a  authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_Base_download()"><i class="fa fa-plus"></i>基层下载更新</a>
                     </td>
                 </tr>
                 <tr>
@@ -81,7 +96,13 @@
                 <tr>
                     <th class="formTitle"></th>
                     <td class="formValue">
-                        <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="importDiagnosisProjectExcel()"><i class="fa fa-plus"></i>诊疗目录导入</a>
+                        <a  authorize="yes" class="btn btn-primary dropdown-text" onclick="importDiagnosisProjectExcel()"><i class="fa fa-plus"></i>诊疗目录导入</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle"></th>
+                    <td class="formValue">
+                        <a  authorize="yes" class="btn btn-primary dropdown-text" onclick="importMaterialScienceExcel()"><i class="fa fa-plus"></i>材料导入</a>
                     </td>
                 </tr>
             </table>

@@ -158,6 +158,14 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="userId"></param>
         /// <returns></returns>
         Int64 DrugCatalogImportExcel(DataTable dt, string userId);
+        /// <summary>
+        /// 材料导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+
+         int ImportMaterialScienceExcel(DataTable dt, string userId);
 
         /// <summary>
         /// 诊疗项目导入

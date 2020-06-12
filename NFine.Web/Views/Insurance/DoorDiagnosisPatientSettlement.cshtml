@@ -233,9 +233,6 @@
         params["timestamp"] = (new Date()).valueOf();
         //获取医院基本信息回调方法
         window.getHospitalInfoBack = function () { };
-
-        getHospitalInfo(getHospitalInfoBack);
-
         //初始化病人基本信息
         function iniInpatientInfo() {
             $("#InsuranceBalance").val(baseInfo.Inpatient.AccountBalance);
@@ -277,17 +274,18 @@
                         if (dataValue.TransactionInputXml !== null) {
                             var activeX = document.getElementById("CSharpActiveX");
 
-                            var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                            var activeData = activeX.YiHaiMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
                                 , "OutpatientRegister", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                                msgError(activeJsonData.Message);
+                              
 
                             } else {
                                 var registerParam = params;
                                 registerParam["ResultJson"] = activeJsonData.Data;
                                 //挂号回写
-                                outpatientRegister(registerParam);
+                                outpatientRegister(registerParam, activeJsonData.OtherInfo);
                             }
 
                         }
@@ -336,19 +334,22 @@
 
         }
         //门诊挂号
-        function outpatientRegister() {
+        function outpatientRegister(registerParam,serialNumber) {
             var confirmParam = params;
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientRegister',
-                data: params,
+                data: registerParam,
                 dataType: "json",
                 async: false,
                 success: function (data) {
 
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        //医保取消交易
+                        medicalInsuranceCancelTransaction(serialNumber);
+                        msgError(errData);
+                       
                         //样式类名:墨绿深蓝风
                     } else {
                       
@@ -356,12 +357,12 @@
                         if (dataValue!== null) {
                             var activeX = document.getElementById("CSharpActiveX");
 
-                            var activeData = activeX.YiHaiOutpatientMethods(dataValue.SerialNumber, dataValue.VerificationCode
+                            var activeData = activeX.YiHaiMethods(dataValue.SerialNumber, dataValue.VerificationCode
                                 , "ConfirmDeal", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
-
+                                msgError(activeJsonData.Message);
+  
                             } else {
                                
                                 confirmParam["ResultJson"] = activeJsonData.Data;
@@ -391,23 +392,24 @@
 
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        msgError(errData);
+                     
                         //样式类名:墨绿深蓝风
                     } else {
                         var dataValue = data.Data;
                         if (dataValue.TransactionInputXml !== null) {
                             var activeX = document.getElementById("CSharpActiveX");
 
-                            var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                            var activeData = activeX.YiHaiMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
                                 , "OutpatientDetailUpload", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                                msgError(activeJsonData.Message);
 
                             } else {
                                 var uploadParam = params;
                                 uploadParam["ResultJson"] = activeJsonData.Data;
-                                outpatientDetailUpload(uploadParam);
+                                outpatientDetailUpload(uploadParam, activeJsonData.OtherInfo);
 
                             }
 
@@ -418,7 +420,7 @@
             });
         }
         //门诊病人费用明细上传
-        function outpatientDetailUpload(uploadParam) {
+        function outpatientDetailUpload(uploadParam,serialNumber) {
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientDetailUpload',
@@ -429,6 +431,8 @@
 
                     if (data.Success === false) {
                         var errData = data.Message;
+                        //医保取消交易
+                        medicalInsuranceCancelTransaction(serialNumber);
                         msgError(errData);
 
                     } else {
@@ -458,7 +462,8 @@
                    
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        msgError(errData);
+
                         //样式类名:墨绿深蓝风
 
                     } else {
@@ -466,7 +471,7 @@
                         var dataValue = data.Data;
                         var activeX = document.getElementById("CSharpActiveX");
                         //门诊结算
-                        var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                        var activeData = activeX.YiHaiMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
                             , "OutpatientSettlement", $("#empid").val());
                       
                         var activeJsonData = JSON.parse(activeData);
@@ -475,7 +480,7 @@
                         } else {
                             var costInputParams = params;
                             costInputParams["ResultJson"] = activeJsonData.Data;
-                            outpatientDepartmentCostInput(costInputParams);
+                            outpatientDepartmentCostInput(costInputParams, activeJsonData.OtherInfo);
                         }
 
                     }
@@ -496,7 +501,8 @@
                   
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        msgError(errData);
+                       
                         //样式类名:墨绿深蓝风
 
                     } else {
@@ -504,7 +510,7 @@
                         var dataValue = data.Data;
                         var activeX = document.getElementById("CSharpActiveX");
                         //门诊结算
-                        var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                        var activeData = activeX.YiHaiMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
                             , "OutpatientSettlementPrint", $("#empid").val());
 
                         var activeJsonData = JSON.parse(activeData);
@@ -522,7 +528,7 @@
             });
         }
         //普通门诊结算
-        function outpatientDepartmentCostInput(costInputParams) {
+        function outpatientDepartmentCostInput(costInputParams,serialNumber) {
            
             var confirmProcessParam = params;
             $.ajax({
@@ -535,6 +541,7 @@
                    
                     if (data.Success === false) {
                         var errData = data.Message;
+                        medicalInsuranceCancelTransaction(serialNumber);
                         msgError(errData);
 
                     } else {
@@ -543,14 +550,14 @@
                          
                             var activeX = document.getElementById("CSharpActiveX");
 
-                            var activeData = activeX.YiHaiOutpatientMethods(dataValue.SerialNumber, dataValue.VerificationCode
+                            var activeData = activeX.YiHaiMethods(dataValue.SerialNumber, dataValue.VerificationCode
                                 , "ConfirmDeal", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                                msgError(activeJsonData.Message);
 
                             } else {
-                               
+                                settlementData(dataValue.PayMsg);
                                 confirmProcessParam["ResultJson"] = activeJsonData.Data;
                                 confirmProcessParam["SettlementStep"] = 5;
                                 confirmProcessStep(confirmProcessParam,"OutpatientDepartmentCostInput" );
@@ -601,7 +608,8 @@
                 if (data.Success === false) {
                     var errData = data.Message;
                     //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                    msgError(errData);
+                  
 
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");

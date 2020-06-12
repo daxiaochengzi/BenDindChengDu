@@ -10,7 +10,7 @@ using BenDing.Domain.Models.Params.OutpatientDepartment;
 
 namespace BenDing.Repository.Interfaces.Web
 {
-  public  interface IOutpatientDepartmentRepository
+  public  interface IOutpatientDepartmentRepository   
       {/// <summary>
        /// 门诊费用录入
        /// </summary>

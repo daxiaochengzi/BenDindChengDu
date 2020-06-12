@@ -533,6 +533,55 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+        /// <summary>
+        /// 材料导入
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        public int ImportMaterialScienceExcel(DataTable dt,  string userId)
+        {
+            int insterCount = 0;
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string insterSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                 
+
+                    string sqlStr = $"update [dbo].[MedicalInsuranceProject] set IsDelete=1,UpdateTime=GETDATE(),UpdateUserId='{userId}'  where [ProjectType]=3 and IsDelete=0";
+                    sqlConnection.Execute(sqlStr);
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (!string.IsNullOrWhiteSpace(dr["材料项目编码"].ToString()))
+                        {
+
+                            insterSql += $@"
+                                   insert into [dbo].[MedicalInsuranceProject]
+                                    ([Id],[ProjectCode],[ProjectName],
+                                    [CreateTime],[CreateUserId],[ProjectType],[IsDelete]
+                                    )
+                                   values('{Guid.NewGuid()}','{dr["材料项目编码"]}','{dr["项目名称"]}',
+                                    getDate(),'{userId}',3,0 );";
+                        }
+                    }
+                    insterCount = sqlConnection.Execute(insterSql);
+                    sqlConnection.Close();
+
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(insterSql);
+                    throw new Exception(e.Message);
+                }
+
+
+
+            }
+
+            return insterCount;
+        }
 
         /// <summary>
         /// ICD10获取最新时间
@@ -1325,13 +1374,11 @@ namespace BenDing.Repository.Providers.Web
                                 UploadMark = c.UploadMark,
                                 AdjustmentDifferenceValue = c.AdjustmentDifferenceValue,
                                 DirectoryCategoryCode = itemPairCode != null ? ((CatalogTypeEnum)Convert.ToInt32(itemPairCode.DirectoryCategoryCode)).ToString() : null,
-                                BlockPrice = itemPairCode != null ? GetBlockPrice(itemPairCode, gradeData.OrganizationGrade) : 0,
+                              
                                 ProjectCode = itemPairCode?.ProjectCode,
                                 ProjectLevel = itemPairCode != null ? ((ProjectLevel)Convert.ToInt32(itemPairCode.ProjectLevel)).ToString() : null,
                                 ProjectCodeType = itemPairCode != null ? ((ProjectCodeType)Convert.ToInt32(itemPairCode.ProjectCodeType)).ToString() : null,
-                                SelfPayProportion = (residentInfoData != null && itemPairCode != null)
-                                    ? GetSelfPayProportion(itemPairCode, residentInfoData)
-                                    : 0,
+                                
                                 UploadAmount = c.UploadAmount,
                                 OrganizationCode = c.OrganizationCode,
                                 UploadTime = c.UploadTime,
@@ -1470,7 +1517,6 @@ namespace BenDing.Repository.Providers.Web
                         string insertSql = "";
                         foreach (var item in paramNew)
                         {
-
                             string str = $@"INSERT INTO [dbo].[HospitalGeneralCatalog]
                                    (id,DirectoryType,[OrganizationCode],[OrganizationName],[DirectoryCode],[DirectoryName]
                                    ,[MnemonicCode],[DirectoryCategoryName],[Remark] ,[CreateTime]
@@ -1572,26 +1618,26 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-        private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)
-        {
-            decimal resultData = 0;
-            if (grade == OrganizationGrade.二级乙等以下) resultData = param.ZeroBlock;
-            if (grade == OrganizationGrade.二级乙等) resultData = param.OneBlock;
-            if (grade == OrganizationGrade.二级甲等) resultData = param.TwoBlock;
-            if (grade == OrganizationGrade.三级乙等) resultData = param.ThreeBlock;
-            if (grade == OrganizationGrade.三级甲等) resultData = param.FourBlock;
+        //private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)
+        //{
+        //    decimal resultData = 0;
+        //    if (grade == OrganizationGrade.二级乙等以下) resultData = param.ZeroBlock;
+        //    if (grade == OrganizationGrade.二级乙等) resultData = param.OneBlock;
+        //    if (grade == OrganizationGrade.二级甲等) resultData = param.TwoBlock;
+        //    if (grade == OrganizationGrade.三级乙等) resultData = param.ThreeBlock;
+        //    if (grade == OrganizationGrade.三级甲等) resultData = param.FourBlock;
 
-            return resultData;
-        }
-        private decimal GetSelfPayProportion(QueryMedicalInsurancePairCodeDto param, MedicalInsuranceResidentInfoDto residentInfo)
-        {
-            decimal resultData = 0;
-            //居民
-            if (residentInfo.InsuranceType == "342") resultData = param.ResidentSelfPayProportion;
-            //职工
-            if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
-            return resultData;
-        }
+        //    return resultData;
+        //}
+        //private decimal GetSelfPayProportion(QueryMedicalInsurancePairCodeDto param, MedicalInsuranceResidentInfoDto residentInfo)
+        //{
+        //    decimal resultData = 0;
+        //    //居民
+        //    if (residentInfo.InsuranceType == "342") resultData = param.ResidentSelfPayProportion;
+        //    //职工
+        //    if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
+        //    return resultData;
+        //}
 
     }
 }

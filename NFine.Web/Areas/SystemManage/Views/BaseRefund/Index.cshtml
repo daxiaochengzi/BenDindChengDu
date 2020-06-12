@@ -13,14 +13,15 @@
             height: $(window).height() - 128,
             colModel: [
                 { label: '主键', name: 'Id', hidden: true },
-                { label: '就诊编号', name: 'VisitNo', width: 80, align: 'left' },
-                { label: '就诊步骤', name: 'ProcessStep', width: 80, align: 'left' },
-                { label: '病人姓名', name: 'PatientName', width: 80, align: 'left' },
-                { label: '身份证号', name: 'IdCardNo', width: 80, align: 'left' },
-                { label: '门诊号', name: 'OutpatientNo', width: 80, align: 'left' },
-                { label: '住院号', name: 'InpatientNo', width: 80, align: 'left' },
-                { label: '操作人员', name: 'OperationName', width: 80, align: 'left' },
-                { label: '操作时间', name: 'OperationTime', width: 80, align: 'left' }
+                { label: '就诊编号', name: 'VisitNo', width: 123, align: 'left' },
+                { label: '就诊步骤', name: 'ProcessStep', width: 123, align: 'left' },
+                { label: '病人姓名', name: 'PatientName', width: 123, align: 'left' },
+                { label: '身份证号', name: 'IdCardNo', width: 123, align: 'left' },
+                { label: '门诊号', name: 'OutpatientNo', width: 123, align: 'left' },
+                { label: '业务id', name: 'BusinessId', width: 123, align: 'left' },
+                { label: '住院号', name: 'InpatientNo', width: 123, align: 'left' },
+                { label: '操作人员', name: 'OperationName', width: 123, align: 'left' },
+                { label: '操作时间', name: 'OperationTime', width: 123, align: 'left' }
             ],
             pager: "#gridPager",
             sortname: 'CreateTime desc',
@@ -72,14 +73,14 @@
         @*<div class="btn-group">
                 <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>更新信息</a>
             </div>*@
-        <div class="operate">
+        @*<div class="operate">
             <ul class="nav nav-pills">
                 <li class="first">已选中<span>1</span>项</li>
                 <li><a id="NF-edit" authorize="yes" onclick="btn_edit()"><i class="fa fa-pencil-square-o"></i>取消基层结算</a></li>
 
             </ul>
             <a href="javascript:;" class="close"></a>
-        </div>
+        </div>*@
         <script>$('.toolbar').authorizeButton()</script>
 
     </div>
@@ -94,7 +95,10 @@
                 </td>
                 <td>
                     <div class="input-group" style="padding-left: 10px">
-                        <input id="txt_startTime" type="text" class="form-control" style="width: 200px;">
+                        <input class="Wdate" type="text" id="txt_startTime" name="txt_startTime" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd'})" style="height: 30px; width: 240px"/>
+                        @*<input id="txt_startTime" class="Wdate" name="SettlementStartTime" id="startTime"
+                               onClick="WdatePicker({ autoPickDate: true, dateFmt: 'yyyy-MM-dd', maxDate: '#F{$dp.$D(\'endTime\')||\'new Date()\'}', readOnly: true })" style="height: 34px; width: 330px"/>*@
+                       
                     </div>
 
                 </td>
@@ -106,7 +110,8 @@
                 </td>
                 <td>
                     <div class="input-group" style="padding-left: 10px">
-                        <input id="txt_endTime" type="text" class="form-control" style="width: 200px;">
+                        <input class="Wdate" type="text" id="txt_endTime" name="txt_endTime" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd'})" style="height: 30px; width: 240px"/>
+                       
                     </div>
 
                 </td>
@@ -115,7 +120,7 @@
                     <div class="input-group">
                         
                         <span class="input-group-btn" style="padding-left: 20px">
-                            <button type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                            <button type="button" id="btn_search" class="btn  btn-primary"><i class="fa fa-search"></i></button>
                         </span>
                     </div>
                 </td>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.YiHai.Base;
 using BenDing.Domain.Models.Dto.YiHai.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Base;
@@ -36,7 +37,7 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// 门诊结算
         /// </summary>
         /// <param name="param"></param>
-        ConfirmInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param);
+        OutpatientSettlementInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param);
         /// <summary>
         /// 获取医院上传信息
         /// </summary>
@@ -81,6 +82,11 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// </summary>
         /// <param name="param"></param>
         void OutpatientDetailUpload(GetOutpatientDetailUploadUiParam param);
+        /// <summary>
+        /// 查询不能确定交易
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<int, List<QueryUncertainTransactionDto>> QueryUncertainTransaction();
         /// <summary>
         /// 确认步骤
         /// </summary>
