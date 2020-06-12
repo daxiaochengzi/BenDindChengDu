@@ -95,6 +95,7 @@
     <Compile Include="Models\Dto\YiHai\JsonEntity\MedicalInsuranceSignInJsonDto.cs" />
     <Compile Include="Models\Dto\YiHai\JsonEntity\OutpatientSettlementOutputJsonDto.cs" />
     <Compile Include="Models\Dto\YiHai\OutpatientDepartment\BaseRefundDto.cs" />
+    <Compile Include="Models\Dto\YiHai\OutpatientDepartment\OutpatientSettlementInfoDto.cs" />
     <Compile Include="Models\Dto\YiHai\OutpatientDepartment\QueryOutpatientSettlementCost.cs" />
     <Compile Include="Models\Dto\YiHai\OutpatientDepartment\SettlementProcessDto.cs" />
     <Compile Include="Models\Dto\YiHai\OutpatientDepartment\YiHaiMedicalInsuranceProjectDto.cs" />

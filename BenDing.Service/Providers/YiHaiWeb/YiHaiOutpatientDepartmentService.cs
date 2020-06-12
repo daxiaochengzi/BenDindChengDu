@@ -360,6 +360,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
             //获取初始门诊费用明细
             var iniCostDetail = dataValue.DetailInfo;
             var outpatientBase = dataValue.OutpatientPersonBase;
+            if (string.IsNullOrWhiteSpace(outpatientBase.MainDiagnosis)) throw new Exception("当前病人没有主诉，不能进行医保报账!!!");
+            if (string.IsNullOrWhiteSpace(outpatientBase.AntecedentHistory)) throw new Exception("当前病人没有现病史，不能进行医保报账!!!");
 
             //获取未对码的项目
             var unCodeData = iniCostDetail.Where(c => string.IsNullOrEmpty(c.MedicalInsuranceProjectCode))
@@ -581,13 +583,25 @@ namespace BenDing.Service.Providers.YiHaiWeb
         /// 门诊结算
         /// </summary>
         /// <param name="param"></param>
-        public ConfirmInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param)
+        public OutpatientSettlementInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param)
         {
-            var resultData = new ConfirmInfoDto();
+            var resultData = new OutpatientSettlementInfoDto();
             var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
             baseUser.TransKey = param.TransKey;
             var resultDto = JsonConvert.DeserializeObject<DealModelDto>(param.ResultJson);
             var outputData = XmlHelp.DeSerializer<OutpatientSettlementOutputXmlDto>(resultDto.TransactionOutputXml);
+            //--
+
+            var outputJson = AutoMapper.Mapper.Map<OutpatientSettlementOutputJsonDto>(outputData);
+            if (outputData.AccountInfo.Any() && outputData.AccountInfo.Count > 0)
+            {
+                var accountInfoData = outputData.AccountInfo.FirstOrDefault();
+                outputJson.AccountType = accountInfoData.AccountType;
+                outputJson.Balance = accountInfoData.Balance;
+            }
+
+            resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(outputJson));
+
             //获取门诊病人信息
             var outpatientInfo = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam()
             {
@@ -642,8 +656,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 BusinessId = param.BusinessId,
                 BackParam = strXmlBackParam
             };
-            //存基层
-            _webServiceBasicRepository.SaveXmlData(saveXml);
+            ////存基层
+            //_webServiceBasicRepository.SaveXmlData(saveXml);
             //更新门诊病人状态
             _yiHaiSqlRepository.UpdateOutpatientSettlement(
                 new UpdateOutpatientSettlementParam
@@ -731,8 +745,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
             if (outpatientInfo.ProcessStep!=(int) OutpatientSettlementStep.ConfirmSettlement) throw new Exception("当前病人没有确认结算信息不能,取消结算!!!");
             var resultData = new QueryOutpatientSettlementCost()
             {    BusinessId = param.BusinessId,
-                DepartmentName = outpatientInfo.DepartmentName,
-                DiagnosticDoctor = outpatientInfo.DiagnosticDoctor,
+                 DepartmentName = outpatientInfo.DepartmentName,
+                 DiagnosticDoctor = outpatientInfo.DiagnosticDoctor,
                 IdCardNo = outpatientInfo.IdCardNo,
                 InvoiceNo = outpatientInfo.InvoiceNo,
                 Operator = outpatientInfo.Operator,
@@ -1217,7 +1231,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
             {
                 Age = CommonHelp.GetAgeByBirthdate(Convert.ToDateTime(patientInfo.Birthday)),
                 Birthday = patientInfo.Birthday,
-                AntecedentHistory = mainDiagnosis.DiseaseName,
+                AntecedentHistory = outpatientBase.AntecedentHistory,
                 DepartmentAreaCode = hospitalGeneralCatalog.MedicalInsuranceCode,
                 DiagnosisStartTime = visitDate,
                 DiagnosisTime = visitDate,
@@ -1227,8 +1241,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 IsConsultation = 1,
                 IsRepeatedDiagnosis = 0,
                 IsTrauma = 0,
-                Job = "工人",
-                MainDiagnosis = mainDiagnosis.DiseaseName,
+                Job =string.IsNullOrWhiteSpace(outpatientBase.Job)?"工人": outpatientBase.Job,
+                MainDiagnosis = outpatientBase.MainDiagnosis,
                 OperatorName = outpatientBase.Operator,
                 WestMedicineFirstDiagnosis = isWestMedicineDiagnosis == true? mainDiagnosis.ProjectCode:null,
                 PhysiqueInspect = "T36.5℃",
@@ -1424,11 +1438,11 @@ namespace BenDing.Service.Providers.YiHaiWeb
         private OutpatientSettlementDataXmlDto OutpatientDepartmentDataXml(
             OutpatientDepartmentDataXmlParam param)
         {
-            var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
-            {
-                DirectoryCodeList = param.CostDetail.Select(c => c.DirectoryCode).ToList(),
-                OrganizationCode = param.OrganizationCode
-            });
+            //var pairCodeData = _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(new QueryMedicalInsurancePairCodeParam()
+            //{
+            //    DirectoryCodeList = param.CostDetail.Select(c => c.DirectoryCode).ToList(),
+            //    OrganizationCode = param.OrganizationCode
+            //});
             var resultData = new OutpatientSettlementDataXmlDto();
             //居民
             if (param.IsWorkers == false)
@@ -1445,8 +1459,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 var ordersDetailData = new List<OutpatientDepartmentDataXmlDetailDto>();
                 foreach (var item in param.CostDetail)
                 {
-                    var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == item.DirectoryCode)
-                        .Select(d => d.FixedEncodingId).FirstOrDefault();
+                    //var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == item.DirectoryCode)
+                    //    .Select(d => d.FixedEncodingId).FirstOrDefault();
                     var costDetailItem = new OutpatientDepartmentDataXmlRowDto()
                     {
                         DetailId = CommonHelp.GuidToStr(item.DetailId),
@@ -1474,7 +1488,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                         ExternalInspectHospitalNo = null,
                         DoctorCode = null,
                         EquipmentCode = null,
-                        HospitalPairingCode = hospitalCodeNo,
+                        //HospitalPairingCode = hospitalCodeNo,
                         DirectoryCode = CommonHelp.GuidToStr(item.DirectoryCode)
 
                     };
@@ -1482,8 +1496,8 @@ namespace BenDing.Service.Providers.YiHaiWeb
                 }
                 foreach (var items in param.CostDetail)
                 {
-                    var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == items.DirectoryCode)
-                        .Select(d => d.FixedEncodingId).FirstOrDefault();
+                    //var hospitalCodeNo = pairCodeData.Where(c => c.DirectoryCode == items.DirectoryCode)
+                    //    .Select(d => d.FixedEncodingId).FirstOrDefault();
                     var ordersDetailItem = new OutpatientDepartmentDataXmlDetailDto()
                     {
                         OrdersSortNo = param.OutpatientBase.InvoiceNo,
@@ -1492,7 +1506,7 @@ namespace BenDing.Service.Providers.YiHaiWeb
                         DoctorCode =CommonHelp.GuidToStr(items.BillDoctorId) ,
                         OrdersDepartmentCode = items.BillDepartmentId,
                         OrdersDepartmentName = param.DepartmentName,
-                        HospitalCodeNo = hospitalCodeNo,
+                        //HospitalCodeNo = hospitalCodeNo,
                         OrdersType = null,
                         OrdersClassify = null,
                         DoseUnit ="",

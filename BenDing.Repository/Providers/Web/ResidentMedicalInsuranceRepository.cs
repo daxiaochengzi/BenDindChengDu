@@ -638,20 +638,20 @@ namespace BenDing.Repository.Providers.Web
 
                 if (pairCodeData != null)
                 {
-                    //自付金额
-                    decimal residentSelfPayProportion = 0;
-                    if (insuranceType == "342") //居民   
-                    {
-                        residentSelfPayProportion = CommonHelp.ValueToDouble(
-                            (item.Amount + item.AdjustmentDifferenceValue) *
-                            pairCodeData.ResidentSelfPayProportion);
-                    }
+                    ////自付金额
+                    //decimal residentSelfPayProportion = 0;
+                    //if (insuranceType == "342") //居民   
+                    //{
+                    //    residentSelfPayProportion = CommonHelp.ValueToDouble(
+                    //        (item.Amount + item.AdjustmentDifferenceValue) *
+                    //        pairCodeData.ResidentSelfPayProportion);
+                    //}
 
-                    if (insuranceType == "310") //职工
-                    {
-                        residentSelfPayProportion = CommonHelp.ValueToDouble(
-                            (item.Amount + item.AdjustmentDifferenceValue) * pairCodeData.WorkersSelfPayProportion);
-                    }
+                    //if (insuranceType == "310") //职工
+                    //{
+                    //    residentSelfPayProportion = CommonHelp.ValueToDouble(
+                    //        (item.Amount + item.AdjustmentDifferenceValue) * pairCodeData.WorkersSelfPayProportion);
+                    //}
 
                     var rowData = new PrescriptionUploadRowParam()
                     {
@@ -668,7 +668,7 @@ namespace BenDing.Repository.Providers.Web
                         UnitPrice = item.UnitPrice,
                         Quantity = item.Quantity,
                         Amount = item.Amount,
-                        ResidentSelfPayProportion = residentSelfPayProportion, //自付金额计算
+                    
                         Formulation = pairCodeData.Formulation,
                         Dosage = (!string.IsNullOrWhiteSpace(item.Dosage))
                             ? CommonHelp.ValueToDouble(Convert.ToDecimal(item.Dosage))
@@ -729,35 +729,35 @@ namespace BenDing.Repository.Providers.Web
             foreach (var item in param)
             {
                 var queryData = pairCode.FirstOrDefault(c => c.DirectoryCode == item.DirectoryCode);
-                if (queryData != null)
-                {
-                    decimal queryAmount = 0;
-                    if (grade == OrganizationGrade.二级乙等以下) queryAmount = queryData.ZeroBlock;
-                    if (grade == OrganizationGrade.二级乙等) queryAmount = queryData.OneBlock;
-                    if (grade == OrganizationGrade.二级甲等) queryAmount = queryData.TwoBlock;
-                    if (grade == OrganizationGrade.三级乙等) queryAmount = queryData.ThreeBlock;
-                    if (grade == OrganizationGrade.三级甲等)
-                    {
-                        queryAmount = queryData.FourBlock;
-                    }
+                //if (queryData != null)
+                //{
+                //    decimal queryAmount = 0;
+                //    if (grade == OrganizationGrade.二级乙等以下) queryAmount = queryData.ZeroBlock;
+                //    if (grade == OrganizationGrade.二级乙等) queryAmount = queryData.OneBlock;
+                //    if (grade == OrganizationGrade.二级甲等) queryAmount = queryData.TwoBlock;
+                //    if (grade == OrganizationGrade.三级乙等) queryAmount = queryData.ThreeBlock;
+                //    if (grade == OrganizationGrade.三级甲等)
+                //    {
+                //        queryAmount = queryData.FourBlock;
+                //    }
 
-                    //限价大于零判断
-                    if (queryAmount > 0)
-                    {
-                        if (item.Amount < queryAmount)
-                        {
-                            dataList.Add(item);
-                        }
-                        else
-                        {
-                            msg += item.DirectoryCode + ",";
-                        }
-                    }
-                    else
-                    {
-                        dataList.Add(item);
-                    }
-                }
+                //    //限价大于零判断
+                //    if (queryAmount > 0)
+                //    {
+                //        if (item.Amount < queryAmount)
+                //        {
+                //            dataList.Add(item);
+                //        }
+                //        else
+                //        {
+                //            msg += item.DirectoryCode + ",";
+                //        }
+                //    }
+                //    else
+                //    {
+                //        dataList.Add(item);
+                //    }
+                //}
             }
 
             msg = msg != "" ? msg + "金额超出限制等级" : "";

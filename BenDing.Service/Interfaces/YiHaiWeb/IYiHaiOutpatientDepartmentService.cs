@@ -37,7 +37,7 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
         /// 门诊结算
         /// </summary>
         /// <param name="param"></param>
-        ConfirmInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param);
+        OutpatientSettlementInfoDto OutpatientSettlement(GetOutpatientDepartmentUiParam param);
         /// <summary>
         /// 获取医院上传信息
         /// </summary>

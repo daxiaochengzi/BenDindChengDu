@@ -1374,13 +1374,11 @@ namespace BenDing.Repository.Providers.Web
                                 UploadMark = c.UploadMark,
                                 AdjustmentDifferenceValue = c.AdjustmentDifferenceValue,
                                 DirectoryCategoryCode = itemPairCode != null ? ((CatalogTypeEnum)Convert.ToInt32(itemPairCode.DirectoryCategoryCode)).ToString() : null,
-                                BlockPrice = itemPairCode != null ? GetBlockPrice(itemPairCode, gradeData.OrganizationGrade) : 0,
+                              
                                 ProjectCode = itemPairCode?.ProjectCode,
                                 ProjectLevel = itemPairCode != null ? ((ProjectLevel)Convert.ToInt32(itemPairCode.ProjectLevel)).ToString() : null,
                                 ProjectCodeType = itemPairCode != null ? ((ProjectCodeType)Convert.ToInt32(itemPairCode.ProjectCodeType)).ToString() : null,
-                                SelfPayProportion = (residentInfoData != null && itemPairCode != null)
-                                    ? GetSelfPayProportion(itemPairCode, residentInfoData)
-                                    : 0,
+                                
                                 UploadAmount = c.UploadAmount,
                                 OrganizationCode = c.OrganizationCode,
                                 UploadTime = c.UploadTime,
@@ -1519,7 +1517,6 @@ namespace BenDing.Repository.Providers.Web
                         string insertSql = "";
                         foreach (var item in paramNew)
                         {
-
                             string str = $@"INSERT INTO [dbo].[HospitalGeneralCatalog]
                                    (id,DirectoryType,[OrganizationCode],[OrganizationName],[DirectoryCode],[DirectoryName]
                                    ,[MnemonicCode],[DirectoryCategoryName],[Remark] ,[CreateTime]
@@ -1621,26 +1618,26 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-        private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)
-        {
-            decimal resultData = 0;
-            if (grade == OrganizationGrade.二级乙等以下) resultData = param.ZeroBlock;
-            if (grade == OrganizationGrade.二级乙等) resultData = param.OneBlock;
-            if (grade == OrganizationGrade.二级甲等) resultData = param.TwoBlock;
-            if (grade == OrganizationGrade.三级乙等) resultData = param.ThreeBlock;
-            if (grade == OrganizationGrade.三级甲等) resultData = param.FourBlock;
+        //private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)
+        //{
+        //    decimal resultData = 0;
+        //    if (grade == OrganizationGrade.二级乙等以下) resultData = param.ZeroBlock;
+        //    if (grade == OrganizationGrade.二级乙等) resultData = param.OneBlock;
+        //    if (grade == OrganizationGrade.二级甲等) resultData = param.TwoBlock;
+        //    if (grade == OrganizationGrade.三级乙等) resultData = param.ThreeBlock;
+        //    if (grade == OrganizationGrade.三级甲等) resultData = param.FourBlock;
 
-            return resultData;
-        }
-        private decimal GetSelfPayProportion(QueryMedicalInsurancePairCodeDto param, MedicalInsuranceResidentInfoDto residentInfo)
-        {
-            decimal resultData = 0;
-            //居民
-            if (residentInfo.InsuranceType == "342") resultData = param.ResidentSelfPayProportion;
-            //职工
-            if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
-            return resultData;
-        }
+        //    return resultData;
+        //}
+        //private decimal GetSelfPayProportion(QueryMedicalInsurancePairCodeDto param, MedicalInsuranceResidentInfoDto residentInfo)
+        //{
+        //    decimal resultData = 0;
+        //    //居民
+        //    if (residentInfo.InsuranceType == "342") resultData = param.ResidentSelfPayProportion;
+        //    //职工
+        //    if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
+        //    return resultData;
+        //}
 
     }
 }

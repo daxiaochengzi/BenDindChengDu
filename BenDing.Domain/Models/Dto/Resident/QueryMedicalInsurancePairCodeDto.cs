@@ -53,36 +53,8 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// 医保单位
         /// </summary>
         public string Unit { get; set; }
-        /// <summary>
-        /// 二级乙等以下
-        /// </summary>
-        public decimal ZeroBlock { get; set; }
-        /// <summary>
-        /// 二级乙等
-        /// </summary>
-        public decimal OneBlock { get; set; }
-        /// <summary>
-        /// 二级甲等
-        /// </summary>
-        public decimal TwoBlock { get; set; }
-        /// <summary>
-        /// 三级乙等
-        /// </summary>
-        public decimal ThreeBlock { get; set; }
-        /// <summary>
-        /// 三级甲等
-        /// </summary>
-        public decimal FourBlock { get; set; }
-        /// <summary>
-        /// 职工医保自付比例
-        /// </summary>
-       
-        public decimal WorkersSelfPayProportion { get; set; }
-        /// <summary>
-        /// 居民医保自付比例
-        /// </summary>
-      
-        public decimal ResidentSelfPayProportion { get; set; }
+        
+
        
         /// <summary>
         /// 居民普通门诊报销标志
@@ -95,15 +67,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
 
         public string RestrictionSign { get; set; }
-        /// <summary>
-        /// 居民普通门诊报销限价
-        /// </summary>
-        public decimal ResidentOutpatientBlock { get; set; }
-        /// <summary>
-        /// 限制支付范围
-        /// </summary>
       
-        public string LimitPaymentScope { get; set; }
         /// <summary>
         /// 生产厂家
         /// </summary>

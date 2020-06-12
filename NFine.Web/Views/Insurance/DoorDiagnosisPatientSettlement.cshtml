@@ -392,7 +392,8 @@
 
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        msgError(errData);
+                     
                         //样式类名:墨绿深蓝风
                     } else {
                         var dataValue = data.Data;
@@ -403,7 +404,7 @@
                                 , "OutpatientDetailUpload", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                                msgError(activeJsonData.Message);
 
                             } else {
                                 var uploadParam = params;
@@ -461,7 +462,8 @@
                    
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        msgError(errData);
+
                         //样式类名:墨绿深蓝风
 
                     } else {
@@ -499,7 +501,8 @@
                   
                     if (data.Success === false) {
                         var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        msgError(errData);
+                       
                         //样式类名:墨绿深蓝风
 
                     } else {
@@ -551,10 +554,10 @@
                                 , "ConfirmDeal", $("#empid").val());
                             var activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
-                                $.modalAlert(activeJsonData.Message, "error");
+                                msgError(activeJsonData.Message);
 
                             } else {
-                               
+                                settlementData(dataValue.PayMsg);
                                 confirmProcessParam["ResultJson"] = activeJsonData.Data;
                                 confirmProcessParam["SettlementStep"] = 5;
                                 confirmProcessStep(confirmProcessParam,"OutpatientDepartmentCostInput" );
@@ -605,7 +608,8 @@
                 if (data.Success === false) {
                     var errData = data.Message;
                     //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                    msgError(errData);
+                  
 
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
