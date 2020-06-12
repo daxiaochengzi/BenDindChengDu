@@ -6,7 +6,7 @@
 <script>
     $(function() {
         gridList();
-        DetectActiveX();
+        YiHaiDetectActiveX();
     });
     function gridList() {
         var $gridList = $("#gridList");
@@ -97,9 +97,9 @@
                 } else {
                     var dataValue = data.Data;
                     if (dataValue.TransactionInputXml !== null) {
-                        var activeX = document.getElementById("CSharpActiveX");
+                     
                   
-                        var activeData = activeX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                        var activeData = yiHaiActiveX.YiHaiMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
                             , "HospitalInfoUpload", $("#empid").val());
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {

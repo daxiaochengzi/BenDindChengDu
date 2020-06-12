@@ -5,7 +5,7 @@
 <script src="~/script/BenDingYiHaiComm.js"></script>
 <script>
     $(function () {
-        DetectActiveX();
+        YiHaiDetectActiveX();
         gridList();
     });
     function gridList() {
@@ -33,7 +33,7 @@
             }
             var transactionType = $("#TransactionType").val();
            //查询不能确定交易
-            var activeData = yiHaiActiveX.YiHaiOutpatientMethods(transactionType, transactionType
+            var activeData = yiHaiActiveX.YiHaiMethods(transactionType, transactionType
                 , "Getuncertaintytrade", $("#empid").val());
             var activeJsonData = JSON.parse(activeData);
             if (activeJsonData.Success === false) {
@@ -58,7 +58,7 @@
         
         //获取交易流水号
         var serialNumber = $("#gridList").jqGridRowValue().SerialNumber;
-        var activeData = yiHaiActiveX.YiHaiOutpatientMethods(serialNumber, serialNumber
+        var activeData = yiHaiActiveX.YiHaiMethods(serialNumber, serialNumber
             , "CancelDeal", $("#empid").val());
         var activeJsonData = JSON.parse(activeData);
         if (activeJsonData.Success === false) {

@@ -50,7 +50,7 @@ function DetectActiveX() {
 function SignInCheck() {
     var operatorId = iniJs("#empid").val();
    
-    var activeData = iniActiveX.YiHaiOutpatientMethods("GetSignInUserId", "GetSignInUserId"
+    var activeData = iniActiveX.YiHaiMethods("GetSignInUserId", "GetSignInUserId"
         , "GetSignInUserId", operatorId);
    
     var activeJsonData = JSON.parse(activeData);
@@ -90,7 +90,7 @@ function medicalInsuranceSignIn() {
                 var dataValue = data.Data;
                 if (dataValue.TransactionInputXml !== null) {
                    
-                    var activeData = iniActiveX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                    var activeData = iniActiveX.YiHaiMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
                         , "MedicalInsuranceSignIn", iniJs("#empid").val());
                     var activeJsonData = JSON.parse(activeData);
                     if (activeJsonData.Success === false) {
@@ -145,7 +145,7 @@ function buttonStatus(buttonId, status) {
 }
 //医保取消交易
 function medicalInsuranceCancelTransaction(serialNumber) {
-    var activeData = iniActiveX.YiHaiOutpatientMethods(serialNumber, serialNumber
+    var activeData = iniActiveX.YiHaiMethods(serialNumber, serialNumber
         , "CancelDeal", iniJs("#empid").val());
     var activeJsonData = JSON.parse(activeData);
     if (activeJsonData.Success === false) {
@@ -178,7 +178,7 @@ function settlementData(data) {
 function getInpatientInfo(getInpatientInfoBack) {
    
       var activeX = document.getElementById("CSharpActiveX");
-    var activeData = activeX.YiHaiOutpatientMethods("", "","GetUserInfo","");
+    var activeData = activeX.YiHaiMethods("", "","GetUserInfo","");
         var activeJsonData = JSON.parse(activeData);
         if (activeJsonData.Success === false) {
             msgError(activeJsonData.Message);

@@ -1,7 +1,7 @@
 ﻿//判断插件是否存在
 var YiHaiAPI = "/api/YiHai";
 var yiHaiActiveX = null;
-function DetectActiveX() {
+function YiHaiDetectActiveX() {
     try {
         yiHaiActiveX = document.getElementById("CSharpActiveX");
         var versionNumber = yiHaiActiveX.name;
@@ -26,7 +26,7 @@ function YiHaiSignInCheck() {
 
 
 
-        var activeData = iniActiveX.YiHaiOutpatientMethods("GetSignInUserId", "GetSignInUserId"
+        var activeData = iniActiveX.YiHaiMethods("GetSignInUserId", "GetSignInUserId"
             , "GetSignInUserId", operatorId);
 
         var activeJsonData = JSON.parse(activeData);
@@ -65,7 +65,7 @@ function getMedicalInsuranceSignInParam() {
                 var dataValue = data.Data;
                 if (dataValue.TransactionInputXml !== null) {
 
-                    var activeData = iniActiveX.YiHaiOutpatientMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
+                    var activeData = iniActiveX.YiHaiMethods(dataValue.TransactionControlXml, dataValue.TransactionInputXml
                         , "MedicalInsuranceSignIn", $("#empid").val());
                     var activeJsonData = JSON.parse(activeData);
                     if (activeJsonData.Success === false) {
