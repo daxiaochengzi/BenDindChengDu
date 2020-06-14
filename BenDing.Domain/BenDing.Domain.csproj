@@ -155,6 +155,10 @@
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeDataXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\InHospital\QueryInHospitalTime\QueryInHospitalTimeOutPutXmlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\MedicalInsuranceSignIn\MedicalInsuranceSignInOutputXmlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\Cognizances\QuerySickTypeCognizanceControlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\Cognizances\SickTypeCognizanceControlDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\Cognizances\QuerySickTypeCognizanceOutputDto.cs" />
+    <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\Cognizances\SickTypeCognizanceOutputDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\Settlements\JobInjurySettlementControlDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\Settlements\JobInjurySettlementInputDto.cs" />
     <Compile Include="Models\Dto\YiHai\XmlDto\OutpatientDepartment\OpSpecials\Settlements\JobInjurySettlementOutputDto.cs" />

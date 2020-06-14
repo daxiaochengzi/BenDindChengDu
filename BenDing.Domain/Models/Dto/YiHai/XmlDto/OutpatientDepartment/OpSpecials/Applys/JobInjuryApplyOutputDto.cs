@@ -99,7 +99,7 @@ namespace BenDing.Domain.Models.Dto.YiHai.XmlDto.OpSpecials
         /// </summary>
         [XmlElementAttribute("yka441")]
 
-        public decimal SickTypePayType { get; set; }
+        public decimal PayType { get; set; }
 
     }
 

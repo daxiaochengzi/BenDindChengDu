@@ -19,31 +19,74 @@ namespace BenDing.Service.Interfaces.YiHaiWeb
     public interface IYinHaiOpSpecialService
     {
         /// <summary>
-        /// 工伤门诊新申请
+        /// 获取 工伤门诊申请  参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        GetYiHaiBaseParm JobInjuryApply(UiInIParam param);
+        GetYiHaiBaseParm GetJobInjuryApplyParam(UiInIParam param);
 
         /// <summary>
-        /// 变更工伤门诊申请
+        /// 获取 取消工伤门诊申请  参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        GetYiHaiBaseParm UpdateJobInjuryApply(UiInIParam param);
+        GetYiHaiBaseParm GetCacelJobInjuryApplyParam(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        /// 获取 修改工伤门诊申请  参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetUpdateJobInjuryApplyParam(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        /// 获取 查询工伤门诊申请  参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetQueryJobInjuryApplyParam(GetCancelOutpatientSettlementUiParam param);
 
         /// <summary>
-        /// 工伤门诊新申请
+        /// 获取 病种认证  参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        GetYiHaiBaseParm CancelJobInjuryApply(UiInIParam param);
+        GetYiHaiBaseParm GetSickTypeCognizanceParam(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        /// 获取 查询病种认证  参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetQuerySickTypeCognizanceParam(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        /// 获取 工伤门诊回退 参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetJobInjurySettlementParam(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        /// 获取 取消工伤门诊回退 参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetCancelJobInjurySettlementParam(GetCancelOutpatientSettlementUiParam param);
 
         /// <summary>
-        /// 工伤门诊、工伤康复住院申请查询
+        /// 获取 工伤门诊就诊 参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        GetYiHaiBaseParm QueryJobInjuryApply(UiInIParam param);
+        GetYiHaiBaseParm GetJobInjuryVisitParam(GetCancelOutpatientSettlementUiParam param);
+        /// <summary>
+        ///  获取 取消工伤门诊就诊 参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetCancelJobInjuryVisitParam(GetCancelOutpatientSettlementUiParam param);
+
+        /// <summary>
+        ///  获取 修改工伤门诊就诊 参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        GetYiHaiBaseParm GetUpdateJobInjuryVisitParam(GetCancelOutpatientSettlementUiParam param);
     }
 }
